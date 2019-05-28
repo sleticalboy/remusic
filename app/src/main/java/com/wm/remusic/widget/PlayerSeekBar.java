@@ -17,31 +17,31 @@ import com.wm.remusic.R;
  * Created by wm on 2016/12/29.
  */
 public class PlayerSeekBar extends SeekBar {
-
+    
     private boolean drawLoading = false;
     private int degree = 0;
     private Matrix matrix = new Matrix();
     private Bitmap loading = BitmapFactory.decodeResource(getResources(), R.drawable.play_plybar_btn_loading);
     private Drawable drawable;
-
+    
     public PlayerSeekBar(Context context) {
         super(context);
     }
-
+    
     public PlayerSeekBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         setThumb(getContext().getResources().getDrawable(R.drawable.play_plybar_btn));
     }
-
+    
     public void setLoading(boolean loading) {
         if (loading) {
             drawLoading = true;
             invalidate();
-        }else {
+        } else {
             drawLoading = false;
         }
     }
-
+    
     @Override
     public void setThumb(Drawable thumb) {
         Rect localRect = null;
@@ -54,7 +54,7 @@ public class PlayerSeekBar extends SeekBar {
             drawable.setBounds(localRect);
         }
     }
-
+    
     @Override
     public Drawable getThumb() {
         if (Build.VERSION.SDK_INT >= 16) {
@@ -62,7 +62,7 @@ public class PlayerSeekBar extends SeekBar {
         }
         return drawable;
     }
-
+    
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -77,6 +77,6 @@ public class PlayerSeekBar extends SeekBar {
             canvas.restore();
             invalidate();
         }
-
+        
     }
 }

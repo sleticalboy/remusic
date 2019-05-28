@@ -6,7 +6,7 @@ import java.security.MessageDigest;
  * Created by wm on 2016/4/14.
  */
 public class IdEncrpte {
-
+    
     public static void main(String[] args) {
         byte[] g = ("3go8&$8*3*3h0k(2)2").getBytes();
         byte[] id = "30101323".getBytes();
@@ -25,14 +25,14 @@ public class IdEncrpte {
             System.out.println(parseByte2HexStr(resultByteArray));
             System.out.println(Base64Encoder.encode("ÓÙDhﾤBYu]8æÑcè ".getBytes()));
             // System.out.println(Base64Encoder.encode(binary(resultByteArray, 2)));
-
+    
         } catch (Exception e) {
-
+    
         }
-
+        
     }
-
-    public static String parseByte2HexStr(byte buf[]) {
+    
+    public static String parseByte2HexStr(byte[] buf) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < buf.length; i++) {
             String hex = Integer.toHexString(buf[i] & 0xFF);
@@ -43,5 +43,5 @@ public class IdEncrpte {
         }
         return sb.toString();
     }
-
+    
 }

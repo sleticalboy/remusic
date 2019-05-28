@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.facebook.common.logging.FLog;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
@@ -21,7 +20,6 @@ import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.image.QualityInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.wm.remusic.R;
@@ -32,29 +30,29 @@ import com.wm.remusic.R;
 public class RoundView extends FrameLayout {
     private View mView;
     private SimpleDraweeView albumView;
-
+    
     public RoundView(Context context) {
         super(context);
         initView(context);
     }
-
+    
     public RoundView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
-
+        
     }
-
-    public static RoundView getView(Context context ,String str){
+    
+    public static RoundView getView(Context context, String str) {
         RoundView view = new RoundView(context);
         view.setAlbum(str);
-        Log.e("uqueue",str);
+        Log.e("uqueue", str);
         return view;
     }
-
-    private void initView(Context context){
+    
+    private void initView(Context context) {
         this.setAnimationCacheEnabled(false);
-        mView = LayoutInflater.from(context).inflate(R.layout.fragment_roundimage,null);
-        albumView = (SimpleDraweeView) mView.findViewById(R.id.sdv);
+        mView = LayoutInflater.from(context).inflate(R.layout.fragment_roundimage, null);
+        albumView = mView.findViewById(R.id.sdv);
         addView(mView);
         //设置图像是否为圆形
         rp.setRoundAsCircle(true);
@@ -68,8 +66,8 @@ public class RoundView extends FrameLayout {
         rp.setBorder(Color.BLACK, 6);
         albumView.setHierarchy(hierarchy);
     }
-
-    public void setAlbum(String albumPath){
+    
+    public void setAlbum(String albumPath) {
         if (albumPath == null) {
             albumView.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_play_song));
         } else {
@@ -85,14 +83,14 @@ public class RoundView extends FrameLayout {
                 e.printStackTrace();
             }
         }
-        Log.e("roundview","setalbum = " + albumPath);
-
+        Log.e("roundview", "setalbum = " + albumPath);
+        
     }
-
+    
     //初始化圆角圆形参数对象
     RoundingParams rp = new RoundingParams();
-
-
+    
+    
     //获取GenericDraweeHierarchy对象
     GenericDraweeHierarchy hierarchy = GenericDraweeHierarchyBuilder.newInstance(getResources())
             //设置圆形圆角参数
@@ -109,22 +107,22 @@ public class RoundView extends FrameLayout {
             .setFadeDuration(300)
             //构建
             .build();
-
+    
     ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
         @Override
         public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
-
+    
         }
-
+        
         @Override
         public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
         }
-
+        
         @Override
         public void onFailure(String id, Throwable throwable) {
             albumView.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_play_song));
         }
     };
-
-
+    
+    
 }

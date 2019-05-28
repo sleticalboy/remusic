@@ -37,31 +37,31 @@ import java.util.ArrayList;
  * Created by wm on 2016/3/10.
  */
 public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapter.ItemHolder> {
-
+    
     private ArrayList<Playlist> playlists, netplaylists = new ArrayList<>();
     private boolean createdExpanded = true;
     private boolean collectExpanded = true;
     private Context mContext;
     private ArrayList itemResults = new ArrayList();
     private boolean isLoveList = true;
-
-
+    
+    
     public MainFragmentAdapter(Context context) {
         this.mContext = context;
     }
-
+    
     public void updateResults(ArrayList itemResults, ArrayList<Playlist> playlists, ArrayList<Playlist> netplaylists) {
         isLoveList = true;
         this.itemResults = itemResults;
         this.playlists = playlists;
         this.netplaylists = netplaylists;
     }
-
-
+    
+    
     public void updatePlaylists(ArrayList<Playlist> playlists) {
         this.playlists = playlists;
     }
-
+    
     @Override
     public ItemHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         switch (viewType) {
@@ -70,7 +70,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 ItemHolder ml0 = new ItemHolder(v0);
                 return ml0;
             case 1:
-                if(isLoveList){
+                if (isLoveList) {
                     View v1 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_main_playlist_first_item, viewGroup, false);
                     ItemHolder ml1 = new ItemHolder(v1);
                     return ml1;
@@ -86,11 +86,11 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 View v3 = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.expandable_item, viewGroup, false);
                 ItemHolder ml3 = new ItemHolder(v3);
                 return ml3;
-
+    
         }
         return null;
     }
-
+    
     @Override
     public void onBindViewHolder(final ItemHolder itemHolder, int i) {
         switch (getItemViewType(i)) {
@@ -109,7 +109,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                         itemHolder.albumArt.setImageURI(Uri.parse(playlist.albumArt));
                     itemHolder.title.setText(playlist.name);
                     itemHolder.songcount.setText(playlist.songCount + "首");
-
+    
                 }
                 if (collectExpanded && !playlist.author.equals("local")) {
                     if (playlist.albumArt != null)
@@ -132,15 +132,15 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 break;
         }
     }
-
+    
     @Override
     public void onViewRecycled(ItemHolder itemHolder) {
-
+    
     }
-
+    
     @Override
     public int getItemCount() {
-        if(itemResults == null){
+        if (itemResults == null) {
             return 0;
         }
         if (!createdExpanded && playlists != null) {
@@ -151,7 +151,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
         }
         return itemResults.size();
     }
-
+    
     private void setOnListener(ItemHolder itemHolder, final int position) {
         switch (position) {
             case 0:
@@ -167,7 +167,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                                 mContext.startActivity(intent);
                             }
                         }, 60);
-
+    
                     }
                 });
                 break;
@@ -185,8 +185,8 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                         }, 60);
                     }
                 });
-
-
+    
+    
                 break;
             case 2:
                 itemHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -200,7 +200,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                                 mContext.startActivity(intent);
                             }
                         }, 60);
-
+    
                     }
                 });
                 break;
@@ -208,17 +208,17 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                 itemHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+    
                         Intent intent = new Intent(mContext, TabActivity.class);
                         intent.putExtra("page_number", 1);
                         mContext.startActivity(intent);
-
+    
                     }
                 });
         }
-
+        
     }
-
+    
     private void setOnPlaylistListener(ItemHolder itemHolder, final int position, final long playlistid, final String albumArt, final String playlistname) {
         itemHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,13 +234,13 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                         intent.putExtra("albumart", albumArt);
                         intent.putExtra("playlistname", playlistname);
                         mContext.startActivity(intent);
-
+    
                     }
                 }, 60);
-
+    
             }
         });
-
+        
         itemHolder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -255,7 +255,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                                     setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-
+    
                                             PlaylistInfo.getInstance(mContext).deletePlaylist(playlistid);
                                             PlaylistsManager.getInstance(mContext).delete(playlistid);
                                             Intent intent = new Intent();
@@ -271,7 +271,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                                         }
                                     }).show();
                         }
-
+    
                         return true;
                     }
                 });
@@ -280,8 +280,8 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
             }
         });
     }
-
-
+    
+    
     private void setSectionListener(final ItemHolder itemHolder, int position) {
         itemHolder.sectionMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -291,8 +291,8 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
             }
         });
     }
-
-
+    
+    
     @Override
     public int getItemViewType(int position) {
         if (getItemCount() == 0) {
@@ -304,36 +304,36 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
             return 1;
         }
         if (itemResults.get(position) instanceof String) {
-            if (((String) itemResults.get(position)).equals("收藏的歌单"))
+            if (itemResults.get(position).equals("收藏的歌单"))
                 return 3;
         }
         return 2;
     }
-
-
+    
+    
     public class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView itemtitle, title, count, songcount, sectionItem;
         protected ImageView menu, sectionImg, sectionMenu;
         SimpleDraweeView albumArt;
         protected TintImageView image;
-
+        
         public ItemHolder(View view) {
             super(view);
-            this.image = (TintImageView) view.findViewById(R.id.fragment_main_item_img);
-            this.itemtitle = (TextView) view.findViewById(R.id.fragment_main_item_title);
-            this.count = (TextView) view.findViewById(R.id.fragment_main_item_count);
-
-            this.title = (TextView) view.findViewById(R.id.fragment_main_playlist_item_title);
-            this.songcount = (TextView) view.findViewById(R.id.fragment_main_playlist_item_count);
-            this.albumArt = (SimpleDraweeView) view.findViewById(R.id.fragment_main_playlist_item_img);
-            this.menu = (ImageView) view.findViewById(R.id.fragment_main_playlist_item_menu);
-
-            this.sectionItem = (TextView) view.findViewById(R.id.expand_title);
-            this.sectionImg = (ImageView) view.findViewById(R.id.expand_img);
-            this.sectionMenu = (ImageView) view.findViewById(R.id.expand_menu);
+            this.image = view.findViewById(R.id.fragment_main_item_img);
+            this.itemtitle = view.findViewById(R.id.fragment_main_item_title);
+            this.count = view.findViewById(R.id.fragment_main_item_count);
+            
+            this.title = view.findViewById(R.id.fragment_main_playlist_item_title);
+            this.songcount = view.findViewById(R.id.fragment_main_playlist_item_count);
+            this.albumArt = view.findViewById(R.id.fragment_main_playlist_item_img);
+            this.menu = view.findViewById(R.id.fragment_main_playlist_item_menu);
+            
+            this.sectionItem = view.findViewById(R.id.expand_title);
+            this.sectionImg = view.findViewById(R.id.expand_img);
+            this.sectionMenu = view.findViewById(R.id.expand_menu);
             view.setOnClickListener(this);
         }
-
+        
         @Override
         public void onClick(View v) {
             ObjectAnimator anim = null;
@@ -342,14 +342,14 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
             anim.setRepeatCount(0);
             anim.setInterpolator(new LinearInterpolator());
             switch (getItemViewType()) {
-
+    
                 case 2:
                     if (createdExpanded) {
                         itemResults.removeAll(playlists);
                         updateResults(itemResults, playlists, netplaylists);
                         notifyItemRangeRemoved(5, playlists.size());
                         anim.start();
-
+    
                         createdExpanded = false;
                     } else {
                         itemResults.removeAll(netplaylists);
@@ -362,9 +362,9 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                         anim.reverse();
                         createdExpanded = true;
                     }
-
+        
                     break;
-
+    
                 case 3:
                     if (collectExpanded) {
                         itemResults.removeAll(netplaylists);
@@ -372,7 +372,7 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                         int len = playlists.size();
                         notifyItemRangeRemoved(6 + len, netplaylists.size());
                         anim.start();
-
+    
                         collectExpanded = false;
                     } else {
                         itemResults.addAll(netplaylists);
@@ -385,6 +385,6 @@ public class MainFragmentAdapter extends RecyclerView.Adapter<MainFragmentAdapte
                     break;
             }
         }
-
+        
     }
 }

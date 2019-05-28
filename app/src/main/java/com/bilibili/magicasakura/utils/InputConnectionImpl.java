@@ -12,11 +12,11 @@ import android.view.inputmethod.InputConnectionWrapper;
  * @create 2016-08-29 11:37
  */
 public class InputConnectionImpl extends InputConnectionWrapper {
-
+    
     public InputConnectionImpl(InputConnection target, boolean mutable) {
         super(target, mutable);
     }
-
+    
     @Override
     public boolean setSelection(int start, int end) {
         if (start < 0 || end < 0) {

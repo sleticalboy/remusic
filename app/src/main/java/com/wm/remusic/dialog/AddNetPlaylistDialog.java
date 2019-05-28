@@ -41,7 +41,7 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
     private RecyclerView recyclerView;
     private ArrayList<MusicInfo> musics;
     private String author;
-
+    
     public static AddNetPlaylistDialog newInstance(ArrayList<MusicInfo> list, String author) {
         AddNetPlaylistDialog dialog = new AddNetPlaylistDialog();
         Bundle bundle = new Bundle();
@@ -50,7 +50,7 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
         dialog.setArguments(bundle);
         return dialog;
     }
-
+    
     public static AddNetPlaylistDialog newInstance(ArrayList<MusicInfo> list) {
         AddNetPlaylistDialog dialog = new AddNetPlaylistDialog();
         Bundle bundle = new Bundle();
@@ -59,31 +59,31 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
         dialog.setArguments(bundle);
         return dialog;
     }
-
+    
     public static AddNetPlaylistDialog newInstance(MusicInfo info) {
         ArrayList<MusicInfo> list = new ArrayList<>();
         list.add(info);
         return AddNetPlaylistDialog.newInstance(list);
     }
-
+    
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         //设置无标题
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+        
         if (getArguments() != null) {
             musics = getArguments().getParcelableArrayList("songs");
             author = getArguments().getString("author");
         }
         playlistInfo = PlaylistInfo.getInstance(mContext);
         playlistsManager = PlaylistsManager.getInstance(mContext);
-
+        
         View view = inflater.inflate(R.layout.fragment_add_playlist, container);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
-        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.create_new_playlist);
-        recyclerView = (RecyclerView) view.findViewById(R.id.add_playlist_recyclerview);
-
-
+        LinearLayout linearLayout = view.findViewById(R.id.create_new_playlist);
+        recyclerView = view.findViewById(R.id.add_playlist_recyclerview);
+        
+        
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +92,7 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
                 alertDialog.show();
                 Window window = alertDialog.getWindow();
                 window.setContentView(R.layout.dialog);
-                final EditText editText = (EditText) (window.findViewById(R.id.message));
+                final EditText editText = window.findViewById(R.id.message);
                 editText.requestFocus();
                 (window.findViewById(R.id.positiveButton)).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -107,7 +107,7 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.e("addplay","here");
+                                Log.e("addplay", "here");
                                 String albumart = null;
                                 for (MusicInfo info : musics) {
                                     albumart = info.albumData;
@@ -124,10 +124,10 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
                                 playlistsManager.insertLists(mContext, playlistid, musics);
                                 Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
                                 MainApplication.context.sendBroadcast(intent);
-
+    
                             }
                         }).start();
-
+    
                         alertDialog.dismiss();
                     }
                 });
@@ -140,13 +140,13 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
         //setItemDecoration();
         return view;
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.CustomDatePickerDialog);
     }
-
+    
     @Override
     public void onStart() {
         super.onStart();
@@ -155,27 +155,27 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
         int dialogWidth = (int) (mContext.getResources().getDisplayMetrics().widthPixels * 0.77);
         getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
         getDialog().setCanceledOnTouchOutside(true);
-
+        
     }
-
+    
     //设置分割线
     private void setItemDecoration() {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
-
+    
     private class AddPlaylistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ArrayList<Playlist> playlists;
-
+        
         public AddPlaylistAdapter(ArrayList<Playlist> p) {
             playlists = p;
         }
-
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.fragment_add_playlist_item, parent, false));
         }
-
+        
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             Playlist playlist = playlists.get(position);
@@ -184,27 +184,27 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
             ((ViewHolder) holder).count.setText(playlist.songCount + "");
             Uri uri = Uri.parse(playlist.albumArt);
             ((ViewHolder) holder).imageView.setImageURI(uri);
-
+            
         }
-
+        
         @Override
         public int getItemCount() {
             return playlists.size();
         }
-
+        
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             SimpleDraweeView imageView;
             TextView title, count;
-
+            
             public ViewHolder(View v) {
                 super(v);
-                this.imageView = (SimpleDraweeView) v.findViewById(R.id.add_playlist_img);
-                this.title = (TextView) v.findViewById(R.id.add_playlist_toptext);
-                this.count = (TextView) v.findViewById(R.id.add_playlist_bottom_text);
+                this.imageView = v.findViewById(R.id.add_playlist_img);
+                this.title = v.findViewById(R.id.add_playlist_toptext);
+                this.count = v.findViewById(R.id.add_playlist_bottom_text);
                 v.setOnClickListener(this);
-
+                
             }
-
+            
             @Override
             public void onClick(View v) {
                 final Playlist playlist = playlists.get(getAdapterPosition());
@@ -220,15 +220,15 @@ public class AddNetPlaylistDialog extends AttachDialogFragment {
                             dismiss();
                         } catch (Exception e) {
                             e.printStackTrace();
-
+    
                         }
                     }
                 }).start();
-
-
+                
+                
             }
         }
     }
-
-
+    
+    
 }

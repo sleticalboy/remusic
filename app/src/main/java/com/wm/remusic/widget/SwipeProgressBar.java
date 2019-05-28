@@ -38,38 +38,38 @@ import android.view.animation.LinearInterpolator;
  * trigger a refresh).
  */
 final class SwipeProgressBar {
-
+    
     // Default progress animation colors are grays.
     private final static int COLOR1 = 0xB3000000;
     private final static int COLOR2 = 0x80000000;
     private final static int COLOR3 = 0x4d000000;
     private final static int COLOR4 = 0x1a000000;
-
+    
     // The duration of the animation cycle.
     private static final int ANIMATION_DURATION_MS = 2000;
-
+    
     // The duration of the animation to clear the bar.
     private static final int FINISH_ANIMATION_DURATION_MS = 1000;
-
+    
     // Interpolator for varying the speed of the animation.
     private static final Interpolator INTERPOLATOR = new LinearInterpolator();
-
+    
     private final Paint mPaint = new Paint();
     private final RectF mClipRect = new RectF();
     private float mTriggerPercentage;
     private long mStartTime;
     private long mFinishTime;
     private boolean mRunning;
-
+    
     // Colors used when rendering the animation,
     private int mColor1;
     private int mColor2;
     private int mColor3;
     private int mColor4;
     private View mParent;
-
+    
     private Rect mBounds = new Rect();
-
+    
     public SwipeProgressBar(View parent) {
         mParent = parent;
         mColor1 = COLOR1;
@@ -77,7 +77,7 @@ final class SwipeProgressBar {
         mColor3 = COLOR3;
         mColor4 = COLOR4;
     }
-
+    
     /**
      * Set the four colors used in the progress animation. The first color will
      * also be the color of the bar that grows in response to a user swipe
@@ -94,7 +94,7 @@ final class SwipeProgressBar {
         mColor3 = color3;
         mColor4 = color4;
     }
-
+    
     /**
      * Update the progress the user has made toward triggering the swipe
      * gesture. and use this value to update the percentage of the trigger that
@@ -105,7 +105,7 @@ final class SwipeProgressBar {
         mStartTime = 0;
         ViewCompat.postInvalidateOnAnimation(mParent);
     }
-
+    
     /**
      * Start showing the progress animation.
      */
@@ -117,7 +117,7 @@ final class SwipeProgressBar {
             mParent.postInvalidate();
         }
     }
-
+    
     /**
      * Stop showing the progress animation.
      */
@@ -129,14 +129,14 @@ final class SwipeProgressBar {
             mParent.postInvalidate();
         }
     }
-
+    
     /**
      * @return Return whether the progress animation is currently running.
      */
     boolean isRunning() {
         return mRunning || mFinishTime > 0;
     }
-
+    
     void draw(Canvas canvas) {
         final int width = mBounds.width();
         final int height = mBounds.height();
@@ -146,13 +146,13 @@ final class SwipeProgressBar {
         boolean drawTriggerWhileFinishing = false;
         int restoreCount = canvas.save();
         canvas.clipRect(mBounds);
-
+        
         if (mRunning || (mFinishTime > 0)) {
             long now = AnimationUtils.currentAnimationTimeMillis();
             long elapsed = (now - mStartTime) % ANIMATION_DURATION_MS;
             long iterations = (now - mStartTime) / ANIMATION_DURATION_MS;
             float rawProgress = (elapsed / (ANIMATION_DURATION_MS / 100f));
-
+            
             // If we're not running anymore, that means we're running through
             // the finish animation.
             if (!mRunning) {
@@ -162,7 +162,7 @@ final class SwipeProgressBar {
                     mFinishTime = 0;
                     return;
                 }
-
+    
                 // Otherwise, use a 0 opacity alpha layer to clear the animation
                 // from the inside out. This layer will prevent the circles from
                 // drawing within its bounds.
@@ -179,7 +179,7 @@ final class SwipeProgressBar {
                 // continue animating.
                 drawTriggerWhileFinishing = true;
             }
-
+            
             // First fill in with the last color that would have finished drawing.
             if (iterations == 0) {
                 canvas.drawColor(mColor1);
@@ -194,7 +194,7 @@ final class SwipeProgressBar {
                     canvas.drawColor(mColor3);
                 }
             }
-
+            
             // Then draw up to 4 overlapping concentric circles of varying radii, based on how far
             // along we are in the cycle.
             // progress 0-50 draw mColor2
@@ -241,12 +241,12 @@ final class SwipeProgressBar {
         }
         canvas.restoreToCount(restoreCount);
     }
-
+    
     private void drawTrigger(Canvas canvas, int cx, int cy) {
         mPaint.setColor(mColor1);
         canvas.drawCircle(cx, cy, cx * mTriggerPercentage, mPaint);
     }
-
+    
     /**
      * Draws a circle centered in the view.
      *
@@ -265,7 +265,7 @@ final class SwipeProgressBar {
         canvas.drawCircle(0, 0, cx, mPaint);
         canvas.restore();
     }
-
+    
     /**
      * Set the drawing bounds of this SwipeProgressBar.
      */

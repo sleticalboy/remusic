@@ -33,12 +33,12 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
     private int totalSize;
     private ArrayList<String> mUrlList = new ArrayList<>();
     SparseArray<MusicFileDownInfo> mDownInfoArray = new SparseArray<>();
-
+    
     public LoadAllDownInfos(Activity context, ArrayList<GeDanGeInfo> list) {
         mContext = context;
         mList = list;
     }
-
+    
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -52,7 +52,7 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
         popupWindow.setOutsideTouchable(true);
         // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
         popupWindow.setBackgroundDrawable(new BitmapDrawable());
-
+        
         popupWindow.showAtLocation(mContext.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
@@ -61,14 +61,13 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
                 cancel(true);
             }
         });
-
+        
     }
-
-
-
+    
+    
     @Override
     protected Boolean doInBackground(Void... params) {
-
+        
         try {
             int le = mList.size();
             int downloadBit = PreferencesUtility.getInstance(mContext).getDownMusicBit();
@@ -84,15 +83,15 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
                     e.printStackTrace();
                 }
             }
-
+            
             if (mDownInfoArray.size() != le) {
                 return false;
             }
-                for (int i = 0; i < le; i++) {
-                    totalSize += mDownInfoArray.get(i).getFile_size();
-                    mUrlList.add(mDownInfoArray.get(i).getFile_link());
-                }
-
+            for (int i = 0; i < le; i++) {
+                totalSize += mDownInfoArray.get(i).getFile_size();
+                mUrlList.add(mDownInfoArray.get(i).getFile_link());
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,11 +123,11 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
 //            }
 //
 //        }
-
+        
         return true;
     }
-
-
+    
+    
     @Override
     protected void onPostExecute(Boolean correct) {
         super.onPostExecute(correct);
@@ -140,12 +139,12 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
                 result = (float) Math.round((float) totalSize / (1024 * 10)) / 10 + "G";
             } else {
                 result = totalSize + "M";
-
+    
             }
-
+    
             new AlertDialog.Builder(mContext).setTitle("将下载歌曲,大约占用" + result + "空间,确定下载吗")
                     .setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
-
+    
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             int len = mList.size();
@@ -162,8 +161,8 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
                             intent.setAction(DownService.ADD_MULTI_DOWNTASK);
                             intent.setPackage(IConstants.PACKAGE);
                             mContext.startService(intent);
-
-
+        
+        
                             dialog.dismiss();
                         }
                     }).
@@ -175,11 +174,11 @@ public class LoadAllDownInfos extends AsyncTask<Void, Void, Boolean> {
                             dialog.dismiss();
                         }
                     }).show();
-
+    
         } else {
             Toast.makeText(mContext, "歌单列表中有信息错误，请重试", Toast.LENGTH_SHORT).show();
         }
         popupWindow.dismiss();
-
+        
     }
 }

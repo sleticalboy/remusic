@@ -20,7 +20,7 @@ import com.wm.remusic.uitl.MusicUtils;
 public class MusicDetailFragment extends AttachDialogFragment {
     private TextView title, name, time, qua, size, path;
     private MusicInfo musicInfo;
-
+    
     public static MusicDetailFragment newInstance(MusicInfo musicInfo) {
         MusicDetailFragment fragment = new MusicDetailFragment();
         Bundle bundle = new Bundle();
@@ -28,7 +28,7 @@ public class MusicDetailFragment extends AttachDialogFragment {
         fragment.setArguments(bundle);
         return fragment;
     }
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -43,33 +43,33 @@ public class MusicDetailFragment extends AttachDialogFragment {
         if (getArguments() != null) {
             musicInfo = getArguments().getParcelable("musicinfo");
         }
-
+        
         View view = inflater.inflate(R.layout.fragment_music_detail, container);
-
-        title = (TextView) view.findViewById(R.id.music_detail_title);
-        name = (TextView) view.findViewById(R.id.music_detail_name);
-        time = (TextView) view.findViewById(R.id.music_detail_time);
+        
+        title = view.findViewById(R.id.music_detail_title);
+        name = view.findViewById(R.id.music_detail_name);
+        time = view.findViewById(R.id.music_detail_time);
         //qua = (TextView) view.findViewById(R.id.music_detail_quater);
-        size = (TextView) view.findViewById(R.id.music_detail_size);
-        path = (TextView) view.findViewById(R.id.music_detail_path);
-
-
+        size = view.findViewById(R.id.music_detail_size);
+        path = view.findViewById(R.id.music_detail_path);
+        
+        
         title.setText(musicInfo.musicName);
         name.setText(musicInfo.artist + "-" + musicInfo.musicName);
         time.setText(MusicUtils.makeShortTimeString(mContext, musicInfo.duration / 1000));
-
+        
         size.setText(musicInfo.size / 1000000 + "m");
         path.setText(musicInfo.data);
         return view;
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //设置样式
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.CustomDatePickerDialog);
     }
-
+    
     @Override
     public void onStart() {
         super.onStart();
@@ -77,8 +77,8 @@ public class MusicDetailFragment extends AttachDialogFragment {
         int dialogHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * 0.30);
         getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, dialogHeight);
         getDialog().setCanceledOnTouchOutside(true);
-
+        
     }
-
-
+    
+    
 }

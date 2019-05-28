@@ -45,8 +45,8 @@ public class LrcView extends View implements ILrcView {
     /**
      * 默认文字的字体大小
      **/
-    private static final float SIZE_FOR_DEFAULT_TEXT = CommonUtils.dip2px(MainApplication.context,17);
-
+    private static final float SIZE_FOR_DEFAULT_TEXT = CommonUtils.dip2px(MainApplication.context, 17);
+    
     /**
      * 画高亮歌词的画笔
      ***/
@@ -54,7 +54,7 @@ public class LrcView extends View implements ILrcView {
     /**
      * 高亮歌词的默认字体大小
      ***/
-    private static final float DEFAULT_SIZE_FOR_HIGHT_LIGHT_LRC = CommonUtils.dip2px(MainApplication.context,15);
+    private static final float DEFAULT_SIZE_FOR_HIGHT_LIGHT_LRC = CommonUtils.dip2px(MainApplication.context, 15);
     /**
      * 高亮歌词当前的字体大小
      ***/
@@ -63,12 +63,12 @@ public class LrcView extends View implements ILrcView {
      * 高亮歌词的默认字体颜色
      **/
     private static final int DEFAULT_COLOR_FOR_HIGHT_LIGHT_LRC = 0xffffffff;
-
+    
     /**
      * 高亮歌词当前的字体颜色
      **/
     private int mCurColorForHightLightLrc = DEFAULT_COLOR_FOR_HIGHT_LIGHT_LRC;
-
+    
     /**
      * 画其他歌词的画笔
      ***/
@@ -76,7 +76,7 @@ public class LrcView extends View implements ILrcView {
     /**
      * 其他歌词的默认字体大小
      ***/
-    private static final float DEFAULT_SIZE_FOR_OTHER_LRC = CommonUtils.dip2px(MainApplication.context,15);
+    private static final float DEFAULT_SIZE_FOR_OTHER_LRC = CommonUtils.dip2px(MainApplication.context, 15);
     /**
      * 其他歌词当前的字体大小
      ***/
@@ -89,8 +89,8 @@ public class LrcView extends View implements ILrcView {
      * 其他歌词当前的字体颜色
      **/
     private int mCurColorForOtherLrc = DEFAULT_COLOR_FOR_OTHER_LRC;
-
-
+    
+    
     /**
      * 画时间线的画笔
      ***/
@@ -102,21 +102,21 @@ public class LrcView extends View implements ILrcView {
     /**
      * 时间文字大小
      **/
-    private static final int SIZE_FOR_TIME = CommonUtils.dip2px(MainApplication.context,12);
+    private static final int SIZE_FOR_TIME = CommonUtils.dip2px(MainApplication.context, 12);
     /**
      * 是否画时间线
      **/
     private boolean mIsDrawTimeLine = false;
-
+    
     /**
      * 歌词间默认的行距
      **/
-    private static final float DEFAULT_PADDING = CommonUtils.dip2px(MainApplication.context,17);
+    private static final float DEFAULT_PADDING = CommonUtils.dip2px(MainApplication.context, 17);
     /**
      * 歌词当前的行距
      **/
     private float mCurPadding = DEFAULT_PADDING;
-
+    
     /**
      * 歌词的最大缩放比例
      **/
@@ -133,7 +133,7 @@ public class LrcView extends View implements ILrcView {
      * 歌词的当前缩放比例
      **/
     private float mCurScalingFactor = DEFAULT_SCALING_FACTOR;
-
+    
     /**
      * 实现歌词竖直方向平滑滚动的辅助对象
      **/
@@ -146,27 +146,27 @@ public class LrcView extends View implements ILrcView {
      * 停止触摸时 如果View需要滚动 时的持续时间
      **/
     private static final int DURATION_FOR_ACTION_UP = 400;
-
+    
     /**
      * 控制文字缩放的因子
      **/
     private float mCurFraction = 0;
     private int mTouchSlop;
-
+    
     private Bitmap arrowBitmap;
-
+    
     public LrcView(Context context) {
         super(context);
-
+        
         init(context);
     }
-
+    
     public LrcView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
-
-
+    
+    
     /**
      * 初始化画笔等
      */
@@ -177,26 +177,26 @@ public class LrcView extends View implements ILrcView {
         mPaintForHighLightLrc.setColor(mCurColorForHightLightLrc);
         mPaintForHighLightLrc.setTextSize(mCurSizeForHightLightLrc);
         mPaintForHighLightLrc.setAntiAlias(true);
-
+    
         mPaintForOtherLrc = new Paint();
         mPaintForOtherLrc.setColor(mCurColorForOtherLrc);
         mPaintForOtherLrc.setTextSize(mCurSizeForOtherLrc);
         mPaintForOtherLrc.setAntiAlias(true);
-
+    
         mPaintForTimeLine = new Paint();
         mPaintForTimeLine.setColor(COLOR_FOR_TIME_LINE);
         mPaintForTimeLine.setTextSize(SIZE_FOR_TIME);
-
+    
         mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
-
+    
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDensity = 30;
         options.inTargetDensity = 30;
         arrowBitmap = BitmapFactory.decodeResource(context.getResources(), R.raw.lrc_arrow, options);
     }
-
+    
     private int mTotleDrawRow;
-
+    
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -227,12 +227,12 @@ public class LrcView extends View implements ILrcView {
         //画出来的第一行歌词的y坐标
         float rowY = getHeight() / 2 + minRaw * (mCurSizeForOtherLrc + mCurPadding);
         for (int i = minRaw; i <= maxRaw; i++) {
-
+    
             if (i == mCurRow) {//画高亮歌词
                 //因为有缩放效果，所有需要动态设置歌词的字体大小
                 float textSize = mCurSizeForOtherLrc + (mCurSizeForHightLightLrc - mCurSizeForOtherLrc) * mCurFraction;
                 mPaintForHighLightLrc.setTextSize(textSize);
-
+        
                 String text = mLrcRows.get(i).getContent();//获取到高亮歌词
                 float textWidth = mPaintForHighLightLrc.measureText(text);//用画笔测量歌词的宽度
                 if (textWidth > getWidth()) {
@@ -264,7 +264,7 @@ public class LrcView extends View implements ILrcView {
             //计算出下一行歌词绘制的y坐标
             rowY += mCurSizeForOtherLrc + mCurPadding;
         }
-
+        
         //画时间线和时间
         if (mIsDrawTimeLine) {
             float y = getHeight() / 2 + getScrollY();
@@ -273,9 +273,9 @@ public class LrcView extends View implements ILrcView {
             canvas.drawText(mLrcRows.get(mCurRow).getTimeStr().substring(0, 5), x - 105, y + 13, mPaintForTimeLine);
             canvas.drawLine(60, y, getWidth() - 110, y, mPaintForTimeLine);
         }
-
+        
     }
-
+    
     /**
      * 是否可拖动歌词
      **/
@@ -289,7 +289,7 @@ public class LrcView extends View implements ILrcView {
      **/
     private float lastY;
     private float lastX;
-
+    
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (mLrcRows == null || mLrcRows.size() == 0) {
@@ -311,7 +311,7 @@ public class LrcView extends View implements ILrcView {
                     }
                     lastY = event.getRawY();
                 }
-
+    
                 if (canDrag) {
                     float offset = event.getRawY() - lastY;//偏移量
                     if (getScrollY() - offset < 0) {
@@ -348,7 +348,7 @@ public class LrcView extends View implements ILrcView {
                     } else if (getScrollY() > mLrcRows.size() * (mCurSizeForOtherLrc + mCurPadding) - mCurPadding) {
                         smoothScrollTo((int) (mLrcRows.size() * (mCurSizeForOtherLrc + mCurPadding) - mCurPadding), DURATION_FOR_ACTION_UP);
                     }
-
+    
                     canDrag = false;
                     mIsDrawTimeLine = false;
                     invalidate();
@@ -357,7 +357,7 @@ public class LrcView extends View implements ILrcView {
         }
         return true;
     }
-
+    
     /**
      * 为LrcView设置歌词List集合数据
      */
@@ -367,7 +367,7 @@ public class LrcView extends View implements ILrcView {
         this.mLrcRows = lrcRows;
         invalidate();
     }
-
+    
     /**
      * 当前高亮歌词的行号
      **/
@@ -376,7 +376,7 @@ public class LrcView extends View implements ILrcView {
      * 上一次的高亮歌词的行号
      **/
     private int mLastRow = -1;
-
+    
     @Override
     public void seekTo(int progress, boolean fromSeekBar, boolean fromSeekBarByUser) {
         if (mLrcRows == null || mLrcRows.size() == 0) {
@@ -387,7 +387,7 @@ public class LrcView extends View implements ILrcView {
             return;
         }
         for (int i = mLrcRows.size() - 1; i >= 0; i--) {
-
+    
             if (progress >= mLrcRows.get(i).getTime()) {
                 if (mCurRow != i) {
                     mLastRow = mCurRow;
@@ -416,14 +416,14 @@ public class LrcView extends View implements ILrcView {
                 break;
             }
         }
-
+        
     }
-
+    
     /**
      * 控制歌词水平滚动的属性动画
      ***/
     private ValueAnimator mAnimator;
-
+    
     /**
      * 开始水平滚动歌词
      *
@@ -443,7 +443,7 @@ public class LrcView extends View implements ILrcView {
         mAnimator.setStartDelay((long) (duration * 0.3)); //延迟执行属性动画
         mAnimator.start();
     }
-
+    
     /**
      * 停止歌词的滚动
      */
@@ -453,7 +453,7 @@ public class LrcView extends View implements ILrcView {
         }
         mCurTextXForHighLightLrc = 0;
     }
-
+    
     /**
      * 高亮歌词当前的其实x轴绘制坐标
      **/
@@ -462,7 +462,7 @@ public class LrcView extends View implements ILrcView {
      * 监听属性动画的数值值的改变
      */
     AnimatorUpdateListener updateListener = new AnimatorUpdateListener() {
-
+    
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             //TODO
@@ -471,7 +471,7 @@ public class LrcView extends View implements ILrcView {
             invalidate();
         }
     };
-
+    
     /**
      * 设置歌词的缩放比例
      */
@@ -487,7 +487,7 @@ public class LrcView extends View implements ILrcView {
         invalidate();
         mScroller.forceFinished(true);
     }
-
+    
     /**
      * 重置
      */
@@ -500,8 +500,8 @@ public class LrcView extends View implements ILrcView {
         scrollTo(getScrollX(), 0);
         invalidate();
     }
-
-
+    
+    
     /**
      * 平滑的移动到某处
      *
@@ -513,7 +513,7 @@ public class LrcView extends View implements ILrcView {
         mScroller.startScroll(getScrollX(), oldScrollY, getScrollX(), offset, duration);
         invalidate();
     }
-
+    
     @Override
     public void computeScroll() {
         if (!mScroller.isFinished()) {
@@ -529,7 +529,7 @@ public class LrcView extends View implements ILrcView {
             }
         }
     }
-
+    
     /**
      * 返回当前的歌词缩放比例
      *
@@ -538,27 +538,27 @@ public class LrcView extends View implements ILrcView {
     public float getmCurScalingFactor() {
         return mCurScalingFactor;
     }
-
+    
     private OnSeekToListener onSeekToListener;
-
+    
     public void setOnSeekToListener(OnSeekToListener onSeekToListener) {
         this.onSeekToListener = onSeekToListener;
     }
-
+    
     public interface OnSeekToListener {
         void onSeekTo(int progress);
     }
-
+    
     private OnLrcClickListener onLrcClickListener;
-
+    
     public void setOnLrcClickListener(OnLrcClickListener onLrcClickListener) {
         this.onLrcClickListener = onLrcClickListener;
     }
-
+    
     public interface OnLrcClickListener {
         void onClick();
     }
-
+    
     public void log(Object o) {
         Log.d("LrcView", o + "");
     }

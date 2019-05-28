@@ -34,25 +34,25 @@ import java.util.ArrayList;
  * Created by wm on 2016/4/11.
  */
 public class PlaylistDetailActivity extends BaseActivity {
-
+    
     private long playlsitId = -1;
     private String albumPath, playlistname;
-
+    
     private PlaylistsManager playlistsManager;
-
+    
     private SimpleDraweeView albumArtSmall;
     private ImageView albumArt;
     private TextView albumTitle, albumDetails;
-
+    
     private RecyclerView recyclerView;
     private PlaylistDetailAdapter mAdapter;
-
+    
     private Toolbar toolbar;
-
+    
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AppBarLayout appBarLayout;
-
-
+    
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         playlistsManager = PlaylistsManager.getInstance(this);
@@ -62,23 +62,23 @@ public class PlaylistDetailActivity extends BaseActivity {
             albumPath = getIntent().getStringExtra("albumart");
             playlistname = getIntent().getStringExtra("playlistname");
         }
-
+        
         setContentView(R.layout.fragment_playlist_detail);
-
-        albumArt = (ImageView) findViewById(R.id.album_art);
-        albumTitle = (TextView) findViewById(R.id.album_title);
-        albumDetails = (TextView) findViewById(R.id.album_details);
-        albumArtSmall = (SimpleDraweeView) findViewById(R.id.albumArtSmall);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        
+        albumArt = findViewById(R.id.album_art);
+        albumTitle = findViewById(R.id.album_title);
+        albumDetails = findViewById(R.id.album_details);
+        albumArtSmall = findViewById(R.id.albumArtSmall);
+        
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setPadding(0, CommonUtils.getStatusHeight(this) / 2, 0, 0);
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        
+        recyclerView = findViewById(R.id.recyclerview);
+        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
+        appBarLayout = findViewById(R.id.app_bar);
         //recyclerView.setEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        
         setUpEverything();
 
 //        runOnUiThread(new Runnable() {
@@ -87,18 +87,18 @@ public class PlaylistDetailActivity extends BaseActivity {
 //                getWindow().getDecorView().setFitsSystemWindows(true);
 //            }
 //        });
-
+    
     }
-
-
+    
+    
     private void setUpEverything() {
         setupToolbar();
         loadAllLists();
         setAlbumart();
     }
-
+    
     private void setupToolbar() {
-
+        
         setSupportActionBar(toolbar);
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
@@ -111,9 +111,9 @@ public class PlaylistDetailActivity extends BaseActivity {
             }
         });
         //collapsingToolbarLayout.setTitle("歌单");
-
+        
     }
-
+    
     private void loadAllLists() {
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -127,7 +127,7 @@ public class PlaylistDetailActivity extends BaseActivity {
                 mAdapter = new PlaylistDetailAdapter(PlaylistDetailActivity.this, playlsitId, mList);
                 return null;
             }
-
+    
             @Override
             protected void onPostExecute(Void aVoid) {
                 recyclerView.setAdapter(mAdapter);
@@ -135,13 +135,13 @@ public class PlaylistDetailActivity extends BaseActivity {
             }
         }.execute();
     }
-
+    
     //更新adapter界面
     public void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-
+    
                 ArrayList<MusicTrack> musicInfos = playlistsManager.getPlaylist(playlsitId);
                 long[] ids = new long[musicInfos.size()];
                 for (int i = 0; i < musicInfos.size(); i++) {
@@ -149,52 +149,52 @@ public class PlaylistDetailActivity extends BaseActivity {
                 }
                 ArrayList<MusicInfo> mList = MusicUtils.getMusicLists(PlaylistDetailActivity.this, ids);
                 mAdapter.updateDataSet(playlsitId, mList);
-
+    
                 return null;
             }
-
+    
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
             }
         }.execute();
     }
-
+    
     @Override
     public void onResume() {
         super.onResume();
         toolbar.setBackgroundColor(Color.TRANSPARENT);
         reloadAdapter();
-
+        
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
     }
-
+    
     private void setAlbumart() {
         albumTitle.setText(playlistname);
         albumArtSmall.setImageURI(Uri.parse(albumPath));
         final Drawable drawable;
         try {
             drawable = Drawable.createFromStream(PlaylistDetailActivity.this.getContentResolver().openInputStream(Uri.parse(albumPath)), null);
-
+    
             new setBlurredAlbumArt().execute(ImageUtils.getBitmapFromDrawable(drawable));
-
+    
         } catch (Exception e) {
-
+    
         }
-
+        
     }
-
-
+    
+    
     private class setBlurredAlbumArt extends AsyncTask<Bitmap, Void, Drawable> {
-
+        
         @Override
         protected Drawable doInBackground(Bitmap... loadedImage) {
             Drawable drawable = null;
-
+            
             try {
                 drawable = ImageUtils.createBlurredImageFromBitmap(loadedImage[0], PlaylistDetailActivity.this, 20);
             } catch (Exception e) {
@@ -202,7 +202,7 @@ public class PlaylistDetailActivity extends BaseActivity {
             }
             return drawable;
         }
-
+        
         @Override
         protected void onPostExecute(Drawable result) {
             if (result != null) {
@@ -214,17 +214,17 @@ public class PlaylistDetailActivity extends BaseActivity {
                             });
                     albumArt.setImageDrawable(td);
                     td.startTransition(200);
-
+    
                 } else {
                     albumArt.setImageDrawable(result);
                 }
             }
         }
-
+        
         @Override
         protected void onPreExecute() {
         }
     }
-
-
+    
+    
 }

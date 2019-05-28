@@ -43,12 +43,12 @@ public class GradientDrawableUtils extends DrawableUtils {
     private static Field sStPaddingField;
     private static Field sStGradientPositions;
     private static Field sStGradientAngle;
-
+    
     @Override
     protected Drawable inflateDrawable(Context context, XmlPullParser parser, AttributeSet attrs) throws XmlPullParserException, IOException {
         GradientDrawable gradientDrawable = new GradientDrawable();
         inflateGradientRootElement(context, attrs, gradientDrawable);
-
+        
         int type;
         final int innerDepth = parser.getDepth() + 1;
         int depth;
@@ -58,13 +58,13 @@ public class GradientDrawableUtils extends DrawableUtils {
             if (type != XmlPullParser.START_TAG) {
                 continue;
             }
-
+    
             if (depth > innerDepth) {
                 continue;
             }
-
+    
             String name = parser.getName();
-
+    
             if (name.equals("size")) {
                 final int width = getAttrDimensionPixelSize(context, attrs, android.R.attr.width);
                 final int height = getAttrDimensionPixelSize(context, attrs, android.R.attr.height);
@@ -86,19 +86,19 @@ public class GradientDrawableUtils extends DrawableUtils {
                     gradientDrawable.setColors(new int[]{startColor, centerColor, endColor});
                     setStGradientPositions(gradientDrawable.getConstantState(), 0.0f, centerX != 0.5f ? centerX : centerY, 1f);
                 }
-
+        
                 if (gradientType == GradientDrawable.LINEAR_GRADIENT) {
                     int angle = (int) getAttrFloat(context, attrs, android.R.attr.angle, 0.0f);
                     angle %= 360;
-
+            
                     if (angle % 45 != 0) {
                         throw new XmlPullParserException("<gradient> tag requires"
                                 + "'angle' attribute to "
                                 + "be a multiple of 45");
                     }
-
+            
                     setStGradientAngle(gradientDrawable.getConstantState(), angle);
-
+            
                     switch (angle) {
                         case 0:
                             gradientDrawable.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
@@ -145,7 +145,7 @@ public class GradientDrawableUtils extends DrawableUtils {
             } else if (name.equals("corners")) {
                 final int radius = getAttrDimensionPixelSize(context, attrs, android.R.attr.radius);
                 gradientDrawable.setCornerRadius(radius);
-
+        
                 final int topLeftRadius = getAttrDimensionPixelSize(context, attrs, android.R.attr.topLeftRadius, radius);
                 final int topRightRadius = getAttrDimensionPixelSize(context, attrs, android.R.attr.topRightRadius, radius);
                 final int bottomLeftRadius = getAttrDimensionPixelSize(context, attrs, android.R.attr.bottomLeftRadius, radius);
@@ -193,14 +193,14 @@ public class GradientDrawableUtils extends DrawableUtils {
         }
         return gradientDrawable;
     }
-
+    
     void inflateGradientRootElement(Context context, AttributeSet attrs, GradientDrawable gradientDrawable) {
         int shape = getAttrInt(context, attrs, android.R.attr.shape, GradientDrawable.RECTANGLE);
         gradientDrawable.setShape(shape);
         boolean dither = getAttrBoolean(context, attrs, android.R.attr.dither, false);
         gradientDrawable.setDither(dither);
     }
-
+    
     void setGradientRadius(Context context, AttributeSet attrs, GradientDrawable drawable, int gradientType) throws XmlPullParserException {
         TypedArray a = obtainAttributes(context.getResources(), context.getTheme(), attrs, new int[]{android.R.attr.gradientRadius});
         TypedValue value = a.peekValue(0);
@@ -214,7 +214,7 @@ public class GradientDrawableUtils extends DrawableUtils {
         }
         a.recycle();
     }
-
+    
     void setStGradientAngle(Drawable.ConstantState constantState, int angle) {
         try {
             if (sStGradientAngle == null) {
@@ -230,7 +230,7 @@ public class GradientDrawableUtils extends DrawableUtils {
             e.printStackTrace();
         }
     }
-
+    
     void setStGradientPositions(Drawable.ConstantState constantState, float... positions) {
         try {
             if (sStGradientPositions == null) {
@@ -246,7 +246,7 @@ public class GradientDrawableUtils extends DrawableUtils {
             e.printStackTrace();
         }
     }
-
+    
     float getAttrFloatOrFraction(Context context, AttributeSet attrs, int attr, float defaultValue, float base, float pbase) {
         TypedArray a = obtainAttributes(context.getResources(), context.getTheme(), attrs, new int[]{attr});
         TypedValue tv = a.peekValue(0);
@@ -258,7 +258,7 @@ public class GradientDrawableUtils extends DrawableUtils {
         a.recycle();
         return v;
     }
-
+    
     int getAlphaColor(int baseColor, float alpha) {
         return alpha != 1.0f
                 ? ColorUtils.setAlphaComponent(baseColor, Math.round(Color.alpha(baseColor) * alpha))

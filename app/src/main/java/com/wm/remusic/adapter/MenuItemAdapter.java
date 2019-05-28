@@ -22,14 +22,14 @@ public class MenuItemAdapter extends BaseAdapter {
     private final int mIconSize;
     private LayoutInflater mInflater;
     private Context mContext;
-
+    
     public MenuItemAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
         mContext = context;
-
+        
         mIconSize = context.getResources().getDimensionPixelSize(R.dimen.drawer_icon_size);//24dp
     }
-
+    
     private List<LvMenuItem> mItems = new ArrayList<LvMenuItem>(
             Arrays.asList(
                     new LvMenuItem(R.mipmap.topmenu_icn_night, "夜间模式"),
@@ -39,35 +39,35 @@ public class MenuItemAdapter extends BaseAdapter {
                     new LvMenuItem(R.mipmap.topmenu_icn_exit, "退出")
 
             ));
-
-
+    
+    
     @Override
     public int getCount() {
         return mItems.size();
     }
-
-
+    
+    
     @Override
     public Object getItem(int position) {
         return mItems.get(position);
     }
-
-
+    
+    
     @Override
     public long getItemId(int position) {
         return position;
     }
-
+    
     @Override
     public int getViewTypeCount() {
         return 3;
     }
-
+    
     @Override
     public int getItemViewType(int position) {
         return mItems.get(position).type;
     }
-
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LvMenuItem item = mItems.get(position);
@@ -85,7 +85,7 @@ public class MenuItemAdapter extends BaseAdapter {
                     icon.setBounds(0, 0, mIconSize, mIconSize);
                     TextViewCompat.setCompoundDrawablesRelative(itemView, icon, null, null, null);
                 }
-
+    
                 break;
             case LvMenuItem.TYPE_NO_ICON:
                 if (convertView == null) {
@@ -102,10 +102,10 @@ public class MenuItemAdapter extends BaseAdapter {
                 }
                 break;
         }
-
+        
         return convertView;
     }
-
+    
     public void setIconColor(Drawable icon) {
         int textColorSecondary = android.R.attr.textColorSecondary;
         TypedValue value = new TypedValue();

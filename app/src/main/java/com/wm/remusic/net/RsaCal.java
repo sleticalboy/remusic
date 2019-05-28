@@ -16,8 +16,8 @@ public class RsaCal {
     public static String reverse(String str) {
         return new StringBuilder(str).reverse().toString();
     }
-
-
+    
+    
     public static String rsaEncode(String key) {
         String pubKey = "010001";
         String m = "157794750267131502212476817800345498121872783333389747424011531025366277535262539913701806290766479189477533597854989606803194253978660329941980786072432806427833685472618792592200595694346872951301770580765135349259590167490536138082469680638514416594216629258349130257685001248172188325316586707301643237607";
@@ -29,17 +29,17 @@ public class RsaCal {
             // pow(Integer.valueOf(pubKey, 16)) 得到次方的值
             //remainder 取余数
             String c = (new BigInteger(keyTo16, 16).pow(Integer.valueOf(pubKey, 16))).remainder(new BigInteger(m)) + "";
-
+    
             //转为16进制表示
             return (new BigInteger(c).toString(16));
         } catch (UnsupportedEncodingException e) {
-
+    
             e.printStackTrace();
         }
         return "-1";
     }
-
-
+    
+    
     public static void main3(String[] args) {
         String key = "7b104953fb112826";
         String pubKey = "010001";
@@ -52,25 +52,25 @@ public class RsaCal {
             // pow(Integer.valueOf(pubKey, 16)) 得到次方的值
             //remainder 取余数
             String c = (new BigInteger(keyTo16, 16).pow(Integer.valueOf(pubKey, 16))).remainder(new BigInteger(m)) + "";
-
+    
             //转为16进制表示
             System.out.println(new BigInteger(c).toString(16));
         } catch (UnsupportedEncodingException e) {
-
+    
             e.printStackTrace();
         }
     }
-
+    
     @NonNull
     static public String toHex(String text, String enc) throws UnsupportedEncodingException {
-        byte B[] = text.getBytes(enc);
+        byte[] B = text.getBytes(enc);
         StringBuilder buf = new StringBuilder();
         for (byte b : B) {
             buf.append(Integer.toHexString(b & 0xff));
         }
         return buf.toString();
     }
-
+    
     public static void main1(String[] args) throws Exception {
         // TODO Auto-generated method stub
         HashMap<String, Object> map = RSAUtils.getKeys();
@@ -84,12 +84,12 @@ public class RsaCal {
         RSAPublicKeySpec rsaPubKS = new RSAPublicKeySpec(new BigInteger(big1, 16), new BigInteger(big2, 16));
         KeyFactory kf = KeyFactory.getInstance("RSA");
         RSAPublicKey publicKey = (RSAPublicKey) kf.generatePublic(rsaPubKS);
-
+        
         //模
         String modulus = publicKey.getModulus().toString();
         //公钥指数
         String public_exponent = publicKey.getPublicExponent().toString();
-
+        
         System.err.println(modulus);
         System.err.println(public_exponent);
         //私钥指数

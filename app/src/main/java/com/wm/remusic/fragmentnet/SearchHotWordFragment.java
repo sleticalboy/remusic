@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -37,44 +36,44 @@ public class SearchHotWordFragment extends AttachFragment implements View.OnClic
     private RecentSearchAdapter adapter;
     private RecyclerView recyclerView;
     private boolean isFromCache = true;
-
+    
     private List searchResults = Collections.emptyList();
     private ArrayList<SearchSongInfo> songList = new ArrayList<>();
     View loadview;
     FrameLayout frameLayout;
-
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.load_framelayout, container, false);
-        frameLayout = (FrameLayout) view.findViewById(R.id.loadframe);
+        frameLayout = view.findViewById(R.id.loadframe);
         loadview = LayoutInflater.from(mContext).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadview);
         loadWords();
-
+        
         return view;
     }
-
+    
     public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
-
+    
     public static int dip2px(Context context, float dipValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dipValue * scale + 0.5f);
     }
-
+    
     private void loadWords() {
         new AsyncTask<Boolean, Void, Boolean>() {
-
+    
             @Override
             protected Boolean doInBackground(Boolean... params) {
                 if (NetworkUtils.isConnectInternet(mContext)) {
                     isFromCache = false;
                 }
-
-
+        
+        
                 try {
                     JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Search.hotWord(), mContext, isFromCache).get("result").getAsJsonArray();
                     for (int i = 0; i < 10; i++) {
@@ -84,35 +83,35 @@ public class SearchHotWordFragment extends AttachFragment implements View.OnClic
                     e.printStackTrace();
                     return false;
                 }
-
+        
                 return true;
             }
-
+    
             @Override
             protected void onPostExecute(Boolean load) {
                 super.onPostExecute(load);
                 if (!load && mContext == null) {
-
+    
                     return;
                 }
                 View view = LayoutInflater.from(mContext).inflate(R.layout.fragment_search_hot_words, frameLayout, false);
-                recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+                recyclerView = view.findViewById(R.id.recyclerview);
                 recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                 recyclerView.setHasFixedSize(true);
                 adapter = new RecentSearchAdapter(mContext);
                 adapter.setListenter(SearchHotWordFragment.this);
                 recyclerView.setAdapter(adapter);
-
-                TextView text1 = (TextView) view.findViewById(R.id.text1);
-                TextView text2 = (TextView) view.findViewById(R.id.text2);
-                TextView text3 = (TextView) view.findViewById(R.id.text3);
-                TextView text4 = (TextView) view.findViewById(R.id.text4);
-                TextView text5 = (TextView) view.findViewById(R.id.text5);
-                TextView text6 = (TextView) view.findViewById(R.id.text6);
-                TextView text7 = (TextView) view.findViewById(R.id.text7);
-                TextView text8 = (TextView) view.findViewById(R.id.text8);
-                TextView text9 = (TextView) view.findViewById(R.id.text9);
-                TextView text10 = (TextView) view.findViewById(R.id.text10);
+        
+                TextView text1 = view.findViewById(R.id.text1);
+                TextView text2 = view.findViewById(R.id.text2);
+                TextView text3 = view.findViewById(R.id.text3);
+                TextView text4 = view.findViewById(R.id.text4);
+                TextView text5 = view.findViewById(R.id.text5);
+                TextView text6 = view.findViewById(R.id.text6);
+                TextView text7 = view.findViewById(R.id.text7);
+                TextView text8 = view.findViewById(R.id.text8);
+                TextView text9 = view.findViewById(R.id.text9);
+                TextView text10 = view.findViewById(R.id.text10);
                 views.add(text1);
                 views.add(text2);
                 views.add(text3);
@@ -123,11 +122,11 @@ public class SearchHotWordFragment extends AttachFragment implements View.OnClic
                 views.add(text8);
                 views.add(text9);
                 views.add(text10);
-
-
+        
+        
                 frameLayout.removeAllViews();
                 frameLayout.addView(view);
-
+        
                 int w = mContext.getResources().getDisplayMetrics().widthPixels;
                 int xdistance = -1;
                 int ydistance = 0;
@@ -151,14 +150,14 @@ public class SearchHotWordFragment extends AttachFragment implements View.OnClic
                 }
             }
         }.execute();
-
+        
     }
-
+    
     public void searchWords(SearchWords searchWords) {
         this.searchWords = searchWords;
     }
-
-
+    
+    
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -194,7 +193,7 @@ public class SearchHotWordFragment extends AttachFragment implements View.OnClic
                 break;
         }
     }
-
+    
     @Override
     public void onSearch(String t) {
         if (searchWords != null)

@@ -66,7 +66,7 @@ import java.util.LinkedList;
  */
 public class ThemeUtils {
     private static final ThreadLocal<TypedValue> TL_TYPED_VALUE = new ThreadLocal<>();
-
+    
     public static final int[] DISABLED_STATE_SET = new int[]{-android.R.attr.state_enabled};
     public static final int[] ENABLED_STATE_SET = new int[]{android.R.attr.state_enabled};
     public static final int[] FOCUSED_STATE_SET = new int[]{android.R.attr.state_focused};
@@ -75,10 +75,10 @@ public class ThemeUtils {
     public static final int[] CHECKED_STATE_SET = new int[]{android.R.attr.state_checked};
     public static final int[] SELECTED_STATE_SET = new int[]{android.R.attr.state_selected};
     public static final int[] EMPTY_STATE_SET = new int[0];
-
+    
     private static final int[] TEMP_ARRAY = new int[1];
-
-
+    
+    
     public static Drawable tintDrawable(Drawable drawable, @ColorInt int color, PorterDuff.Mode mode) {
         if (drawable == null) return null;
         Drawable wrapper = DrawableCompat.wrap(drawable.mutate());
@@ -86,29 +86,29 @@ public class ThemeUtils {
         DrawableCompat.setTintMode(drawable, mode);
         return wrapper;
     }
-
+    
     public static Drawable tintDrawable(Context context, @DrawableRes int resId, @ColorRes int colorId) {
         if (resId <= 0 || colorId <= 0) return null;
         Drawable drawable = context.getResources().getDrawable(resId);
         return tintDrawableByColorId(context, drawable, colorId);
     }
-
+    
     public static Drawable tintDrawable(Drawable drawable, @ColorInt int color) {
         return tintDrawable(drawable, color, PorterDuff.Mode.SRC_IN);
     }
-
+    
     public static Drawable tintDrawableByDrawableId(Context context, @DrawableRes int resId, @ColorInt int color) {
         if (resId <= 0) return null;
         Drawable drawable = context.getResources().getDrawable(resId);
         return tintDrawable(drawable, color);
     }
-
+    
     public static Drawable tintDrawableByColorId(Context context, Drawable drawable, @ColorRes int colorId) {
         if (drawable == null) return null;
         if (colorId <= 0) return drawable;
         return tintDrawable(drawable, replaceColor(context, context.getResources().getColor(colorId)));
     }
-
+    
     public static Drawable tintDrawable(Drawable drawable, ColorStateList cls, PorterDuff.Mode mode) {
         if (drawable == null) return null;
         Drawable wrapper = DrawableCompat.wrap(drawable.mutate());
@@ -116,38 +116,38 @@ public class ThemeUtils {
         DrawableCompat.setTintMode(drawable, mode);
         return wrapper;
     }
-
+    
     public static Drawable tintDrawableByColorList(Context context, Drawable drawable, @ColorRes int colorListId, PorterDuff.Mode mode) {
         if (drawable == null) return null;
         if (colorListId <= 0) return drawable;
         return tintDrawable(drawable, TintManager.get(context).getColorStateList(colorListId), mode == null ? PorterDuff.Mode.SRC_IN : mode);
     }
-
+    
     public static
     @ColorInt
     int getColorById(Context context, @ColorRes int colorId) {
         return replaceColorById(context, colorId);
     }
-
+    
     public static
     @ColorInt
     int getColor(Context context, @ColorInt int color) {
         return replaceColor(context, color);
     }
-
+    
     public static
     @ColorInt
     int getThemeAttrColor(Context context, @AttrRes int attr) {
         return hasThemeAttr(context, attr) ? replaceColorById(context, getThemeAttrId(context, attr)) : Color.TRANSPARENT;
     }
-
+    
     static int getThemeAttrColor(Context context, @AttrRes int attr, float alpha) {
         final int color = getThemeAttrColor(context, attr);
         final int originalAlpha = Color.alpha(color);
-
+        
         return ColorUtils.setAlphaComponent(color, Math.round(originalAlpha * alpha));
     }
-
+    
     public static ColorStateList getThemeAttrColorStateList(Context context, @AttrRes int attr) {
         TEMP_ARRAY[0] = attr;
         TypedArray a = context.obtainStyledAttributes(null, TEMP_ARRAY);
@@ -157,7 +157,7 @@ public class ThemeUtils {
             a.recycle();
         }
     }
-
+    
     public static int getDisabledThemeAttrColor(Context context, @AttrRes int attr) {
         final ColorStateList csl = getThemeAttrColorStateList(context, attr);
         if (csl != null && csl.isStateful()) {
@@ -165,16 +165,16 @@ public class ThemeUtils {
             return csl.getColorForState(DISABLED_STATE_SET, csl.getDefaultColor());
         } else {
             // Else, we'll generate the color using disabledAlpha from the theme
-
+    
             final TypedValue tv = getTypedValue();
             // Now retrieve the disabledAlpha value from the theme
             context.getTheme().resolveAttribute(android.R.attr.disabledAlpha, tv, true);
             final float disabledAlpha = tv.getFloat();
-
+    
             return getThemeAttrColor(context, attr, disabledAlpha);
         }
     }
-
+    
     public static int getThemeAttrId(Context context, @AttrRes int attr) {
         TEMP_ARRAY[0] = attr;
         TypedArray a = context.obtainStyledAttributes(null, TEMP_ARRAY);
@@ -184,7 +184,7 @@ public class ThemeUtils {
             a.recycle();
         }
     }
-
+    
     public static int getThemeAttrId(Context context, AttributeSet attrs, @AttrRes int attr) {
         TEMP_ARRAY[0] = attr;
         TypedArray a = context.obtainStyledAttributes(attrs, TEMP_ARRAY);
@@ -194,7 +194,7 @@ public class ThemeUtils {
             a.recycle();
         }
     }
-
+    
     public static boolean getThemeAttrBoolean(Context context, @AttrRes int attr) {
         TEMP_ARRAY[0] = attr;
         TypedArray a = context.obtainStyledAttributes(null, TEMP_ARRAY);
@@ -204,7 +204,7 @@ public class ThemeUtils {
             a.recycle();
         }
     }
-
+    
     public static boolean hasThemeAttr(Context context, @AttrRes int attr) {
         TEMP_ARRAY[0] = attr;
         TypedArray a = context.obtainStyledAttributes(null, TEMP_ARRAY);
@@ -214,7 +214,7 @@ public class ThemeUtils {
             a.recycle();
         }
     }
-
+    
     public static int getThemeAttrDimensionPixelSize(Context context, @AttrRes int attr) {
         TEMP_ARRAY[0] = attr;
         TypedArray a = context.obtainStyledAttributes(null, TEMP_ARRAY);
@@ -224,7 +224,7 @@ public class ThemeUtils {
             a.recycle();
         }
     }
-
+    
     private static TypedValue getTypedValue() {
         TypedValue typedValue = TL_TYPED_VALUE.get();
         if (typedValue == null) {
@@ -233,11 +233,11 @@ public class ThemeUtils {
         }
         return typedValue;
     }
-
+    
     // skip animated-selector when android version is 5.0.x
     private static boolean isSkipAnimatedSelector = false;
     private static boolean hasRecordedVersion = false;
-
+    
     public static boolean isSkipAnimatedSelector() {
         if (!hasRecordedVersion) {
             final String sdkVersion = Build.VERSION.RELEASE;
@@ -246,7 +246,7 @@ public class ThemeUtils {
         }
         return isSkipAnimatedSelector;
     }
-
+    
     public static boolean containsNinePatch(Drawable drawable) {
         drawable = getWrapperDrawable(drawable);
         if (drawable instanceof NinePatchDrawable
@@ -271,18 +271,19 @@ public class ThemeUtils {
         }
         return false;
     }
-
+    
     public static Drawable getWrapperDrawable(Drawable drawable) {
-        if (drawable instanceof android.support.v4.graphics.drawable.DrawableWrapper) {
+        /*if (drawable instanceof android.support.v4.graphics.drawable.DrawableWrapper) {
             return ((android.support.v4.graphics.drawable.DrawableWrapper) drawable).getWrappedDrawable();
-        } else if (drawable instanceof android.support.v7.graphics.drawable.DrawableWrapper) {
+        } else */
+        if (drawable instanceof android.support.v7.graphics.drawable.DrawableWrapper) {
             return ((android.support.v7.graphics.drawable.DrawableWrapper) drawable).getWrappedDrawable();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && drawable instanceof android.graphics.drawable.DrawableWrapper) {
             return ((android.graphics.drawable.DrawableWrapper) drawable).getDrawable();
         }
         return drawable;
     }
-
+    
     public static Activity getWrapperActivity(Context context) {
         if (context instanceof Activity) {
             return (Activity) context;
@@ -291,13 +292,13 @@ public class ThemeUtils {
         }
         return null;
     }
-
+    
     public static ContextWrapper getWrapperContext(Context context, @StyleRes int themeId) {
         if (context == null) return null;
-
+        
         return new ContextThemeWrapper(context, themeId);
     }
-
+    
     public static Resources updateNightMode(Resources resource, boolean on) {
         DisplayMetrics dm = resource.getDisplayMetrics();
         Configuration config = resource.getConfiguration();
@@ -310,74 +311,74 @@ public class ThemeUtils {
         }
         return resource;
     }
-
+    
     static TintInfo parseColorStateList(ColorStateList origin) {
         if (origin == null) return null;
-
+        
         boolean hasDisable = false;
         int originDefaultColor = origin.getDefaultColor();
         LinkedList<int[]> stateList = new LinkedList<>();
         LinkedList<Integer> colorList = new LinkedList<>();
-
+        
         int disableColor = origin.getColorForState(DISABLED_STATE_SET, 0);
         if (disableColor != originDefaultColor) {
             hasDisable = true;
             stateList.add(DISABLED_STATE_SET);
             colorList.add(disableColor);
         }
-
+        
         int pressedColor = origin.getColorForState(wrapState(hasDisable, PRESSED_STATE_SET), 0);
         if (pressedColor != originDefaultColor) {
             stateList.add(PRESSED_STATE_SET);
             colorList.add(pressedColor);
         }
-
+        
         int focusColor = origin.getColorForState(wrapState(hasDisable, FOCUSED_STATE_SET), 0);
         if (focusColor != originDefaultColor) {
             stateList.add(FOCUSED_STATE_SET);
             colorList.add(focusColor);
         }
-
+        
         int checkedColor = origin.getColorForState(wrapState(hasDisable, CHECKED_STATE_SET), 0);
         if (checkedColor != originDefaultColor) {
             stateList.add(CHECKED_STATE_SET);
             colorList.add(checkedColor);
         }
-
+        
         int selectedColor = origin.getColorForState(wrapState(hasDisable, SELECTED_STATE_SET), 0);
         if (selectedColor != originDefaultColor) {
             stateList.add(SELECTED_STATE_SET);
             colorList.add(selectedColor);
         }
-
+        
         int normalColor = origin.getColorForState(wrapState(hasDisable, EMPTY_STATE_SET), 0);
         if (normalColor != 0) {
             stateList.add(EMPTY_STATE_SET);
             colorList.add(normalColor);
         }
-
+        
         if (colorList.size() > 1) {
             return new TintInfo(stateList, colorList);
         } else {
             return null;
         }
     }
-
+    
     private static int[] wrapState(boolean hasDisable, int[] targetState) {
         return targetState.length > 0
                 ? (hasDisable ? new int[]{ENABLED_STATE_SET[0], targetState[0]} : targetState)
                 : (hasDisable ? ENABLED_STATE_SET : targetState);
     }
-
+    
     public static ColorStateList getThemeColorStateList(Context context, ColorStateList origin) {
         if (origin == null) return null;
-
+        
         if (origin.isStateful()) {
             TintInfo tintInfo = parseColorStateList(origin);
             if (tintInfo == null || tintInfo.isInvalid()) {
                 return origin;
             }
-
+            
             int[] newColors;
             int[][] newStates;
             int index = 0;
@@ -392,7 +393,7 @@ public class ThemeUtils {
                 newStates = new int[tintInfo.mTintStates.length][];
                 newColors = new int[tintInfo.mTintStates.length];
             }
-
+            
             for (int i = 0; i < tintInfo.mTintStates.length; i++) {
                 newStates[index] = tintInfo.mTintStates[i];
                 newColors[index] = replaceColor(context, tintInfo.mTintColors[i]);
@@ -402,15 +403,15 @@ public class ThemeUtils {
         }
         return ColorStateList.valueOf(replaceColor(context, origin.getDefaultColor()));
     }
-
+    
     public static ColorStateList getThemeColorStateList(Context context, @ColorRes int colorId) {
         return ColorStateListUtils.createColorStateList(context, colorId);
     }
-
+    
     public static void refreshUI(Context context) {
         refreshUI(context, null);
     }
-
+    
     public static void refreshUI(Context context, ExtraRefreshable extraRefreshable) {
         TintManager.clearTintCache();
         Activity activity = getWrapperActivity(context);
@@ -422,13 +423,13 @@ public class ThemeUtils {
             refreshView(rootView, extraRefreshable);
         }
     }
-
+    
     private static Field mRecycler;
     private static Method mClearMethod;
-
+    
     private static void refreshView(View view, ExtraRefreshable extraRefreshable) {
         if (view == null) return;
-
+        
         view.destroyDrawingCache();
         if (view instanceof Tintable) {
             ((Tintable) view).tint();
@@ -483,35 +484,35 @@ public class ThemeUtils {
             }
         }
     }
-
+    
     public interface ExtraRefreshable {
         void refreshGlobal(Activity activity);
-
+        
         void refreshSpecificView(View view);
     }
-
+    
     public static switchColor mSwitchColor;
-
+    
     public static void setSwitchColor(switchColor switchColor) {
         mSwitchColor = switchColor;
     }
-
+    
     static
     @ColorInt
     int replaceColorById(Context context, @ColorRes int colorId) {
         return mSwitchColor == null ? Color.TRANSPARENT : mSwitchColor.replaceColorById(context, colorId);
     }
-
+    
     static
     @ColorInt
     int replaceColor(Context context, @ColorInt int color) {
         return mSwitchColor == null ? Color.TRANSPARENT : mSwitchColor.replaceColor(context, color);
     }
-
+    
     public interface switchColor {
         @ColorInt
         int replaceColorById(Context context, @ColorRes int colorId);
-
+        
         @ColorInt
         int replaceColor(Context context, @ColorInt int color);
     }

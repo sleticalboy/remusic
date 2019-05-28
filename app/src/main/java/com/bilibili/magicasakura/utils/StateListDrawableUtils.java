@@ -37,7 +37,7 @@ import java.util.ArrayList;
  * @time 16/2/22
  */
 public class StateListDrawableUtils extends DrawableUtils {
-
+    
     @Override
     protected Drawable inflateDrawable(Context context, XmlPullParser parser, AttributeSet attrs) throws IOException, XmlPullParserException {
         StateListDrawable sd = null;
@@ -47,22 +47,22 @@ public class StateListDrawableUtils extends DrawableUtils {
         final int innerDepth = parser.getDepth() + 1;
         int type;
         int depth;
-
+        
         while ((type = parser.next()) != XmlPullParser.END_DOCUMENT
                 && ((depth = parser.getDepth()) >= innerDepth
                 || type != XmlPullParser.END_TAG)) {
             if (type != XmlPullParser.START_TAG) {
                 continue;
             }
-
+            
             if (depth > innerDepth || !parser.getName().equals("item")) {
                 continue;
             }
-
+            
             Drawable dr = getAttrDrawable(context, attrs, android.R.attr.drawable);
-
+            
             states.add(extractStateSet(attrs));
-
+            
             // Loading child elements modifies the state of the AttributeSet's
             // underlying parser, so it needs to happen after obtaining
             // attributes and extracting states.

@@ -35,11 +35,11 @@ import java.io.IOException;
  */
 public class LayerDrawableUtils extends DrawableUtils {
     private static final int STEP = 1;
-
+    
     private static final int[] ATTRS = new int[]{
             android.R.attr.left, android.R.attr.top, android.R.attr.right,
             android.R.attr.bottom, android.R.attr.id};
-
+    
     @Override
     protected Drawable inflateDrawable(Context context, XmlPullParser parser, AttributeSet attrs) throws IOException, XmlPullParserException {
         final int innerDepth = parser.getDepth() + 1;
@@ -51,17 +51,17 @@ public class LayerDrawableUtils extends DrawableUtils {
         //L,T,R,B,S,E,id
         int[][] childLayersAttrs = new int[space][ATTRS.length];
         Drawable[] drawables = new Drawable[space];
-
+        
         while ((type = parser.next()) != XmlPullParser.END_DOCUMENT
                 && ((depth = parser.getDepth()) >= innerDepth || type != XmlPullParser.END_TAG)) {
             if (type != XmlPullParser.START_TAG) {
                 continue;
             }
-
+            
             if (depth > innerDepth || !parser.getName().equals("item")) {
                 continue;
             }
-
+            
             if (layerAttrUseCount >= childLayersAttrs.length) {
                 int[][] dstInt = new int[drawables.length + STEP][ATTRS.length];
                 System.arraycopy(childLayersAttrs, 0, dstInt, 0, childLayersAttrs.length);
@@ -69,9 +69,9 @@ public class LayerDrawableUtils extends DrawableUtils {
             }
             updateLayerAttrs(context, attrs, childLayersAttrs[layerAttrUseCount]);
             layerAttrUseCount++;
-
+            
             Drawable drawable = getAttrDrawable(context, attrs, android.R.attr.drawable);
-
+            
             // If the layer doesn't have a drawable or unresolved theme
             // attribute for a drawable, attempt to parse one from the child
             // element.
@@ -90,7 +90,7 @@ public class LayerDrawableUtils extends DrawableUtils {
                     drawable = ThemeUtils.tintDrawable(drawable, cls, getTintMode(context, attrs, R.attr.drawableTintMode));
                 }
             }
-
+            
             if (drawable != null) {
                 if (drawableUseCount >= drawables.length) {
                     Drawable[] dst = new Drawable[drawables.length + STEP];
@@ -101,7 +101,7 @@ public class LayerDrawableUtils extends DrawableUtils {
                 drawableUseCount++;
             }
         }
-
+        
         if (drawables[0] == null || drawableUseCount != layerAttrUseCount) {
             return null;
         } else {
@@ -118,7 +118,7 @@ public class LayerDrawableUtils extends DrawableUtils {
             return layerDrawable;
         }
     }
-
+    
     void updateLayerAttrs(Context context, AttributeSet attrs, int[] childLayersAttrs) {
         childLayersAttrs[0] = getAttrDimensionPixelOffset(context, attrs, ATTRS[0]);
         childLayersAttrs[1] = getAttrDimensionPixelOffset(context, attrs, ATTRS[1]);

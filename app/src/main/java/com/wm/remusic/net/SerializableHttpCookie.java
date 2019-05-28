@@ -11,14 +11,14 @@ import java.net.HttpCookie;
  */
 public class SerializableHttpCookie implements Serializable {
     private static final long serialVersionUID = 6374381323722046732L;
-
+    
     private transient final HttpCookie cookie;
     private transient HttpCookie clientCookie;
-
+    
     public SerializableHttpCookie(HttpCookie cookie) {
         this.cookie = cookie;
     }
-
+    
     public HttpCookie getCookie() {
         HttpCookie bestCookie = cookie;
         if (clientCookie != null) {
@@ -26,7 +26,7 @@ public class SerializableHttpCookie implements Serializable {
         }
         return bestCookie;
     }
-
+    
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeObject(cookie.getName());
         out.writeObject(cookie.getValue());
@@ -40,7 +40,7 @@ public class SerializableHttpCookie implements Serializable {
         out.writeBoolean(cookie.getSecure());
         out.writeBoolean(cookie.getDiscard());
     }
-
+    
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         String name = (String) in.readObject();
         String value = (String) in.readObject();

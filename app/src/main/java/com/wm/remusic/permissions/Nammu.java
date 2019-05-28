@@ -1,26 +1,26 @@
 /*
-* The MIT License (MIT)
-
-* Copyright (c) 2015 Michal Tajchert
-
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*/
+ * The MIT License (MIT)
+ 
+ * Copyright (c) 2015 Michal Tajchert
+ 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 package com.wm.remusic.permissions;
 
@@ -46,12 +46,12 @@ public class Nammu {
     private static Context context;
     private static SharedPreferences sharedPreferences;
     private static ArrayList<PermissionRequest> permissionRequests = new ArrayList<PermissionRequest>();
-
+    
     public static void init(Context context) {
         sharedPreferences = context.getSharedPreferences("pl.tajchert.runtimepermissionhelper", Context.MODE_PRIVATE);
         Nammu.context = context;
     }
-
+    
     /**
      * Check that all given permissions have been granted by verifying that each entry in the
      * given array is of the value {@link PackageManager#PERMISSION_GRANTED}.
@@ -64,14 +64,14 @@ public class Nammu {
         }
         return true;
     }
-
+    
     /**
      * Returns true if the Activity has access to given permissions.
      */
     public static boolean hasPermission(Activity activity, String permission) {
         return activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
-
+    
     /**
      * Returns true if the Activity has access to a all given permission.
      */
@@ -83,7 +83,7 @@ public class Nammu {
         }
         return true;
     }
-
+    
     /*
      * If we override other methods, lets do it as well, and keep name same as it is already weird enough.
      * Returns true if we should show explanation why we need this permission.
@@ -91,11 +91,11 @@ public class Nammu {
     public static boolean shouldShowRequestPermissionRationale(Activity activity, String permissions) {
         return activity.shouldShowRequestPermissionRationale(permissions);
     }
-
+    
     public static void askForPermission(Activity activity, String permission, PermissionCallback permissionCallback) {
         askForPermission(activity, new String[]{permission}, permissionCallback);
     }
-
+    
     public static void askForPermission(Activity activity, String[] permissions, PermissionCallback permissionCallback) {
         if (permissionCallback == null) {
             return;
@@ -106,10 +106,10 @@ public class Nammu {
         }
         PermissionRequest permissionRequest = new PermissionRequest(new ArrayList<String>(Arrays.asList(permissions)), permissionCallback);
         permissionRequests.add(permissionRequest);
-
+        
         activity.requestPermissions(permissions, permissionRequest.getRequestCode());
     }
-
+    
     public static void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         PermissionRequest requestResult = new PermissionRequest(requestCode);
         if (permissionRequests.contains(requestResult)) {
@@ -119,16 +119,16 @@ public class Nammu {
                 permissionRequest.getPermissionCallback().permissionGranted();
             } else {
                 permissionRequest.getPermissionCallback().permissionRefused();
-
+    
             }
             permissionRequests.remove(requestResult);
         }
         refreshMonitoredList();
     }
-
-
+    
+    
     //Permission monitoring part below
-
+    
     /**
      * Get list of currently granted permissions, without saving it inside Nammu
      *
@@ -188,7 +188,7 @@ public class Nammu {
         }
         return permissionsGranted;
     }
-
+    
     /**
      * Refresh currently granted permission list, and save it for later comparing using @permissionCompare()
      */
@@ -200,7 +200,7 @@ public class Nammu {
         }
         sharedPreferences.edit().putStringSet(KEY_PREV_PERMISSIONS, set).apply();
     }
-
+    
     /**
      * Get list of previous Permissions, from last refreshMonitoredList() call and they may be outdated,
      * use getGrantedPermissions() to get current
@@ -210,13 +210,13 @@ public class Nammu {
         prevPermissions.addAll(sharedPreferences.getStringSet(KEY_PREV_PERMISSIONS, new HashSet<String>()));
         return prevPermissions;
     }
-
+    
     public static ArrayList<String> getIgnoredPermissions() {
         ArrayList<String> ignoredPermissions = new ArrayList<String>();
         ignoredPermissions.addAll(sharedPreferences.getStringSet(KEY_IGNORED_PERMISSIONS, new HashSet<String>()));
         return ignoredPermissions;
     }
-
+    
     /**
      * Lets see if we already ignore this permission
      */
@@ -226,7 +226,7 @@ public class Nammu {
         }
         return getIgnoredPermissions().contains(permission);
     }
-
+    
     /**
      * Use to ignore to particular Permission - even if user will deny or add it we won't receive a callback.
      *
@@ -241,7 +241,7 @@ public class Nammu {
             sharedPreferences.edit().putStringSet(KEY_IGNORED_PERMISSIONS, set).apply();
         }
     }
-
+    
     /**
      * Used to trigger comparing process - @permissionListener will be called each time Permission was revoked, or added (but only once).
      *
@@ -250,22 +250,18 @@ public class Nammu {
     public static void permissionCompare(PermissionListener permissionListener) {
         if (context == null) {
             throw new RuntimeException("Before comparing permissions you need to call Nammu.initCatchException(context)");
-
+    
         }
         ArrayList<String> previouslyGranted = getPreviousPermissions();
         ArrayList<String> currentPermissions = getGrantedPermissions();
         ArrayList<String> ignoredPermissions = getIgnoredPermissions();
         for (String permission : ignoredPermissions) {
             if (previouslyGranted != null && !previouslyGranted.isEmpty()) {
-                if (previouslyGranted.contains(permission)) {
-                    previouslyGranted.remove(permission);
-                }
+                previouslyGranted.remove(permission);
             }
-
+            
             if (currentPermissions != null && !currentPermissions.isEmpty()) {
-                if (currentPermissions.contains(permission)) {
-                    currentPermissions.remove(permission);
-                }
+                currentPermissions.remove(permission);
             }
         }
         for (String permission : currentPermissions) {
@@ -291,7 +287,7 @@ public class Nammu {
         }
         refreshMonitoredList();
     }
-
+    
     /**
      * Not that needed method but if we override others it is good to keep same.
      */

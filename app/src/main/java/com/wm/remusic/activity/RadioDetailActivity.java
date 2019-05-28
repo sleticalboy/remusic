@@ -17,7 +17,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bilibili.magicasakura.widgets.TintImageView;
 import com.facebook.binaryresource.BinaryResource;
@@ -57,8 +55,6 @@ import com.wm.remusic.fragment.MoreFragment;
 import com.wm.remusic.fragment.NetMoreFragment;
 import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.info.MusicInfo;
-import com.wm.remusic.json.AlbumInfo;
-import com.wm.remusic.json.MusicDetailInfo;
 import com.wm.remusic.json.RadioInfo;
 import com.wm.remusic.net.BMA;
 import com.wm.remusic.net.HttpUtil;
@@ -79,16 +75,16 @@ import java.util.HashMap;
 
 //歌单
 public class RadioDetailActivity extends BaseActivity implements ObservableScrollViewCallbacks {
-
+    
     private String albumId;
     private String albumPath, albumName, albumDes, artistName;
     private ArrayList<RadioInfo> mList = new ArrayList<>();
     private ArrayList<MusicInfo> adapterList = new ArrayList<>();
-
+    
     private SimpleDraweeView albumArtSmall;
     private ImageView albumArt;
     private TextView albumTitle, tryAgain;
-
+    
     private PlaylistDetailAdapter mAdapter;
     private Toolbar toolbar;
     private FrameLayout loadFrameLayout;
@@ -105,10 +101,10 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
     private RelativeLayout headerDetail;
     private ObservableRecyclerView recyclerView;
     private LoadNetPlaylistInfo mLoadNetList;
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
+        
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         if (getIntent().getExtras() != null) {
@@ -119,24 +115,24 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
             artistName = getIntent().getStringExtra("artistname");
         }
         setContentView(R.layout.activity_playlist);
-        loadFrameLayout = (FrameLayout) findViewById(R.id.state_container);
-
-        headerViewContent = (FrameLayout) findViewById(R.id.headerview);
-        headerDetail = (RelativeLayout) findViewById(R.id.headerdetail);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        loadFrameLayout = findViewById(R.id.state_container);
+        
+        headerViewContent = findViewById(R.id.headerview);
+        headerDetail = findViewById(R.id.headerdetail);
+        
+        toolbar = findViewById(R.id.toolbar);
         mHandler = HandlerUtil.getInstance(this);
-
+        
         mFlexibleSpaceImageHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_image_height);
         mActionBarSize = CommonUtils.getActionBarHeight(this);
         mStatusSize = CommonUtils.getStatusHeight(this);
-
-        tryAgain = (TextView) findViewById(R.id.try_again);
-
+        
+        tryAgain = findViewById(R.id.try_again);
+        
         setUpEverything();
-
+        
     }
-
+    
     private void setUpEverything() {
         setupToolbar();
         setHeaderView();
@@ -144,7 +140,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
         setList();
         loadAllLists();
     }
-
+    
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
@@ -160,22 +156,22 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
         });
         toolbar.setSubtitle(albumDes);
     }
-
+    
     private void setHeaderView() {
-        albumArt = (ImageView) findViewById(R.id.album_art);
-        albumTitle = (TextView) findViewById(R.id.album_title);
-        albumArtSmall = (SimpleDraweeView) findViewById(R.id.playlist_art);
-
-        LinearLayout downAll = (LinearLayout) headerViewContent.findViewById(R.id.playlist_down);
+        albumArt = findViewById(R.id.album_art);
+        albumTitle = findViewById(R.id.album_title);
+        albumArtSmall = findViewById(R.id.playlist_art);
+        
+        LinearLayout downAll = headerViewContent.findViewById(R.id.playlist_down);
         downAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(RadioDetailActivity.this).setTitle("要下载音乐吗").
                         setPositiveButton(RadioDetailActivity.this.getString(R.string.sure), new DialogInterface.OnClickListener() {
-
+    
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+        
                                 int len = mList.size();
                                 for (int i = 0; i < len; i++) {
                                     Down.downMusic(MainApplication.context, mList.get(i).getSong_id(), mList.get(i).getSong_name(), artistName);
@@ -191,12 +187,12 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                         }).show();
             }
         });
-
+        
     }
-
-
+    
+    
     private void setList() {
-        recyclerView = (ObservableRecyclerView) findViewById(R.id.recyclerview);
+        recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setScrollViewCallbacks(RadioDetailActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(RadioDetailActivity.this));
         recyclerView.setHasFixedSize(false);
@@ -204,8 +200,8 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(RadioDetailActivity.this, DividerItemDecoration.VERTICAL_LIST));
     }
-
-
+    
+    
     protected void updateViews(int scrollY, boolean animated) {
         // If it's ListView, onScrollChanged is called before ListView is laid out (onGlobalLayout).
         // This causes weird animation when onRestoreInstanceState occurred,
@@ -213,12 +209,12 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 //        if (!mReady) {
 //            return;
 //        }
-
+        
         // Translate header
         ViewHelper.setTranslationY(headerViewContent, getHeaderTranslationY(scrollY));
-
+        
     }
-
+    
     protected float getHeaderTranslationY(int scrollY) {
         final int headerHeight = headerViewContent.getHeight();
         Log.e("hei", "  " + headerHeight);
@@ -229,18 +225,18 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
         Log.e("headerY", "  " + headerTranslationY);
         return headerTranslationY;
     }
-
-
+    
+    
     private void loadAllLists() {
-
-
+        
+        
         if (NetworkUtils.isConnectInternet(this)) {
             tryAgain.setVisibility(View.GONE);
             loadView = LayoutInflater.from(this).inflate(R.layout.loading, loadFrameLayout, false);
             loadFrameLayout.addView(loadView);
             mLoadNetList = new LoadNetPlaylistInfo();
             mLoadNetList.execute();
-
+            
         } else {
             tryAgain.setVisibility(View.VISIBLE);
             tryAgain.setOnClickListener(new View.OnClickListener() {
@@ -250,24 +246,24 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                 }
             });
         }
-
+        
     }
-
-
+    
+    
     class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(final Void... unused) {
             try {
                 JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Lebo.albumInfo(albumId, 10)).get("result").getAsJsonObject()
                         .get("latest_song").getAsJsonArray();
-
+    
                 musicCount = jsonArray.size();
-
+    
                 for (int i = 0; i < musicCount; i++) {
                     RadioInfo geDanGeInfo = MainApplication.gsonInstance().fromJson(jsonArray.get(i), RadioInfo.class);
                     mList.add(geDanGeInfo);
                 }
-
+    
                 for (int i = 0; i < mList.size(); i++) {
                     MusicInfo musicInfo = new MusicInfo();
                     musicInfo.songId = Integer.parseInt(mList.get(i).getSong_id());
@@ -280,36 +276,36 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+    
             return null;
         }
-
+        
         @Override
         protected void onPostExecute(Void aVoid) {
             loadFrameLayout.removeAllViews();
             recyclerView.setVisibility(View.VISIBLE);
             mAdapter.updateDataSet(adapterList);
         }
-
+        
     }
-
-
+    
+    
     @Override
     public void onResume() {
         super.onResume();
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
     }
-
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mLoadNetList.cancel(true);
     }
-
+    
     private void setAlbumart() {
         albumTitle.setText(albumName);
         albumArtSmall.setImageURI(Uri.parse(albumPath));
@@ -324,15 +320,15 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                 new setBlurredAlbumArt().execute(ImageUtils.getArtworkQuick(file, 300, 300));
                 return;
             }
-
+    
             imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(albumPath))
                     .setProgressiveRenderingEnabled(true).build();
             ImagePipeline imagePipeline = Fresco.getImagePipeline();
             DataSource<CloseableReference<CloseableImage>>
                     dataSource = imagePipeline.fetchDecodedImage(imageRequest, RadioDetailActivity.this);
-
+    
             dataSource.subscribe(new BaseBitmapDataSubscriber() {
-
+        
                                      @Override
                                      public void onNewResultImpl(@Nullable Bitmap bitmap) {
                                          // You can use the bitmap in only limited ways
@@ -340,34 +336,33 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                                          if (bitmap != null) {
                                              new setBlurredAlbumArt().execute(bitmap);
                                          }
-                                         ;
                                      }
-
+        
                                      @Override
                                      public void onFailureImpl(DataSource dataSource) {
                                          // No cleanup required here.
-
+            
                                      }
                                  },
                     CallerThreadExecutor.getInstance());
-
-
+    
+    
             //drawable = Drawable.createFromStream( new URL(albumPath).openStream(),"src");
-
-
+    
+    
         } catch (Exception e) {
-
+    
         }
-
+        
     }
-
-
+    
+    
     private class setBlurredAlbumArt extends AsyncTask<Bitmap, Void, Drawable> {
-
+        
         @Override
         protected Drawable doInBackground(Bitmap... loadedImage) {
             Drawable drawable = null;
-
+            
             try {
                 drawable = ImageUtils.createBlurredImageFromBitmap(loadedImage[0], RadioDetailActivity.this, 20);
 //                drawable = ImageUtils.createBlurredImageFromBitmap(ImageUtils.getBitmapFromDrawable(Drawable.createFromStream(new URL(albumPath).openStream(), "src")),
@@ -377,7 +372,7 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
             }
             return drawable;
         }
-
+        
         @Override
         protected void onPostExecute(Drawable result) {
             if (result != null) {
@@ -389,20 +384,20 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                             });
                     albumArt.setImageDrawable(td);
                     td.startTransition(200);
-
+    
                 } else {
                     albumArt.setImageDrawable(result);
                 }
             }
         }
     }
-
-
+    
+    
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-
+        
         updateViews(scrollY, false);
-
+        
         if (scrollY > 0 && scrollY < mFlexibleSpaceImageHeight - mActionBarSize - mStatusSize) {
             toolbar.setTitle(albumName);
             toolbar.setSubtitle(albumDes);
@@ -419,39 +414,39 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
 //                actionBar.setBackgroundDrawable(mBlurDrawable);
 //            }
         }
-
+        
         float a = (float) scrollY / (mFlexibleSpaceImageHeight - mActionBarSize - mStatusSize);
         headerDetail.setAlpha(1f - a);
         Log.e("alpha", " " + a);
     }
-
+    
     @Override
     public void onDownMotionEvent() {
-
+    
     }
-
+    
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-
+    
     }
-
+    
     @Override
     public void updateTrack() {
         super.updateTrack();
         mAdapter.notifyDataSetChanged();
     }
-
+    
     class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final static int FIRST_ITEM = 0;
         final static int ITEM = 1;
         private ArrayList<MusicInfo> arraylist;
         private Activity mContext;
-
+        
         public PlaylistDetailAdapter(Activity context, ArrayList<MusicInfo> mList) {
             this.arraylist = mList;
             this.mContext = context;
         }
-
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             if (viewType == FIRST_ITEM) {
@@ -460,14 +455,14 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                 return new ItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_playlist_detail_item, viewGroup, false));
             }
         }
-
+        
         //判断布局类型
         @Override
         public int getItemViewType(int position) {
             return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
-
+    
         }
-
+        
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder itemHolder, final int i) {
             if (itemHolder instanceof ItemViewHolder) {
@@ -488,9 +483,9 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                 ((ItemViewHolder) itemHolder).menu.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+    
                         HttpUtil.getResposeJsonObject("http://tingapi.ting.baidu.com/v1/restserver/ting?from=android&version=5.8.1.0&channel=ppzs&operator=3&method=baidu.ting.artist.item&format=json&tinguid=1035&artistid=14");
-
+    
                         if (localItem.islocal) {
                             MoreFragment morefragment = MoreFragment.newInstance(arraylist.get(i - 1),
                                     IConstants.MUSICOVERFLOW);
@@ -502,45 +497,45 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                         }
                     }
                 });
-
+    
             } else if (itemHolder instanceof CommonItemViewHolder) {
-
+    
                 ((CommonItemViewHolder) itemHolder).textView.setText("(共" + arraylist.size() + "首)");
-
+    
                 ((CommonItemViewHolder) itemHolder).select.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+    
                     }
                 });
-
+    
             }
-
+            
         }
-
+        
         @Override
         public int getItemCount() {
             return arraylist == null ? 0 : arraylist.size() + 1;
         }
-
+        
         public void updateDataSet(ArrayList<MusicInfo> arraylist) {
             this.arraylist = arraylist;
             this.notifyDataSetChanged();
         }
-
+        
         public class CommonItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView textView;
             ImageView select;
             RelativeLayout layout;
-
+            
             CommonItemViewHolder(View view) {
                 super(view);
-                this.textView = (TextView) view.findViewById(R.id.play_all_number);
-                this.select = (ImageView) view.findViewById(R.id.select);
-                this.layout = (RelativeLayout) view.findViewById(R.id.play_all_layout);
+                this.textView = view.findViewById(R.id.play_all_number);
+                this.select = view.findViewById(R.id.select);
+                this.layout = view.findViewById(R.id.play_all_layout);
                 layout.setOnClickListener(this);
             }
-
+            
             public void onClick(View v) {
                 //// TODO: 2016/1/20
                 mHandler.postDelayed(new Runnable() {
@@ -556,27 +551,27 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
-
+                }, 70);
+                
             }
-
+            
         }
-
+        
         public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             protected TextView title, artist, trackNumber;
             protected ImageView menu;
             TintImageView playState;
-
+            
             public ItemViewHolder(View view) {
                 super(view);
-                this.title = (TextView) view.findViewById(R.id.song_title);
-                this.artist = (TextView) view.findViewById(R.id.song_artist);
-                this.trackNumber = (TextView) view.findViewById(R.id.trackNumber);
-                this.menu = (ImageView) view.findViewById(R.id.popup_menu);
-                this.playState = (TintImageView) view.findViewById(R.id.play_state);
+                this.title = view.findViewById(R.id.song_title);
+                this.artist = view.findViewById(R.id.song_artist);
+                this.trackNumber = view.findViewById(R.id.trackNumber);
+                this.menu = view.findViewById(R.id.popup_menu);
+                this.playState = view.findViewById(R.id.play_state);
                 view.setOnClickListener(this);
             }
-
+            
             @Override
             public void onClick(View v) {
                 mHandler.postDelayed(new Runnable() {
@@ -593,10 +588,10 @@ public class RadioDetailActivity extends BaseActivity implements ObservableScrol
                         if (getAdapterPosition() > 0)
                             MusicPlayer.playAll(infos, list, getAdapterPosition() - 1, false);
                     }
-                },70);
-
+                }, 70);
+                
             }
-
+            
         }
     }
 }

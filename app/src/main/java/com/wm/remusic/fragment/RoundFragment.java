@@ -60,8 +60,8 @@ public class RoundFragment extends Fragment {
             albumPath = getArguments().getString("album");
         }
         //  CircleImageView  circleImageView = (CircleImageView) rootView.findViewById(R.id.circle);
-
-        sdv = (SimpleDraweeView) rootView.findViewById(R.id.sdv);
+    
+        sdv = rootView.findViewById(R.id.sdv);
 
 
         //初始化圆角圆形参数对象
@@ -168,7 +168,7 @@ public class RoundFragment extends Fragment {
         super.onStart();
 //        animatorWeakReference = new  WeakReference<ObjectAnimator>(new ObjectAnimator());
 //        animator = animatorWeakReference.get();
-        animatorWeakReference = new WeakReference(ObjectAnimator.ofFloat(getView(), "rotation", new float[]{0.0F, 360.0F}));
+        animatorWeakReference = new WeakReference(ObjectAnimator.ofFloat(getView(), "rotation", 0.0F, 360.0F));
         animator = animatorWeakReference.get();
         //animator = ObjectAnimator.ofFloat(getView(), "rotation", new float[]{0.0F, 360.0F});
         animator.setRepeatCount(Integer.MAX_VALUE);
@@ -201,10 +201,10 @@ public class RoundFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e("roundfragment"," id = " + hashCode());
+        Log.e("roundfragment", " id = " + hashCode());
         if (animator != null) {
             animator = null;
-            Log.e("roundfragment"," id = " + hashCode() + "  , animator destroy");
+            Log.e("roundfragment", " id = " + hashCode() + "  , animator destroy");
         }
 //        RefWatcher refWatcher = MainApplication.getRefWatcher(getActivity());
 //        refWatcher.watch(this);

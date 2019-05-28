@@ -56,16 +56,16 @@ import java.util.List;
 
 //歌单
 public class ArtistDetailActivity extends BaseActivity implements ObservableScrollViewCallbacks {
-
+    
     private String TAG = ArtistDetailActivity.class.getSimpleName();
     private String artistId;
     private String artistPath, artistName, artistDes;
     private ArrayList<GeDanGeInfo> mList = new ArrayList<GeDanGeInfo>();
     private ArrayList<MusicInfo> adapterList = new ArrayList<>();
-
+    
     private SimpleDraweeView artistArt;
     private TextView artistTitle, tryAgain;
-
+    
     private Toolbar toolbar;
     private SparseArray<MusicDetailInfo> sparseArray = new SparseArray<MusicDetailInfo>();
     private FrameLayout loadFrameLayout;
@@ -83,10 +83,10 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
     private TabLayout tabLayout;
     private ImageView toolbar_bac;
     private LoadNetPlaylistInfo mLoadNetList;
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
+        
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         if (getIntent().getExtras() != null) {
@@ -94,34 +94,34 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
             artistName = getIntent().getStringExtra("artistname");
         }
         setContentView(R.layout.activity_artist);
-        loadFrameLayout = (FrameLayout) findViewById(R.id.state_container);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        loadFrameLayout = findViewById(R.id.state_container);
+        
+        toolbar = findViewById(R.id.toolbar);
         mHandler = HandlerUtil.getInstance(this);
-
+        
         mActionBarSize = CommonUtils.getActionBarHeight(this);
         mStatusSize = CommonUtils.getStatusHeight(this);
-        artistArt = (SimpleDraweeView) findViewById(R.id.artist_art);
-        mHeaderView = (LinearLayout) findViewById(R.id.header);
-        tryAgain = (TextView) findViewById(R.id.try_again);
-
-        mPager = (ViewPager) findViewById(R.id.pager);
-        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        toolbar_bac = (ImageView) findViewById(R.id.toolbar_bac);
+        artistArt = findViewById(R.id.artist_art);
+        mHeaderView = findViewById(R.id.header);
+        tryAgain = findViewById(R.id.try_again);
+        
+        mPager = findViewById(R.id.pager);
+        tabLayout = findViewById(R.id.sliding_tabs);
+        toolbar_bac = findViewById(R.id.toolbar_bac);
         ViewGroup.LayoutParams layoutParams = toolbar_bac.getLayoutParams();
         layoutParams.height = mActionBarSize + mStatusSize;
         toolbar_bac.setLayoutParams(layoutParams);
-
+        
         setUpEverything();
-
+        
     }
-
+    
     private void setUpEverything() {
         setupToolbar();
         setAlbumart();
         loadAllLists();
     }
-
+    
     private void setupToolbar() {
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
@@ -136,10 +136,10 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
             }
         });
         toolbar.setSubtitle(artistDes);
-
+        
     }
-
-
+    
+    
     private void loadAllLists() {
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,40 +147,40 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
                 loadAllLists();
             }
         });
-
+        
         if (NetworkUtils.isConnectInternet(this)) {
             tryAgain.setVisibility(View.GONE);
             loadView = LayoutInflater.from(this).inflate(R.layout.loading, loadFrameLayout, false);
             loadFrameLayout.addView(loadView);
             mLoadNetList = new LoadNetPlaylistInfo();
             mLoadNetList.execute();
-
+            
         } else {
             tryAgain.setVisibility(View.VISIBLE);
-
+            
         }
-
+        
     }
-
-
+    
+    
     class LoadNetPlaylistInfo extends AsyncTask<Void, Void, Boolean> {
         //artistInfo artistInfo;
         @Override
         protected Boolean doInBackground(final Void... unused) {
             try {
                 JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Artist.artistSongList("", artistId, 0, 50));
-
+    
                 JsonArray pArray = jsonObject.get("songlist").getAsJsonArray();
                 musicCount = pArray.size();
-
+    
                 for (int i = 0; i < musicCount; i++) {
                     GeDanGeInfo geDanGeInfo = MainApplication.gsonInstance().fromJson(pArray.get(i), GeDanGeInfo.class);
                     mList.add(geDanGeInfo);
                     RequestThreadPool.post(new MusicDetailInfoGet(geDanGeInfo.getSong_id(), i, sparseArray));
                 }
-
+    
                 int tryCount = 0;
-                while (sparseArray.size() != musicCount && tryCount < 1000 && !isCancelled()){
+                while (sparseArray.size() != musicCount && tryCount < 1000 && !isCancelled()) {
                     tryCount++;
                     try {
                         Thread.sleep(30);
@@ -188,8 +188,8 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
                         e.printStackTrace();
                     }
                 }
-
-                if(sparseArray.size() == musicCount){
+    
+                if (sparseArray.size() == musicCount) {
                     for (int i = 0; i < mList.size(); i++) {
                         try {
                             MusicInfo musicInfo = new MusicInfo();
@@ -209,17 +209,17 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
                     }
                     return true;
                 }
-
+    
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+    
             return false;
         }
-
+        
         @Override
         protected void onPostExecute(Boolean comlete) {
-
+            
             if (!comlete) {
                 tryAgain.setVisibility(View.VISIBLE);
             } else {
@@ -232,38 +232,36 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
                 tabLayout.setupWithViewPager(mPager);
                 mPager.setCurrentItem(0);
             }
-
+            
         }
-
-        public void cancleTask(){
+        
+        public void cancleTask() {
             cancel(true);
             RequestThreadPool.finish();
         }
     }
-
-
-
-
+    
+    
     @Override
     public void onResume() {
         super.onResume();
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
     }
-
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mLoadNetList != null){
+        if (mLoadNetList != null) {
             mLoadNetList.cancleTask();
         }
     }
-
+    
     ArtistInfo artistInfo;
-
+    
     private void setAlbumart() {
         new Thread(new Runnable() {
             @Override
@@ -283,8 +281,8 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
             }
         }).start();
     }
-
-
+    
+    
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
         if (dragging) {
@@ -299,21 +297,21 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
             ViewPropertyAnimator.animate(mHeaderView).cancel();
             ViewHelper.setTranslationY(mHeaderView, headerTranslationY);
         }
-
+        
         toolbar_bac.setImageResource(R.drawable.toolbar_background_black);
         float a = (float) scrollY / (ViewHelper.getScrollY(mHeaderView));
         toolbar_bac.setAlpha(a);
-
+        
     }
-
+    
     @Override
     public void onDownMotionEvent() {
     }
-
+    
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
         mBaseTranslationY = 0;
-
+        
         Fragment fragment = getCurrentFragment();
         if (fragment == null) {
             return;
@@ -322,9 +320,9 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
         if (view == null) {
             return;
         }
-
+        
         int toolbarHeight = mHeaderView.getHeight() - mActionBarSize - mStatusSize - tabLayout.getHeight();
-        final ObservableRecyclerView listView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+        final ObservableRecyclerView listView = view.findViewById(R.id.scroll);
         if (listView == null) {
             return;
         }
@@ -350,35 +348,35 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
             }
         }
     }
-
+    
     private Fragment getCurrentFragment() {
         return mPagerAdapter.getItemAt(mPager.getCurrentItem());
     }
-
+    
     private void propagateToolbarState(boolean isShown) {
         int toolbarHeight = mHeaderView.getHeight() - mActionBarSize - mStatusSize - tabLayout.getHeight();
-
+        
         // Set scrollY for the fragments that are not created yet
         mPagerAdapter.setScrollY(isShown ? 0 : toolbarHeight);
-
+        
         // Set scrollY for the active fragments
         for (int i = 0; i < mPagerAdapter.getCount(); i++) {
             // Skip current item
             if (i == mPager.getCurrentItem()) {
                 continue;
             }
-
+    
             // Skip destroyed or not created item
             Fragment f = mPagerAdapter.getItemAt(i);
             if (f == null) {
                 continue;
             }
-
+    
             View view = f.getView();
             if (view == null) {
                 continue;
             }
-            ObservableRecyclerView listView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+            ObservableRecyclerView listView = view.findViewById(R.id.scroll);
             if (listView == null) {
                 continue;
             }
@@ -395,16 +393,16 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
             }
         }
     }
-
+    
     private boolean toolbarIsShown() {
         return ViewHelper.getTranslationY(mHeaderView) == 0;
     }
-
+    
     private boolean toolbarIsHidden() {
         return ViewHelper.getTranslationY(mHeaderView) == -mHeaderView.getHeight() - mActionBarSize - mStatusSize
                 - tabLayout.getHeight();
     }
-
+    
     private void showToolbar() {
         float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
         if (headerTranslationY != 0) {
@@ -413,7 +411,7 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
         }
         propagateToolbarState(true);
     }
-
+    
     private void hideToolbar() {
         float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
         int toolbarHeight = mHeaderView.getHeight() - mActionBarSize - mStatusSize - tabLayout.getHeight();
@@ -423,41 +421,41 @@ public class ArtistDetailActivity extends BaseActivity implements ObservableScro
         }
         propagateToolbarState(false);
     }
-
+    
     private static class NavigationAdapter extends CacheFragmentStatePagerAdapter {
-
+        
         private static final String[] TITLES = new String[]{"热门歌曲", "歌手信息"};
         private final List<Fragment> mFragments = new ArrayList<>();
-
+        
         private int mScrollY;
-
+        
         public NavigationAdapter(FragmentManager fm) {
             super(fm);
         }
-
+        
         public void setScrollY(int scrollY) {
             mScrollY = scrollY;
         }
-
+        
         public void addFragment(Fragment fragment) {
             mFragments.add(fragment);
         }
-
-
+        
+        
         @Override
         protected Fragment createItem(int position) {
             return mFragments.get(position);
         }
-
+        
         @Override
         public int getCount() {
             return TITLES.length;
         }
-
+        
         @Override
         public CharSequence getPageTitle(int position) {
             return TITLES[position];
         }
     }
-
+    
 }

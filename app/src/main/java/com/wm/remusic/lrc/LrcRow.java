@@ -12,7 +12,7 @@ import java.util.List;
  * @author Ligang  2014/8/19
  */
 public class LrcRow implements Comparable<LrcRow> {
-
+    
     /**
      * 开始时间 为00:10:00
      ***/
@@ -29,50 +29,50 @@ public class LrcRow implements Comparable<LrcRow> {
      * 该行歌词显示的总时间
      **/
     private int totalTime;
-
+    
     public long getTotalTime() {
         return totalTime;
     }
-
+    
     public void setTotalTime(int totalTime) {
         this.totalTime = totalTime;
     }
-
+    
     public String getTimeStr() {
         return timeStr;
     }
-
+    
     public void setTimeStr(String timeStr) {
         this.timeStr = timeStr;
     }
-
+    
     public int getTime() {
         return time;
     }
-
+    
     public void setTime(int time) {
         this.time = time;
     }
-
+    
     public String getContent() {
         return content;
     }
-
+    
     public void setContent(String content) {
         this.content = content;
     }
-
+    
     public LrcRow() {
         super();
     }
-
+    
     public LrcRow(String timeStr, int time, String content) {
         super();
         this.timeStr = timeStr;
         this.time = time;
         this.content = content;
     }
-
+    
     /**
      * 将歌词文件中的某一行 解析成一个List<LrcRow>
      * 因为一行中可能包含了多个LrcRow对象
@@ -88,7 +88,7 @@ public class LrcRow implements Comparable<LrcRow> {
         //最后一个"]"
         int lastIndexOfRightBracket = lrcLine.lastIndexOf("]");
         //歌词内容
-        String content = lrcLine.substring(lastIndexOfRightBracket + 1, lrcLine.length());
+        String content = lrcLine.substring(lastIndexOfRightBracket + 1);
         //截取出歌词时间，并将"[" 和"]" 替换为"-"   [offset:0]
         System.out.println("lrcLine=" + lrcLine);
         // -03:33.02--00:36.37-
@@ -109,7 +109,7 @@ public class LrcRow implements Comparable<LrcRow> {
         }
         return lrcRows;
     }
-
+    
     /****
      * 把歌词时间转换为毫秒值  如 将00:10.00  转为10000
      *
@@ -119,22 +119,22 @@ public class LrcRow implements Comparable<LrcRow> {
     private static int formatTime(String timeStr) {
         timeStr = timeStr.replace('.', ':');
         String[] times = timeStr.split(":");
-
+    
         return Integer.parseInt(times[0]) * 60 * 1000
                 + Integer.parseInt(times[1]) * 1000
                 + Integer.parseInt(times[2]);
     }
-
+    
     @Override
     public int compareTo(LrcRow anotherLrcRow) {
-        return (int) (this.time - anotherLrcRow.time);
+        return this.time - anotherLrcRow.time;
     }
-
+    
     @Override
     public String toString() {
         return "LrcRow [timeStr=" + timeStr + ", time=" + time + ", content="
                 + content + "]";
     }
-
-
+    
+    
 }

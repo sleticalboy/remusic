@@ -37,9 +37,9 @@ import okio.Okio;
  * Created by wm on 2016/4/10.
  */
 public class HttpUtil {
-    public  static final OkHttpClient mOkHttpClient = new OkHttpClient();
-
-
+    public static final OkHttpClient mOkHttpClient = new OkHttpClient();
+    
+    
     public static void getOut(final String url) {
         try {
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
@@ -49,27 +49,27 @@ public class HttpUtil {
                     .build();
             Response response = mOkHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
-
+    
                 FileOutputStream fo = new FileOutputStream("/storage/emulated/0/" + "gedangein" + ".json");
                 byte[] c = new byte[1024];
                 while (response.body().source().read(c) != -1) {
                     fo.write(c);
                 }
             }
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
+    
+    
     public static Bitmap getBitmapStream(Context context, String url, boolean forceCache) {
         try {
             File sdcache = context.getExternalCacheDir();
             //File cacheFile = new File(context.getCacheDir(), "[缓存目录]");
             Cache cache = new Cache(sdcache.getAbsoluteFile(), 1024 * 1024 * 30); //30Mb
             mOkHttpClient.setCache(cache);
-
+    
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
             Request.Builder builder = new Request.Builder()
@@ -82,13 +82,13 @@ public class HttpUtil {
             if (response.isSuccessful()) {
                 return _decodeBitmapFromStream(response.body().byteStream(), 160, 160);
             }
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-
+    
     public static FilterInputStream getFromCache(Context context, String url) throws Exception {
         //  File cacheDirectory = new File("/storage/emulated/0/Android/data/com.name.demo .dev/cache/HttpCache");
         File cacheDirectory = context.getExternalCacheDir();
@@ -115,25 +115,25 @@ public class HttpUtil {
         };
         return bodyIn;
     }
-
+    
     private static int _calculateInSampleSize(BitmapFactory.Options options,
                                               int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
-
+        
         if (height > reqHeight || width > reqWidth) {
-
+            
             final int heightRatio = Math.round((float) height
                     / (float) reqHeight);
             final int widthRatio = Math.round((float) width / (float) reqWidth);
-
+            
             inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
         }
-
+        
         return inSampleSize;
     }
-
+    
     /**
      * URL编码
      *
@@ -151,14 +151,14 @@ public class HttpUtil {
         }
         return url;
     }
-
+    
     public static Bitmap _decodeBitmapFromStream(InputStream inputStream,
                                                  int reqWidth, int reqHeight) {
         byte[] byteArr = new byte[0];
         byte[] buffer = new byte[1024];
         int len;
         int count = 0;
-
+        
         try {
             while ((len = inputStream.read(buffer)) > -1) {
                 if (len != 0) {
@@ -167,33 +167,33 @@ public class HttpUtil {
                         System.arraycopy(byteArr, 0, newbuf, 0, count);
                         byteArr = newbuf;
                     }
-
+    
                     System.arraycopy(buffer, 0, byteArr, count, len);
                     count += len;
                 }
             }
-
+            
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeByteArray(byteArr, 0, count, options);
-
+            
             options.inSampleSize = _calculateInSampleSize(options, reqWidth,
                     reqHeight);
             options.inPurgeable = false;
             options.inInputShareable = true;
             options.inJustDecodeBounds = false;
             options.inPreferredConfig = Bitmap.Config.RGB_565;
-
+            
             return BitmapFactory.decodeByteArray(byteArr, 0, count, options);
-
+            
         } catch (Exception e) {
             // close_print_exception
-
+            
             return null;
         }
     }
-
-
+    
+    
     public static String getResposeString(String action1) {
         try {
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
@@ -207,7 +207,7 @@ public class HttpUtil {
                 Log.e("billboard", c);
                 return c;
             }
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -215,10 +215,10 @@ public class HttpUtil {
 //       mOkHttpClient.setCookieHandler(new CookieManager(
 //                new PersistentCookieStore(getContext().getApplicationContext()),
 //                CookiePolicy.ACCEPT_ALL));
-
+        
         return null;
     }
-
+    
     public static JsonObject getResposeJsonObject(String action1, Context context, boolean forceCache) {
         try {
             Log.e("action-cache", action1);
@@ -226,7 +226,7 @@ public class HttpUtil {
             //File cacheFile = new File(context.getCacheDir(), "[缓存目录]");
             Cache cache = new Cache(sdcache.getAbsoluteFile(), 1024 * 1024 * 30); //30Mb
             mOkHttpClient.setCache(cache);
-
+    
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
             Request.Builder builder = new Request.Builder()
@@ -242,9 +242,9 @@ public class HttpUtil {
                 JsonParser parser = new JsonParser();
                 JsonElement el = parser.parse(c);
                 return el.getAsJsonObject();
-
+    
             }
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -252,11 +252,11 @@ public class HttpUtil {
 //       mOkHttpClient.setCookieHandler(new CookieManager(
 //                new PersistentCookieStore(getContext().getApplicationContext()),
 //                CookiePolicy.ACCEPT_ALL));
-
+        
         return null;
     }
-
-
+    
+    
     public static JsonObject getResposeJsonObject(String action1) {
         try {
             mOkHttpClient.setConnectTimeout(3000, TimeUnit.MINUTES);
@@ -275,9 +275,9 @@ public class HttpUtil {
                 JsonParser parser = new JsonParser();
                 JsonElement el = parser.parse(c);
                 return el.getAsJsonObject();
-
+    
             }
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -285,10 +285,10 @@ public class HttpUtil {
 //       mOkHttpClient.setCookieHandler(new CookieManager(
 //                new PersistentCookieStore(getContext().getApplicationContext()),
 //                CookiePolicy.ACCEPT_ALL));
-
+        
         return null;
     }
-
+    
     public static void downMp3(final String url, final String name) {
         new Thread(new Runnable() {
             @Override
@@ -307,16 +307,16 @@ public class HttpUtil {
                             fo.write(c);
                         }
                     }
-
+    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }).start();
-
-
+        
+        
     }
-
+    
     public static void postUrl(Context context, String j) {
         try {
             String action = "https://music.163.com/weapi/login/";
@@ -336,21 +336,21 @@ public class HttpUtil {
                     .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .post(formBody)
                     .build();
-
+    
             mOkHttpClient.setCookieHandler(new CookieManager(
                     new PersistentCookieStore(context.getApplicationContext()),
                     CookiePolicy.ACCEPT_ALL));
-
+    
             Response response = mOkHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
                 Log.e("respose", response.body().string());
             }
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+    
     public static void postNetease(Context context, String j) {
         try {
             String action = "https://music.163.com/weapi/login/";
@@ -374,20 +374,20 @@ public class HttpUtil {
                     .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36")
                     .post(requestBody)
                     .build();
-
+    
             mOkHttpClient.setCookieHandler(new CookieManager(
                     new PersistentCookieStore(context.getApplicationContext()),
                     CookiePolicy.ACCEPT_ALL));
-
+    
             Response response = mOkHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
                 Log.e("respose", response.body().string());
             }
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
+    
+    
 }

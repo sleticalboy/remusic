@@ -47,23 +47,22 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
     private ListView mLvLeftMenu;
     private long time = 0;
     private SplashScreen splashScreen;
-
+    
     public void onCreate(Bundle savedInstanceState) {
         splashScreen = new SplashScreen(this);
-        splashScreen.show(R.drawable.art_login_bg,
-                SplashScreen.SLIDE_LEFT);
+        splashScreen.show(R.drawable.art_login_bg, SplashScreen.SLIDE_LEFT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setBackgroundDrawableResource(R.color.background_material_light_1);
-
-        barnet = (ImageView) findViewById(R.id.bar_net);
-        barmusic = (ImageView) findViewById(R.id.bar_music);
-        barfriends = (ImageView) findViewById(R.id.bar_friends);
-        search = (ImageView) findViewById(R.id.bar_search);
-        barmusic = (ImageView) findViewById(R.id.bar_music);
-        drawerLayout = (DrawerLayout) findViewById(R.id.fd);
-        mLvLeftMenu = (ListView) findViewById(R.id.id_lv_left_menu);
-
+        
+        barnet = findViewById(R.id.bar_net);
+        barmusic = findViewById(R.id.bar_music);
+        barfriends = findViewById(R.id.bar_friends);
+        search = findViewById(R.id.bar_search);
+        barmusic = findViewById(R.id.bar_music);
+        drawerLayout = findViewById(R.id.fd);
+        mLvLeftMenu = findViewById(R.id.id_lv_left_menu);
+        
         setToolBar();
         setViewPager();
         setUpDrawer();
@@ -73,23 +72,21 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
                 splashScreen.removeSplashScreen();
             }
         }, 3000);
-
     }
-
-
+    
     private void setToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setTitle("");
     }
-
+    
     private void setViewPager() {
         tabs.add(barnet);
         tabs.add(barmusic);
-        final CustomViewPager customViewPager = (CustomViewPager) findViewById(R.id.main_viewpager);
+        final CustomViewPager customViewPager = findViewById(R.id.main_viewpager);
         final MainFragment mainFragment = new MainFragment();
         final TabNetPagerFragment tabNetPagerFragment = new TabNetPagerFragment();
         CustomViewPagerAdapter customViewPagerAdapter = new CustomViewPagerAdapter(getSupportFragmentManager());
@@ -101,20 +98,20 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         customViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+    
             }
-
+    
             @Override
             public void onPageSelected(int position) {
                 switchTabs(position);
             }
-
+    
             @Override
             public void onPageScrollStateChanged(int state) {
-
+        
             }
         });
-
+        
         barnet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,7 +124,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
                 customViewPager.setCurrentItem(1);
             }
         });
-
+        
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,8 +134,8 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
             }
         });
     }
-
-
+    
+    
     private void setUpDrawer() {
         LayoutInflater inflater = LayoutInflater.from(this);
         mLvLeftMenu.addHeaderView(inflater.inflate(R.layout.nav_header_main, mLvLeftMenu, false));
@@ -155,19 +152,19 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
                         dialog.setClickListener(MainActivity.this);
                         dialog.show(getSupportFragmentManager(), "theme");
                         drawerLayout.closeDrawers();
-
+    
                         break;
                     case 3:
                         TimingFragment fragment3 = new TimingFragment();
                         fragment3.show(getSupportFragmentManager(), "timing");
                         drawerLayout.closeDrawers();
-
+    
                         break;
                     case 4:
                         BitSetFragment bfragment = new BitSetFragment();
                         bfragment.show(getSupportFragmentManager(), "bitset");
                         drawerLayout.closeDrawers();
-
+    
                         break;
                     case 5:
                         if (MusicPlayer.isPlaying()) {
@@ -176,13 +173,13 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
                         unbindService();
                         finish();
                         drawerLayout.closeDrawers();
-
+    
                 }
             }
         });
     }
-
-
+    
+    
     private void switchTabs(int position) {
         for (int i = 0; i < tabs.size(); i++) {
             if (position == i) {
@@ -192,7 +189,7 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
             }
         }
     }
-
+    
     @Override
     public void onConfirm(int currentTheme) {
         if (ThemeHelper.getTheme(MainActivity.this) != currentTheme) {
@@ -208,8 +205,8 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
                                 getWindow().setStatusBarColor(ThemeUtils.getColorById(context, R.color.theme_color_primary));
                             }
                         }
-
-                        @Override
+    
+                @Override
                         public void refreshSpecificView(View view) {
                         }
                     }
@@ -217,31 +214,31 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         }
         changeTheme();
     }
-
+    
     static class CustomViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
-
+        
         public CustomViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
-
+        
         public void addFragment(Fragment fragment) {
             mFragments.add(fragment);
         }
-
+        
         @Override
         public Fragment getItem(int position) {
             return mFragments.get(position);
         }
-
+        
         @Override
         public int getCount() {
             return mFragments.size();
         }
-
+        
     }
-
-
+    
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // handle item selection
@@ -249,18 +246,18 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
             case android.R.id.home: //Menu icon
                 drawerLayout.openDrawer(Gravity.LEFT);
                 return true;
-
+    
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
         splashScreen.removeSplashScreen();
     }
-
+    
     /**
      * 双击返回桌面
      */
@@ -279,9 +276,9 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         } else {
             return super.onKeyDown(keyCode, event);
         }
-
+    
     }
-
+    
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -289,12 +286,12 @@ public class MainActivity extends BaseActivity implements CardPickerDialog.Click
         if (fragments != null) {
             for (Fragment fragment : fragments) {
                 if (fragment != null) {
-                    fragment.onRequestPermissionsResult(requestCode,permissions,grantResults);
+                    fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 }
             }
         }
     }
-
+    
     @Override
     public void onBackPressed() {
         super.onBackPressed();

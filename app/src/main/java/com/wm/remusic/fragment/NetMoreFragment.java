@@ -64,7 +64,7 @@ public class NetMoreFragment extends AttachDialogFragment {
     private String args;
     private String musicName, artist, albumId, albumName;
     private Handler mHandler;
-
+    
     public static NetMoreFragment newInstance(String id, String albumId, String artistId) {
         NetMoreFragment fragment = new NetMoreFragment();
         Bundle args = new Bundle();
@@ -74,8 +74,8 @@ public class NetMoreFragment extends AttachDialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-
+    
+    
     public static NetMoreFragment newInstance(String id, int startFrom) {
         NetMoreFragment fragment = new NetMoreFragment();
         Bundle args = new Bundle();
@@ -84,8 +84,8 @@ public class NetMoreFragment extends AttachDialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-
+    
+    
     public static NetMoreFragment newInstance(MusicInfo info, int startFrom) {
         NetMoreFragment fragment = new NetMoreFragment();
         Bundle args = new Bundle();
@@ -94,8 +94,8 @@ public class NetMoreFragment extends AttachDialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-
+    
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -119,8 +119,8 @@ public class NetMoreFragment extends AttachDialogFragment {
         }
         //布局
         View view = inflater.inflate(R.layout.more_fragment, container);
-        topTitle = (TextView) view.findViewById(R.id.pop_list_title);
-        recyclerView = (RecyclerView) view.findViewById(R.id.pop_list);
+        topTitle = view.findViewById(R.id.pop_list_title);
+        recyclerView = view.findViewById(R.id.pop_list);
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -129,13 +129,13 @@ public class NetMoreFragment extends AttachDialogFragment {
         setItemDecoration();
         return view;
     }
-
+    
     //设置分割线
     private void setItemDecoration() {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
-
+    
     private void getList() {
         // long musicId = Long.parseLong(args.trim());
         adapterMusicInfo = getArguments().getParcelable("music");
@@ -148,9 +148,9 @@ public class NetMoreFragment extends AttachDialogFragment {
         setMusicInfo();
         muaicflowAdapter = new MusicFlowAdapter(mContext, mlistInfo, adapterMusicInfo);
     }
-
+    
     private void setClick() {
-
+        
         muaicflowAdapter.setOnItemClickListener(new MusicFlowAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, String data) {
@@ -161,7 +161,7 @@ public class NetMoreFragment extends AttachDialogFragment {
                             public void run() {
                                 if (adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
                                     return;
-
+    
                                 long[] ids = new long[1];
                                 ids[0] = adapterMusicInfo.songId;
                                 HashMap<Long, MusicInfo> map = new HashMap<Long, MusicInfo>();
@@ -188,7 +188,7 @@ public class NetMoreFragment extends AttachDialogFragment {
                     case 3:
                         new AlertDialog.Builder(mContext).setTitle("要下载音乐吗").
                                 setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
-
+    
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         Down.downMusic(MainApplication.context, adapterMusicInfo.songId + "", adapterMusicInfo.musicName, adapterMusicInfo.artist);
@@ -204,15 +204,15 @@ public class NetMoreFragment extends AttachDialogFragment {
                         dismiss();
                         break;
                     case 4:
-
+    
                         if (adapterMusicInfo.islocal) {
                             new AsyncTask<Void, Void, Void>() {
-
+    
                                 @Override
                                 protected Void doInBackground(Void... params) {
                                     ArrayList<SearchArtistInfo> artistResults = new ArrayList<>();
                                     try {
-
+    
                                         JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchMerge(adapterMusicInfo.artist, 1, 50)).get("result").getAsJsonObject();
                                         JsonObject artistObject = jsonObject.get("artist_info").getAsJsonObject();
                                         JsonArray artistArray = artistObject.get("artist_list").getAsJsonArray();
@@ -223,8 +223,8 @@ public class NetMoreFragment extends AttachDialogFragment {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-
-
+        
+        
                                     if (artistResults.size() == 0) {
                                         mHandler.post(new Runnable() {
                                             @Override
@@ -232,7 +232,7 @@ public class NetMoreFragment extends AttachDialogFragment {
                                                 Toast.makeText(mContext, "没有找到该艺术家", Toast.LENGTH_SHORT).show();
                                             }
                                         });
-
+            
                                     } else {
                                         SearchArtistInfo info = artistResults.get(0);
                                         Intent intent = new Intent(mContext, ArtistDetailActivity.class);
@@ -248,7 +248,7 @@ public class NetMoreFragment extends AttachDialogFragment {
                                 }
                             }.execute();
                         } else {
-
+        
                             Intent intent = new Intent(mContext, ArtistDetailActivity.class);
                             intent.putExtra("artistid", adapterMusicInfo.artistId + "");
                             intent.putExtra("artistname", adapterMusicInfo.artist);
@@ -257,15 +257,15 @@ public class NetMoreFragment extends AttachDialogFragment {
                         dismiss();
                         break;
                     case 5:
-
+    
                         if (adapterMusicInfo.islocal) {
                             new AsyncTask<Void, Void, Void>() {
-
+    
                                 @Override
                                 protected Void doInBackground(Void... params) {
                                     ArrayList<SearchAlbumInfo> albumResults = new ArrayList<SearchAlbumInfo>();
                                     try {
-
+    
                                         JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchMerge(adapterMusicInfo.albumName, 1, 10)).get("result").getAsJsonObject();
 //                                        JsonObject artistObject =  jsonObject.get("artist_info").getAsJsonObject();
 //                                        JsonArray artistArray = artistObject.get("artist_list").getAsJsonArray();
@@ -283,7 +283,7 @@ public class NetMoreFragment extends AttachDialogFragment {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-
+        
                                     if (albumResults.size() == 0) {
                                         mHandler.post(new Runnable() {
                                             @Override
@@ -291,7 +291,7 @@ public class NetMoreFragment extends AttachDialogFragment {
                                                 Toast.makeText(mContext, "没有找到所属专辑", Toast.LENGTH_SHORT).show();
                                             }
                                         });
-
+            
                                     } else {
                                         SearchAlbumInfo info = albumResults.get(0);
                                         Log.e("search", info.getAlbum_id() + "  " + info.getTitle());
@@ -305,16 +305,16 @@ public class NetMoreFragment extends AttachDialogFragment {
                                     return null;
                                 }
                             }.execute();
-
+        
                         } else {
-
+        
                             Intent intent = new Intent(mContext, AlbumsDetailActivity.class);
                             intent.putExtra("albumid", adapterMusicInfo.albumId + "");
                             intent.putExtra("albumart", adapterMusicInfo.albumData);
                             intent.putExtra("albumname", adapterMusicInfo.albumName);
                             mContext.startActivity(intent);
                         }
-
+    
                         dismiss();
                         break;
                     case 6:
@@ -328,9 +328,9 @@ public class NetMoreFragment extends AttachDialogFragment {
             }
         });
         recyclerView.setAdapter(muaicflowAdapter);
-
+        
     }
-
+    
     //设置音乐overflow条目
     private void setMusicInfo() {
         //设置mlistInfo，listview要显示的内容
@@ -342,28 +342,27 @@ public class NetMoreFragment extends AttachDialogFragment {
         setInfo("专辑：" + albumName, R.drawable.lay_icn_alb);
         setInfo("查看歌曲信息", R.drawable.lay_icn_document);
     }
-
-
+    
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.CustomDatePickerDialog);
     }
-
+    
     @Override
     public void onStart() {
         super.onStart();
         //设置fragment高度 、宽度
         int dialogHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * heightPercent);
-        ;
-//        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        //        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 //        Display display = wm.getDefaultDisplay();
 //        int height = display.getHeight();
         getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, dialogHeight);
         getDialog().setCanceledOnTouchOutside(true);
-
+        
     }
-
+    
     //为info设置数据，并放入mlistInfo
     public void setInfo(String title, int id) {
         // mlistInfo.clear();
@@ -372,6 +371,6 @@ public class NetMoreFragment extends AttachDialogFragment {
         information.setAvatar(id);
         mlistInfo.add(information); //将新的info对象加入到信息列表中
     }
-
-
+    
+    
 }

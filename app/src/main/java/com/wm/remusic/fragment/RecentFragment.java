@@ -37,7 +37,7 @@ import java.util.List;
  * Created by wm on 2016/3/9.
  */
 public class RecentFragment extends Fragment {
-
+    
     private int currentlyPlayingPosition = 0;
     private Adapter mAdapter;
     private RecentStore recentStore;
@@ -57,27 +57,27 @@ public class RecentFragment extends Fragment {
             }
         }
     };
-
+    
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         recentStore = RecentStore.getInstance(getContext());
     }
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recent, container, false);
-
+        
         TopTracksLoader recentloader = new TopTracksLoader(getActivity(), TopTracksLoader.QueryType.RecentSongs);
         List<Song> recentsongs = SongLoader.getSongsForCursor(TopTracksLoader.getCursor());
         int songCountInt = recentsongs.size();
         mList = recentsongs;
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        
+        recyclerView = view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-
-        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        
+        toolbar = view.findViewById(R.id.toolbar);
         toolbar.setPadding(0, CommonUtils.getStatusHeight(getActivity()), 0, 0);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -90,12 +90,12 @@ public class RecentFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
-
+        
         new loadSongs().execute("");
-
+        
         return view;
     }
-
+    
     @Override
     public void onResume() {
         super.onResume();
@@ -104,14 +104,14 @@ public class RecentFragment extends Fragment {
         f.addAction(MediaService.META_CHANGED);
         getActivity().registerReceiver(mStatusListener, f);
     }
-
+    
     @Override
     public void onPause() {
-
+        
         getActivity().unregisterReceiver(mStatusListener);
         super.onPause();
     }
-
+    
     //去除界面重叠
     @Override
     public void onDetach() {
@@ -127,7 +127,7 @@ public class RecentFragment extends Fragment {
             throw new RuntimeException(e);
         }
     }
-
+    
     //刷新列表
     private void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {
@@ -137,57 +137,57 @@ public class RecentFragment extends Fragment {
                 //mAdapter.updateDataSet(songList);
                 return null;
             }
-
+    
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
             }
         }.execute();
     }
-
+    
     //异步加载recyclerview界面
     private class loadSongs extends AsyncTask<String, Void, String> {
-
+        
         @Override
         protected String doInBackground(String... params) {
             if (getActivity() != null)
                 mAdapter = new Adapter(mList);
             return "Executed";
         }
-
+        
         @Override
         protected void onPostExecute(String result) {
             recyclerView.setAdapter(mAdapter);
             if (getActivity() != null)
                 recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-
+            
         }
-
+        
         @Override
         protected void onPreExecute() {
-
+        
         }
     }
-
-
+    
+    
     public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+        
         final static int FIRST_ITEM = 0;
         final static int ITEM = 1;
         private List<Song> mList;
-
+        
         public Adapter(List<Song> list) {
             if (list == null) {
                 throw new IllegalArgumentException("model Data must not be null");
             }
             mList = list;
         }
-
+        
         //更新adpter的数据
         public void updateDataSet(List<Song> list) {
             this.mList = list;
         }
-
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             if (viewType == FIRST_ITEM)
@@ -197,14 +197,14 @@ public class RecentFragment extends Fragment {
                 return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
             }
         }
-
+        
         //判断布局类型
         @Override
         public int getItemViewType(int position) {
             return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
-
+    
         }
-
+        
         //将数据与界面进行绑定
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -213,10 +213,10 @@ public class RecentFragment extends Fragment {
                 model = mList.get(position - 1);
             }
             if (holder instanceof ListItemViewHolder) {
-
-                ((ListItemViewHolder) holder).mainTitle.setText(model.title.toString());
-                ((ListItemViewHolder) holder).title.setText(model.artistName.toString());
-
+    
+                ((ListItemViewHolder) holder).mainTitle.setText(model.title);
+                ((ListItemViewHolder) holder).title.setText(model.artistName);
+                
                 //判断该条目音乐是否在播放
                 if (MusicPlayer.getCurrentAudioId() == model.id) {
                     ((ListItemViewHolder) holder).playState.setVisibility(View.VISIBLE);
@@ -225,7 +225,7 @@ public class RecentFragment extends Fragment {
                 } else {
                     ((ListItemViewHolder) holder).playState.setVisibility(View.GONE);
                 }
-
+    
             } else if (holder instanceof CommonItemViewHolder) {
                 ((CommonItemViewHolder) holder).textView.setText("(共" + mList.size() + "首)");
                 ((CommonItemViewHolder) holder).select.setOnClickListener(new View.OnClickListener() {
@@ -236,27 +236,27 @@ public class RecentFragment extends Fragment {
 //                        getActivity().startActivity(intent);
                     }
                 });
-
+    
             }
         }
-
+        
         @Override
         public int getItemCount() {
             return (null != mList ? mList.size() + 1 : 0);
         }
-
-
+        
+        
         public class CommonItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView textView;
             ImageView select;
-
+            
             CommonItemViewHolder(View view) {
                 super(view);
-                this.textView = (TextView) view.findViewById(R.id.play_all_number);
-                this.select = (ImageView) view.findViewById(R.id.select);
+                this.textView = view.findViewById(R.id.play_all_number);
+                this.select = view.findViewById(R.id.select);
                 view.setOnClickListener(this);
             }
-
+            
             public void onClick(View v) {
                 //// TODO: 2016/1/20
                 final Handler handler = new Handler();
@@ -270,23 +270,23 @@ public class RecentFragment extends Fragment {
                         MusicPlayer.playAll(null, list, 0, false);
                     }
                 }, 100);
-
+                
             }
-
+            
         }
-
-
+        
+        
         public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             //ViewHolder
             ImageView moreOverflow, playState;
             TextView mainTitle, title;
-
+            
             ListItemViewHolder(View view) {
                 super(view);
-                this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
-                this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
-                this.playState = (ImageView) view.findViewById(R.id.play_state);
-                this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
+                this.mainTitle = view.findViewById(R.id.viewpager_list_toptext);
+                this.title = view.findViewById(R.id.viewpager_list_bottom_text);
+                this.playState = view.findViewById(R.id.play_state);
+                this.moreOverflow = view.findViewById(R.id.viewpager_list_button);
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -295,12 +295,12 @@ public class RecentFragment extends Fragment {
                     }
                 });
                 view.setOnClickListener(this);
-
+                
             }
-
+            
             @Override
             public void onClick(View v) {
-
+                
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -333,7 +333,7 @@ public class RecentFragment extends Fragment {
                     }
                 }, 100);
             }
-
+            
         }
     }
 }

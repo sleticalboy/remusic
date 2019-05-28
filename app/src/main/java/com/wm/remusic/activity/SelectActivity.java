@@ -42,7 +42,7 @@ import java.util.HashMap;
  * Created by wm on 2016/3/9.
  */
 public class SelectActivity extends AppCompatActivity implements View.OnClickListener {
-
+    
     private ArrayList<MusicInfo> mList;
     private SelectAdapter mAdapter;
     private ActionBar ab;
@@ -50,14 +50,14 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
     private LinearLayoutManager layoutManager;
     private Toolbar toolbar;
     private LinearLayout nextPlay, addtoPlaylist, delete;
-
-
+    
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
@@ -69,25 +69,25 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                 onBackPressed();
             }
         });
-
-        nextPlay = (LinearLayout) findViewById(R.id.select_next);
-        addtoPlaylist = (LinearLayout) findViewById(R.id.select_addtoplaylist);
-        delete = (LinearLayout) findViewById(R.id.select_del);
+        
+        nextPlay = findViewById(R.id.select_next);
+        addtoPlaylist = findViewById(R.id.select_addtoplaylist);
+        delete = findViewById(R.id.select_del);
         nextPlay.setOnClickListener(this);
         addtoPlaylist.setOnClickListener(this);
         delete.setOnClickListener(this);
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        
+        recyclerView = findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-
-
+        
+        
         new loadSongs().execute("");
-
+        
     }
-
-
+    
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -102,34 +102,34 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                 return false;
             }
         });
-
-
+        
+        
         return true;
-
+        
     }
-
-
+    
+    
     @Override
     public void onClick(View v) {
         final ArrayList<MusicInfo> selectList = mAdapter.getSelectedItem();
         switch (v.getId()) {
-
+    
             case R.id.select_next:
-
+        
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
+    
                         ArrayList<MusicInfo> select = mAdapter.getSelectedItem();
                         long currentAudioId = MusicPlayer.getCurrentAudioId();
-
+    
                         for (int i = 0; i < select.size(); i++) {
                             if (select.get(i).songId == currentAudioId) {
                                 select.remove(i);
                                 break;
                             }
                         }
-
+    
                         final long[] list = new long[select.size()];
                         HashMap<Long, MusicInfo> infos = new HashMap();
                         for (int i = 0; i < select.size(); i++) {
@@ -140,12 +140,12 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                             info.albumData = MusicUtils.getAlbumArtUri(info.albumId) + "";
                             infos.put(list[i], select.get(i));
                         }
-
+    
                         MusicPlayer.playNext(SelectActivity.this, infos, list);
-
+    
                     }
                 }, 100);
-
+        
                 break;
             case R.id.select_addtoplaylist:
                 long[] list1 = new long[selectList.size()];
@@ -155,7 +155,7 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                 AddPlaylistDialog.newInstance(list1).show(getSupportFragmentManager(), "add");
                 Intent intent = new Intent(MediaService.PLAYLIST_CHANGED);
                 sendBroadcast(intent);
-
+    
                 break;
             case R.id.select_del:
                 new AlertDialog.Builder(this).setTitle(getResources().getString(R.string.sure_to_delete_music)).
@@ -163,35 +163,35 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 new AsyncTask<Void, Void, Void>() {
-
+    
                                     @Override
                                     protected Void doInBackground(Void... params) {
                                         for (MusicInfo music : selectList) {
-
+    
                                             if (MusicPlayer.getCurrentAudioId() == music.songId) {
                                                 if (MusicPlayer.getQueueSize() == 0) {
                                                     MusicPlayer.stop();
                                                 } else {
                                                     MusicPlayer.next();
                                                 }
-
+        
                                             }
                                             Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, music.songId);
                                             SelectActivity.this.getContentResolver().delete(uri, null, null);
                                             PlaylistsManager.getInstance(SelectActivity.this).deleteMusic(SelectActivity.this,
                                                     music.songId);
                                         }
-
+        
                                         return null;
                                     }
-
+    
                                     @Override
                                     protected void onPostExecute(Void v) {
                                         mAdapter.updateDataSet();
                                         mAdapter.notifyDataSetChanged();
                                         SelectActivity.this.sendBroadcast(new Intent(IConstants.MUSIC_COUNT_CHANGED));
                                     }
-
+    
                                 }.execute();
                                 dialog.dismiss();
                             }
@@ -202,20 +202,20 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                                 dialog.dismiss();
                             }
                         }).show();
-
+    
                 break;
         }
     }
-
+    
     @Override
     public void onStop() {
         super.onStop();
         finish();
     }
-
+    
     //异步加载recyclerview界面
     private class loadSongs extends AsyncTask<String, Void, String> {
-
+        
         @Override
         protected String doInBackground(String... params) {
             if (getIntent().getParcelableArrayListExtra("ids") != null) {
@@ -225,38 +225,38 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                 mAdapter = new SelectAdapter(mList);
             return "Executed";
         }
-
+        
         @Override
         protected void onPostExecute(String result) {
             recyclerView.setAdapter(mAdapter);
             recyclerView.addItemDecoration(new DividerItemDecoration(SelectActivity.this, DividerItemDecoration.VERTICAL_LIST));
-
+            
         }
-
+        
         @Override
         protected void onPreExecute() {
-
+        
         }
     }
-
+    
     public class SelectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+        
         ArrayList selected;
         private ArrayList<MusicInfo> mList;
         private SparseBooleanArray mSelectedPositions = new SparseBooleanArray();
         private boolean mIsSelectable = false;
-
-
+        
+        
         public SelectAdapter(ArrayList<MusicInfo> list) {
             if (list == null) {
                 throw new IllegalArgumentException("model Data must not be null");
             }
             mList = list;
         }
-
+        
         public ArrayList<MusicInfo> getSelectedItem() {
-
-
+            
+            
             ArrayList<MusicInfo> selectList = new ArrayList<>();
             for (int i = 0; i < mList.size(); i++) {
                 if (isItemChecked(i)) {
@@ -265,37 +265,37 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
             }
             return selectList;
         }
-
+        
         //更新adpter的数据
         public void updateDataSet() {
             ab.setTitle("已选择0项");
             mList.removeAll(getSelectedItem());
             mSelectedPositions.clear();
         }
-
-
+        
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.select_item, viewGroup, false);
             return new ListItemViewHolder(itemView);
         }
-
+        
         private void setItemChecked(int position, boolean isChecked) {
             mSelectedPositions.put(position, isChecked);
         }
-
+        
         private boolean isItemChecked(int position) {
             return mSelectedPositions.get(position);
         }
-
+        
         private boolean isSelectable() {
             return mIsSelectable;
         }
-
+        
         private void setSelectable(boolean selectable) {
             mIsSelectable = selectable;
         }
-
+        
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int i) {
             MusicInfo model = mList.get(i);
@@ -326,30 +326,30 @@ public class SelectActivity extends AppCompatActivity implements View.OnClickLis
                     ab.setTitle("已选择" + getSelectedItem().size() + "项");
                 }
             });
-
-
+            
+            
         }
-
+        
         @Override
         public int getItemCount() {
             return mList == null ? 0 : mList.size();
         }
-
+        
         public class ListItemViewHolder extends RecyclerView.ViewHolder {
             //ViewHolder
             CheckBox checkBox;
             TextView mainTitle, title;
-
+            
             ListItemViewHolder(View view) {
                 super(view);
-                this.mainTitle = (TextView) view.findViewById(R.id.select_title_main);
-                this.title = (TextView) view.findViewById(R.id.select_title_small);
-                this.checkBox = (CheckBox) view.findViewById(R.id.select_checkbox);
-
+                this.mainTitle = view.findViewById(R.id.select_title_main);
+                this.title = view.findViewById(R.id.select_title_small);
+                this.checkBox = view.findViewById(R.id.select_checkbox);
+                
             }
-
+            
         }
     }
-
-
+    
+    
 }

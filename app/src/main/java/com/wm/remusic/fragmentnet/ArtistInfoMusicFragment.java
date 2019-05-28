@@ -47,33 +47,33 @@ import java.util.HashMap;
 public class ArtistInfoMusicFragment extends BaseFragment {
     ArrayList<MusicInfo> mList = new ArrayList<>();
     PlaylistDetailAdapter mAdapter;
-
+    
     public static Fragment getInstance(ArrayList<MusicInfo> mList) {
         ArtistInfoMusicFragment fragment = new ArtistInfoMusicFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("list", mList);
         fragment.setArguments(bundle);
-
+        
         return fragment;
     }
-
+    
     public static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
     ObservableRecyclerView recyclerView;
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
-
+        
         if (getArguments() != null) {
             mList = getArguments().getParcelableArrayList("list");
         }
         Activity parentActivity = getActivity();
-        recyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+        recyclerView = view.findViewById(R.id.scroll);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.setHasFixedSize(true);
         mAdapter = new PlaylistDetailAdapter(getActivity(), mList);
         recyclerView.setAdapter(mAdapter);
-
+        
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
             // Scroll to the specified offset after layout
             Bundle args = getArguments();
@@ -86,34 +86,34 @@ public class ArtistInfoMusicFragment extends BaseFragment {
                     }
                 });
             }
-
+            
             // TouchInterceptionViewGroup should be a parent view other than ViewPager.
             // This is a workaround for the issue #117:
             // https://github.com/ksoichiro/Android-ObservableScrollView/issues/117
             recyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.root));
-
+            
             recyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
         }
         return view;
     }
-
+    
     @Override
     public void updateTrackInfo() {
         super.updateTrackInfo();
         mAdapter.notifyDataSetChanged();
     }
-
+    
     class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final static int FIRST_ITEM = 0;
         final static int ITEM = 1;
         private ArrayList<MusicInfo> arraylist;
         private Activity mContext;
-
+        
         public PlaylistDetailAdapter(Activity context, ArrayList<MusicInfo> mList) {
             this.arraylist = mList;
             this.mContext = context;
         }
-
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             if (viewType == FIRST_ITEM) {
@@ -122,14 +122,14 @@ public class ArtistInfoMusicFragment extends BaseFragment {
                 return new ItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_playlist_detail_item, viewGroup, false));
             }
         }
-
+        
         //判断布局类型
         @Override
         public int getItemViewType(int position) {
             return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
-
+    
         }
-
+        
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder itemHolder, final int i) {
             if (itemHolder instanceof ItemViewHolder) {
@@ -175,45 +175,45 @@ public class ArtistInfoMusicFragment extends BaseFragment {
 //                                }).show();
                     }
                 });
-
+    
             } else if (itemHolder instanceof CommonItemViewHolder) {
-
+    
                 ((CommonItemViewHolder) itemHolder).textView.setText("(共" + arraylist.size() + "首)");
-
+    
                 ((CommonItemViewHolder) itemHolder).select.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+    
                     }
                 });
-
+    
             }
-
+            
         }
-
+        
         @Override
         public int getItemCount() {
             return arraylist == null ? 0 : arraylist.size() + 1;
         }
-
+        
         public void updateDataSet(ArrayList<MusicInfo> arraylist) {
             this.arraylist = arraylist;
             this.notifyDataSetChanged();
         }
-
+        
         public class CommonItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView textView;
             ImageView select;
             RelativeLayout layout;
-
+            
             CommonItemViewHolder(View view) {
                 super(view);
-                this.textView = (TextView) view.findViewById(R.id.play_all_number);
-                this.select = (ImageView) view.findViewById(R.id.select);
-                this.layout = (RelativeLayout) view.findViewById(R.id.play_all_layout);
+                this.textView = view.findViewById(R.id.play_all_number);
+                this.select = view.findViewById(R.id.select);
+                this.layout = view.findViewById(R.id.play_all_layout);
                 layout.setOnClickListener(this);
             }
-
+            
             public void onClick(View v) {
                 //// TODO: 2016/1/20
                 HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
@@ -229,26 +229,26 @@ public class ArtistInfoMusicFragment extends BaseFragment {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
+                }, 70);
             }
-
+            
         }
-
+        
         public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             protected TextView title, artist, trackNumber;
             protected ImageView menu;
             TintImageView playState;
-
+            
             public ItemViewHolder(View view) {
                 super(view);
-                this.title = (TextView) view.findViewById(R.id.song_title);
-                this.artist = (TextView) view.findViewById(R.id.song_artist);
-                this.trackNumber = (TextView) view.findViewById(R.id.trackNumber);
-                this.menu = (ImageView) view.findViewById(R.id.popup_menu);
-                this.playState = (TintImageView) view.findViewById(R.id.play_state);
+                this.title = view.findViewById(R.id.song_title);
+                this.artist = view.findViewById(R.id.song_artist);
+                this.trackNumber = view.findViewById(R.id.trackNumber);
+                this.menu = view.findViewById(R.id.popup_menu);
+                this.playState = view.findViewById(R.id.play_state);
                 view.setOnClickListener(this);
             }
-
+            
             @Override
             public void onClick(View v) {
                 HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
@@ -267,9 +267,9 @@ public class ArtistInfoMusicFragment extends BaseFragment {
                     }
                 }, 70);
             }
-
+            
         }
     }
-
-
+    
+    
 }

@@ -15,13 +15,13 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public final class AESTools {
-
+    
     private static final String INPUT = "2012171402992850";
     private static final String IV = "2012061402992850";
     private static final char[] CHARS = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70};
-
+    
     public static String encrpty(String paramString) {
-
+        
         MessageDigest messageDigest = null;
         try {
             messageDigest = MessageDigest.getInstance("MD5");
@@ -66,5 +66,5 @@ public final class AESTools {
         }
         return "";
     }
-
+    
 }

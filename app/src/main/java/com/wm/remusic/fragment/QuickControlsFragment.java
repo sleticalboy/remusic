@@ -6,12 +6,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,26 +33,26 @@ import com.wm.remusic.handler.HandlerUtil;
 import com.wm.remusic.service.MusicPlayer;
 
 public class QuickControlsFragment extends BaseFragment {
-
-
+    
+    
     private TintProgressBar mProgress;
     public Runnable mUpdateProgress = new Runnable() {
-
+    
         @Override
         public void run() {
-
+        
             long position = MusicPlayer.position();
             long duration = MusicPlayer.duration();
-            if (duration > 0 && duration < 627080716){
+            if (duration > 0 && duration < 627080716) {
                 mProgress.setProgress((int) (1000 * position / duration));
             }
-
+        
             if (MusicPlayer.isPlaying()) {
                 mProgress.postDelayed(mUpdateProgress, 50);
-            }else {
+            } else {
                 mProgress.removeCallbacks(mUpdateProgress);
             }
-
+        
         }
     };
     private TintImageView mPlayPause;
@@ -65,35 +63,35 @@ public class QuickControlsFragment extends BaseFragment {
     private ImageView playQueue, next;
     private String TAG = "QuickControlsFragment";
     private static QuickControlsFragment fragment;
-
+    
     public static QuickControlsFragment newInstance() {
         return new QuickControlsFragment();
     }
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.bottom_nav, container, false);
         this.rootView = rootView;
-        mPlayPause = (TintImageView) rootView.findViewById(R.id.control);
-        mProgress = (TintProgressBar) rootView.findViewById(R.id.song_progress_normal);
-        mTitle = (TextView) rootView.findViewById(R.id.playbar_info);
-        mArtist = (TextView) rootView.findViewById(R.id.playbar_singer);
-        mAlbumArt = (SimpleDraweeView) rootView.findViewById(R.id.playbar_img);
-        next = (ImageView) rootView.findViewById(R.id.play_next);
-        playQueue = (ImageView) rootView.findViewById(R.id.play_list);
-
+        mPlayPause = rootView.findViewById(R.id.control);
+        mProgress = rootView.findViewById(R.id.song_progress_normal);
+        mTitle = rootView.findViewById(R.id.playbar_info);
+        mArtist = rootView.findViewById(R.id.playbar_singer);
+        mAlbumArt = rootView.findViewById(R.id.playbar_img);
+        next = rootView.findViewById(R.id.play_next);
+        playQueue = rootView.findViewById(R.id.play_list);
+        
         mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary));
-        mProgress.postDelayed(mUpdateProgress,0);
-
+        mProgress.postDelayed(mUpdateProgress, 0);
+        
         mPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+    
                 mPlayPause.setImageResource(MusicPlayer.isPlaying() ? R.drawable.playbar_btn_pause
                         : R.drawable.playbar_btn_play);
                 mPlayPause.setImageTintList(R.color.theme_color_primary);
-
+    
                 if (MusicPlayer.getQueueSize() == 0) {
                     Toast.makeText(MainApplication.context, getResources().getString(R.string.queue_is_empty),
                             Toast.LENGTH_SHORT).show();
@@ -105,10 +103,10 @@ public class QuickControlsFragment extends BaseFragment {
                         }
                     }, 60);
                 }
-
+    
             }
         });
-
+        
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,10 +117,10 @@ public class QuickControlsFragment extends BaseFragment {
                         MusicPlayer.next();
                     }
                 }, 60);
-
+    
             }
         });
-
+        
         playQueue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,10 +132,10 @@ public class QuickControlsFragment extends BaseFragment {
                         playQueueFragment.show(getFragmentManager(), "playqueueframent");
                     }
                 }, 60);
-
+    
             }
         });
-
+        
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,118 +144,116 @@ public class QuickControlsFragment extends BaseFragment {
                 MainApplication.context.startActivity(intent);
             }
         });
-
-
-
-
+        
+        
         return rootView;
     }
-
+    
     public void updateNowplayingCard() {
         mTitle.setText(MusicPlayer.getTrackName());
         mArtist.setText(MusicPlayer.getArtistName());
-            ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
-                @Override
-                public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
-                    if (imageInfo == null) {
-                        return;
-                    }
-                    QualityInfo qualityInfo = imageInfo.getQualityInfo();
-                    FLog.d("Final image received! " +
-                                    "Size %d x %d",
-                            "Quality level %d, good enough: %s, full quality: %s",
-                            imageInfo.getWidth(),
-                            imageInfo.getHeight(),
-                            qualityInfo.getQuality(),
-                            qualityInfo.isOfGoodEnoughQuality(),
-                            qualityInfo.isOfFullQuality());
+        ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
+            @Override
+            public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
+                if (imageInfo == null) {
+                    return;
                 }
-
-                @Override
-                public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
-                    //FLog.d("Intermediate image received");
-                }
-
-                @Override
-                public void onFailure(String id, Throwable throwable) {
-                    mAlbumArt.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
-                }
-            };
-            Uri uri = null;
-            try{
-                uri = Uri.parse(MusicPlayer.getAlbumPath());
-            }catch (Exception e){
-                e.printStackTrace();
+                QualityInfo qualityInfo = imageInfo.getQualityInfo();
+                FLog.d("Final image received! " +
+                                "Size %d x %d",
+                        "Quality level %d, good enough: %s, full quality: %s",
+                        imageInfo.getWidth(),
+                        imageInfo.getHeight(),
+                        qualityInfo.getQuality(),
+                        qualityInfo.isOfGoodEnoughQuality(),
+                        qualityInfo.isOfFullQuality());
             }
-            if (uri != null) {
-                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri).build();
-
-                DraweeController controller = Fresco.newDraweeControllerBuilder()
-                        .setOldController(mAlbumArt.getController())
-                        .setImageRequest(request)
-                        .setControllerListener(controllerListener)
-                        .build();
-
-                mAlbumArt.setController(controller);
-            } else {
-                mAlbumArt.setImageURI(Uri.parse("content://" + MusicPlayer.getAlbumPath()));
+            
+            @Override
+            public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
+                //FLog.d("Intermediate image received");
             }
-
+            
+            @Override
+            public void onFailure(String id, Throwable throwable) {
+                mAlbumArt.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
+            }
+        };
+        Uri uri = null;
+        try {
+            uri = Uri.parse(MusicPlayer.getAlbumPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (uri != null) {
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri).build();
+            
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setOldController(mAlbumArt.getController())
+                    .setImageRequest(request)
+                    .setControllerListener(controllerListener)
+                    .build();
+            
+            mAlbumArt.setController(controller);
+        } else {
+            mAlbumArt.setImageURI(Uri.parse("content://" + MusicPlayer.getAlbumPath()));
+        }
+        
     }
-
+    
     @Override
     public void onStart() {
         super.onStart();
-
+        
     }
-
+    
     @Override
     public void onStop() {
         super.onStop();
         mProgress.removeCallbacks(mUpdateProgress);
     }
-
+    
     @Override
     public void onResume() {
         super.onResume();
         mProgress.setMax(1000);
         mProgress.removeCallbacks(mUpdateProgress);
-        mProgress.postDelayed(mUpdateProgress,0);
+        mProgress.postDelayed(mUpdateProgress, 0);
         updateNowplayingCard();
-
+        
     }
-
-
+    
+    
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
-
+    
     public void updateState() {
         if (MusicPlayer.isPlaying()) {
             mPlayPause.setImageResource(R.drawable.playbar_btn_pause);
             mPlayPause.setImageTintList(R.color.theme_color_primary);
             mProgress.removeCallbacks(mUpdateProgress);
-            mProgress.postDelayed(mUpdateProgress,50);
+            mProgress.postDelayed(mUpdateProgress, 50);
         } else {
             mPlayPause.setImageResource(R.drawable.playbar_btn_play);
             mPlayPause.setImageTintList(R.color.theme_color_primary);
             mProgress.removeCallbacks(mUpdateProgress);
         }
     }
-
-
+    
+    
     public void updateTrackInfo() {
         updateNowplayingCard();
         updateState();
     }
-
-
+    
+    
     @Override
     public void changeTheme() {
         super.changeTheme();
         mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary));
     }
-
-
+    
+    
 }

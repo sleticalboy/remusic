@@ -30,14 +30,14 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private long playlistId;
     private Activity mContext;
     private long[] songIDs;
-
+    
     public PlaylistDetailAdapter(Activity context, long playlistid, ArrayList<MusicInfo> mList) {
         this.arraylist = mList;
         this.mContext = context;
         this.playlistId = playlistid;
         this.songIDs = getSongIds();
     }
-
+    
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         if (viewType == FIRST_ITEM) {
@@ -45,16 +45,16 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         } else {
             return new ItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_playlist_detail_item, viewGroup, false));
         }
-
+        
     }
-
+    
     //判断布局类型
     @Override
     public int getItemViewType(int position) {
         return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
-
+    
     }
-
+    
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder itemHolder, final int i) {
         if (itemHolder instanceof ItemViewHolder) {
@@ -69,11 +69,11 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     morefragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), "music");
                 }
             });
-
+    
         } else if (itemHolder instanceof CommonItemViewHolder) {
-
+    
             ((CommonItemViewHolder) itemHolder).textView.setText("(共" + arraylist.size() + "首)");
-
+    
             ((CommonItemViewHolder) itemHolder).select.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -84,41 +84,41 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     mContext.startActivity(intent);
                 }
             });
-
+    
         }
-
+        
     }
-
+    
     @Override
     public int getItemCount() {
         return (null != arraylist ? arraylist.size() + 1 : 0);
     }
-
+    
     public long[] getSongIds() {
         long[] ret = new long[arraylist.size()];
         for (int i = 0; i < arraylist.size(); i++) {
             ret[i] = arraylist.get(i).songId;
         }
-
+        
         return ret;
     }
-
+    
     public void updateDataSet(long playlistid, ArrayList<MusicInfo> arraylist) {
         this.arraylist = arraylist;
         this.playlistId = playlistid;
     }
-
+    
     public class CommonItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView textView;
         ImageView select;
-
+        
         CommonItemViewHolder(View view) {
             super(view);
-            this.textView = (TextView) view.findViewById(R.id.play_all_number);
-            this.select = (ImageView) view.findViewById(R.id.select);
+            this.textView = view.findViewById(R.id.play_all_number);
+            this.select = view.findViewById(R.id.select);
             view.setOnClickListener(this);
         }
-
+        
         public void onClick(View v) {
             //// TODO: 2016/1/20
             final Handler handler = new Handler();
@@ -132,24 +132,24 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     MusicPlayer.playAll(null, list, 0, false);
                 }
             }, 100);
-
+            
         }
-
+        
     }
-
+    
     public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView title, artist, trackNumber;
         protected ImageView menu;
-
+        
         public ItemViewHolder(View view) {
             super(view);
-            this.title = (TextView) view.findViewById(R.id.song_title);
-            this.artist = (TextView) view.findViewById(R.id.song_artist);
-            this.trackNumber = (TextView) view.findViewById(R.id.trackNumber);
-            this.menu = (ImageView) view.findViewById(R.id.popup_menu);
+            this.title = view.findViewById(R.id.song_title);
+            this.artist = view.findViewById(R.id.song_artist);
+            this.trackNumber = view.findViewById(R.id.trackNumber);
+            this.menu = view.findViewById(R.id.popup_menu);
             view.setOnClickListener(this);
         }
-
+        
         @Override
         public void onClick(View v) {
             Handler handler = new Handler();
@@ -159,8 +159,8 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     MusicPlayer.playAll(null, songIDs, getAdapterPosition() - 1, false);
                 }
             }, 100);
-
+            
         }
-
+        
     }
 }

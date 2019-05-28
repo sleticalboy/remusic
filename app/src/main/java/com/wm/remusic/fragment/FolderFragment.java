@@ -52,29 +52,29 @@ public class FolderFragment extends BaseFragment {
     private HashMap<String, Integer> positionMap = new HashMap<>();
     private SideBar sideBar;
     private TextView dialogText;
-
+    
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPreferences = PreferencesUtility.getInstance(mContext);
     }
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recylerview, container, false);
-
+        
         // folderInfos = MusicUtils.queryFolder(mContext);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        recyclerView = view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
-
+        
         mAdapter = new Adapter(null);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
         setItemDecoration();
         isAZSort = mPreferences.getFoloerSortOrder().equals(SortOrder.FolderSortOrder.FOLDER_A_Z);
-        dialogText = (TextView) view.findViewById(R.id.dialog_text);
-        sideBar = (SideBar) view.findViewById(R.id.sidebar);
+        dialogText = view.findViewById(R.id.dialog_text);
+        sideBar = view.findViewById(R.id.sidebar);
         sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
             @Override
             public void onTouchingLetterChanged(String s) {
@@ -86,16 +86,16 @@ public class FolderFragment extends BaseFragment {
                     Log.e("scrolget", "  " + i);
                     ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(i, 0);
                 }
-
+    
             }
         });
         reloadAdapter();
-
-
+        
+        
         return view;
     }
-
-
+    
+    
     private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -105,36 +105,36 @@ public class FolderFragment extends BaseFragment {
             }
         }
     };
-
+    
     @Override
     public void onResume() {
         super.onResume();
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
     }
-
+    
     //设置分割线
     private void setItemDecoration() {
         itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
-
+    
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
+    
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.album_sort_by, menu);
-
+        
     }
-
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -149,7 +149,7 @@ public class FolderFragment extends BaseFragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
+    
     //更新adapter界面
     public void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {
@@ -174,7 +174,7 @@ public class FolderFragment extends BaseFragment {
                 mAdapter.updateDataSet(folderList);
                 return null;
             }
-
+    
             @Override
             protected void onPostExecute(Void aVoid) {
                 if (isAZSort) {
@@ -210,30 +210,30 @@ public class FolderFragment extends BaseFragment {
 //        protected void onPreExecute() {
 //        }
 //    }
-
+    
     public class Adapter extends RecyclerView.Adapter<Adapter.ListItemViewHolder> {
-
+        
         private List<FolderInfo> mList;
-
-
+        
+        
         public Adapter(List<FolderInfo> list) {
 //            if (list == null) {
 //                throw new IllegalArgumentException("model Data must not be null");
 //            }
             mList = list;
         }
-
+        
         //更新adpter的数据
         public void updateDataSet(List<FolderInfo> list) {
             this.mList = list;
         }
-
+        
         @Override
         public ListItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerview_common_item, viewGroup, false);
             return new ListItemViewHolder(itemView);
         }
-
+        
         @Override
         public void onBindViewHolder(ListItemViewHolder holder, int i) {
             FolderInfo model = mList.get(i);
@@ -251,26 +251,26 @@ public class FolderFragment extends BaseFragment {
             } else {
                 holder.moreOverflow.setImageResource(R.drawable.list_icn_more);
             }
-
+            
         }
-
+        
         @Override
         public int getItemCount() {
             return mList == null ? 0 : mList.size();
         }
-
+        
         public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             //ViewHolder
             ImageView imageView;
             TintImageView moreOverflow;
             TextView Maintitle, title;
-
+            
             ListItemViewHolder(View view) {
                 super(view);
-                this.Maintitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
-                this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
-                this.moreOverflow = (TintImageView) view.findViewById(R.id.viewpager_list_button);
-                this.imageView = (ImageView) view.findViewById(R.id.viewpager_list_img);
+                this.Maintitle = view.findViewById(R.id.viewpager_list_toptext);
+                this.title = view.findViewById(R.id.viewpager_list_bottom_text);
+                this.moreOverflow = view.findViewById(R.id.viewpager_list_button);
+                this.imageView = view.findViewById(R.id.viewpager_list_img);
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -279,9 +279,9 @@ public class FolderFragment extends BaseFragment {
                     }
                 });
                 view.setOnClickListener(this);
-
+                
             }
-
+            
             @Override
             public void onClick(View v) {
                 FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
@@ -290,7 +290,7 @@ public class FolderFragment extends BaseFragment {
                 transaction.add(R.id.tab_container, fragment);
                 transaction.addToBackStack(null).commit();
             }
-
+            
         }
     }
 }

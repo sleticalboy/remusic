@@ -38,10 +38,10 @@ import java.util.LinkedList;
  * @time 16/2/22
  */
 public class ColorStateListUtils {
-
+    
     static ColorStateList createColorStateList(Context context, int resId) {
         if (resId <= 0) return null;
-
+        
         TypedValue value = new TypedValue();
         context.getResources().getValue(resId, value, true);
         ColorStateList cl = null;
@@ -59,16 +59,16 @@ public class ColorStateListUtils {
                             value.assetCookie, file);
                     final AttributeSet attrs = Xml.asAttributeSet(rp);
                     int type;
-
+    
                     while ((type = rp.next()) != XmlPullParser.START_TAG
                             && type != XmlPullParser.END_DOCUMENT) {
                         // Seek parser to start tag.
                     }
-
+    
                     if (type != XmlPullParser.START_TAG) {
                         throw new XmlPullParserException("No start tag found");
                     }
-
+    
                     cl = createFromXmlInner(context, rp, attrs);
                     rp.close();
                 }
@@ -80,33 +80,33 @@ public class ColorStateListUtils {
         }
         return cl;
     }
-
+    
     static ColorStateList createFromXmlInner(Context context, XmlPullParser parser, AttributeSet attrs) throws IOException, XmlPullParserException {
-
+        
         final String name = parser.getName();
         if (!name.equals("selector")) {
             throw new XmlPullParserException(
                     parser.getPositionDescription() + ": invalid color state list tag " + name);
         }
-
+        
         return inflateColorStateList(context, parser, attrs);
     }
-
+    
     static ColorStateList inflateColorStateList(Context context, XmlPullParser parser, AttributeSet attrs) throws IOException, XmlPullParserException {
         final int innerDepth = parser.getDepth() + 1;
         int depth;
         int type;
-
+        
         LinkedList<int[]> stateList = new LinkedList<>();
         LinkedList<Integer> colorList = new LinkedList<>();
-
+        
         while ((type = parser.next()) != XmlPullParser.END_DOCUMENT
                 && ((depth = parser.getDepth()) >= innerDepth || type != XmlPullParser.END_TAG)) {
             if (type != XmlPullParser.START_TAG || depth > innerDepth
                     || !parser.getName().equals("item")) {
                 continue;
             }
-
+            
             TypedArray a1 = context.obtainStyledAttributes(attrs, new int[]{android.R.attr.color});
             final int value = a1.getResourceId(0, Color.MAGENTA);
             final int baseColor = value == Color.MAGENTA ? Color.MAGENTA : ThemeUtils.replaceColorById(context, value);
@@ -117,10 +117,10 @@ public class ColorStateListUtils {
             colorList.add(alphaMod != 1.0f
                     ? ColorUtils.setAlphaComponent(baseColor, Math.round(Color.alpha(baseColor) * alphaMod))
                     : baseColor);
-
+            
             stateList.add(extractStateSet(attrs));
         }
-
+        
         if (stateList.size() > 0 && stateList.size() == colorList.size()) {
             int[] colors = new int[colorList.size()];
             for (int i = 0; i < colorList.size(); i++) {
@@ -130,7 +130,7 @@ public class ColorStateListUtils {
         }
         return null;
     }
-
+    
     protected static int[] extractStateSet(AttributeSet attrs) {
         int j = 0;
         final int numAttrs = attrs.getAttributeCount();

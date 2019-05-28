@@ -34,7 +34,7 @@ import java.util.List;
  * Created by wm on 2016/1/9.
  */
 public class AlbumDetailFragment extends BaseFragment {
-
+    
     private int currentlyPlayingPosition = 0;
     private ActionBar ab;
     private AlbumDetailAdapter mAdapter;
@@ -43,7 +43,7 @@ public class AlbumDetailFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private RecyclerView.ItemDecoration itemDecoration;
-
+    
     public static AlbumDetailFragment newInstance(long id, boolean useTransition, String transitionName) {
         AlbumDetailFragment fragment = new AlbumDetailFragment();
         Bundle args = new Bundle();
@@ -54,21 +54,21 @@ public class AlbumDetailFragment extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             albumID = getArguments().getLong("album_id");
         }
-
+        
     }
-
+    
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_common, container, false);
-
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        
+        
+        recyclerView = view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new AlbumDetailAdapter(null);
@@ -77,9 +77,9 @@ public class AlbumDetailFragment extends BaseFragment {
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setHasFixedSize(true);
         reloadAdapter();
-
+        
         AlbumInfo albumInfo = MusicUtils.getAlbumInfo(mContext, albumID);
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.setPadding(0, CommonUtils.getStatusHeight(mContext), 0, 0);
         ((AppCompatActivity) mContext).setSupportActionBar(toolbar);
         ab = ((AppCompatActivity) mContext).getSupportActionBar();
@@ -89,21 +89,21 @@ public class AlbumDetailFragment extends BaseFragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getActivity() != null)
-                getActivity().onBackPressed();
+                if (getActivity() != null)
+                    getActivity().onBackPressed();
             }
         });
-
+        
         return view;
-
+        
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
     }
-
-
+    
+    
     //更新adapter界面
     public void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {
@@ -113,29 +113,29 @@ public class AlbumDetailFragment extends BaseFragment {
                 mAdapter.updateDataSet((ArrayList) albumList);
                 return null;
             }
-
+    
             @Override
             protected void onPostExecute(Void aVoid) {
                 mAdapter.notifyDataSetChanged();
             }
         }.execute();
     }
-
+    
     class AlbumDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final static int FIRST_ITEM = 0;
         final static int ITEM = 1;
         ArrayList<MusicInfo> mList;
-
+        
         public AlbumDetailAdapter(ArrayList<MusicInfo> musicInfos) {
             mList = musicInfos;
             //list.add(0,null);
         }
-
+        
         //更新adpter的数据
         public void updateDataSet(ArrayList<MusicInfo> list) {
             this.mList = list;
         }
-
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             if (viewType == FIRST_ITEM) {
@@ -144,15 +144,15 @@ public class AlbumDetailFragment extends BaseFragment {
                 return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
             }
         }
-
+        
         @Override
         public int getItemViewType(int position) {
             return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
         }
-
+        
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+            
             if (holder instanceof CommonItemViewHolder) {
                 ((CommonItemViewHolder) holder).textView.setText("共" + mList.size() + "首");
                 ((CommonItemViewHolder) holder).select.setOnClickListener(new View.OnClickListener() {
@@ -178,24 +178,24 @@ public class AlbumDetailFragment extends BaseFragment {
                 }
             }
         }
-
+        
         @Override
         public int getItemCount() {
             return (null != mList ? mList.size() + 1 : 0);
         }
-
-
+        
+        
         class CommonItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView textView;
             ImageView select;
-
+            
             CommonItemViewHolder(View view) {
                 super(view);
-                this.textView = (TextView) view.findViewById(R.id.play_all_number);
-                this.select = (ImageView) view.findViewById(R.id.select);
+                this.textView = view.findViewById(R.id.play_all_number);
+                this.select = view.findViewById(R.id.select);
                 view.setOnClickListener(this);
             }
-
+            
             //播放专辑
             @Override
             public void onClick(View v) {
@@ -213,24 +213,24 @@ public class AlbumDetailFragment extends BaseFragment {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
+                }, 70);
             }
-
-
+            
+            
         }
-
+        
         public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             //ViewHolder
             ImageView moreOverflow;
             TextView mainTitle, title;
             TintImageView playState;
-
+            
             ListItemViewHolder(View view) {
                 super(view);
-                this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
-                this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
-                this.playState = (TintImageView) view.findViewById(R.id.play_state);
-                this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
+                this.mainTitle = view.findViewById(R.id.viewpager_list_toptext);
+                this.title = view.findViewById(R.id.viewpager_list_bottom_text);
+                this.playState = view.findViewById(R.id.play_state);
+                this.moreOverflow = view.findViewById(R.id.viewpager_list_button);
                 view.setOnClickListener(this);
                 //设置弹出菜单
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
@@ -240,9 +240,9 @@ public class AlbumDetailFragment extends BaseFragment {
                         moreFragment.show(getFragmentManager(), "music");
                     }
                 });
-
+                
             }
-
+            
             //播放歌曲
             @Override
             public void onClick(View v) {
@@ -263,11 +263,11 @@ public class AlbumDetailFragment extends BaseFragment {
                     }
                 }, 60);
             }
-
+            
         }
-
-
+        
+        
     }
-
-
+    
+    
 }

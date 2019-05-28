@@ -41,20 +41,20 @@ import java.util.HashMap;
 import java.util.WeakHashMap;
 
 public class MusicPlayer {
-
+    
     private static final WeakHashMap<Context, ServiceBinder> mConnectionMap;
     private static final long[] sEmptyList;
     public static MediaAidlInterface mService = null;
     private static ContentValues[] mContentValuesCache = null;
-
+    
     static {
         mConnectionMap = new WeakHashMap<Context, ServiceBinder>();
         sEmptyList = new long[0];
     }
-
+    
     public static final ServiceToken bindToService(final Context context,
                                                    final ServiceConnection callback) {
-
+        
         Activity realActivity = ((Activity) context).getParent();
         if (realActivity == null) {
             realActivity = (Activity) context;
@@ -70,7 +70,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static void unbindFromService(final ServiceToken token) {
         if (token == null) {
             return;
@@ -85,11 +85,11 @@ public class MusicPlayer {
             mService = null;
         }
     }
-
+    
     public static final boolean isPlaybackServiceConnected() {
         return mService != null;
     }
-
+    
     public static void next() {
         try {
             if (mService != null) {
@@ -98,11 +98,11 @@ public class MusicPlayer {
         } catch (final RemoteException ignored) {
         }
     }
-
+    
     public static void initPlaybackServiceWithSettings(final Context context) {
         setShowAlbumArtOnLockscreen(true);
     }
-
+    
     public static void setShowAlbumArtOnLockscreen(final boolean enabled) {
         try {
             if (mService != null) {
@@ -111,13 +111,13 @@ public class MusicPlayer {
         } catch (final RemoteException ignored) {
         }
     }
-
+    
     public static void asyncNext(final Context context) {
         final Intent previous = new Intent(context, MediaService.class);
         previous.setAction(MediaService.NEXT_ACTION);
         context.startService(previous);
     }
-
+    
     public static void previous(final Context context, final boolean force) {
         final Intent previous = new Intent(context, MediaService.class);
         if (force) {
@@ -127,7 +127,7 @@ public class MusicPlayer {
         }
         context.startService(previous);
     }
-
+    
     public static void playOrPause() {
         try {
             if (mService != null) {
@@ -140,8 +140,8 @@ public class MusicPlayer {
         } catch (final Exception ignored) {
         }
     }
-
-
+    
+    
     public static boolean isTrackLocal() {
         try {
             if (mService != null) {
@@ -152,7 +152,7 @@ public class MusicPlayer {
         }
         return false;
     }
-
+    
     public static void cycleRepeat() {
         try {
             if (mService != null) {
@@ -161,7 +161,7 @@ public class MusicPlayer {
                     mService.setRepeatMode(MediaService.REPEAT_CURRENT);
                     return;
                 } else {
-
+    
                     switch (mService.getRepeatMode()) {
                         case MediaService.REPEAT_CURRENT:
                             mService.setRepeatMode(MediaService.REPEAT_ALL);
@@ -172,15 +172,15 @@ public class MusicPlayer {
 //                            mService.setShuffleMode(MediaService.SHUFFLE_NONE);
 //                        }
                             break;
-
+        
                     }
                 }
-
+    
             }
         } catch (final RemoteException ignored) {
         }
     }
-
+    
     public static void cycleShuffle() {
         try {
             if (mService != null) {
@@ -204,7 +204,7 @@ public class MusicPlayer {
         } catch (final RemoteException ignored) {
         }
     }
-
+    
     public static final boolean isPlaying() {
         if (mService != null) {
             try {
@@ -214,7 +214,7 @@ public class MusicPlayer {
         }
         return false;
     }
-
+    
     public static final int getShuffleMode() {
         if (mService != null) {
             try {
@@ -224,17 +224,17 @@ public class MusicPlayer {
         }
         return 0;
     }
-
+    
     public static void setShuffleMode(int mode) {
         try {
             if (mService != null) {
                 mService.setShuffleMode(mode);
             }
         } catch (RemoteException ignored) {
-
+    
         }
     }
-
+    
     public static final int getRepeatMode() {
         if (mService != null) {
             try {
@@ -244,7 +244,7 @@ public class MusicPlayer {
         }
         return 0;
     }
-
+    
     public static final String getTrackName() {
         if (mService != null) {
             try {
@@ -254,7 +254,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static final String getArtistName() {
         if (mService != null) {
             try {
@@ -264,7 +264,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static final String getAlbumName() {
         if (mService != null) {
             try {
@@ -274,7 +274,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static final String getAlbumPath() {
         if (mService != null) {
             try {
@@ -284,7 +284,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static final String[] getAlbumPathAll() {
         if (mService != null) {
             try {
@@ -294,7 +294,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static final long getCurrentAlbumId() {
         if (mService != null) {
             try {
@@ -304,7 +304,7 @@ public class MusicPlayer {
         }
         return -1;
     }
-
+    
     public static final long getCurrentAudioId() {
         if (mService != null) {
             try {
@@ -314,7 +314,7 @@ public class MusicPlayer {
         }
         return -1;
     }
-
+    
     public static final MusicTrack getCurrentTrack() {
         if (mService != null) {
             try {
@@ -324,7 +324,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static final MusicTrack getTrack(int index) {
         if (mService != null) {
             try {
@@ -334,7 +334,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static final long getNextAudioId() {
         if (mService != null) {
             try {
@@ -344,7 +344,7 @@ public class MusicPlayer {
         }
         return -1;
     }
-
+    
     public static final long getPreviousAudioId() {
         if (mService != null) {
             try {
@@ -354,7 +354,7 @@ public class MusicPlayer {
         }
         return -1;
     }
-
+    
     public static final long getCurrentArtistId() {
         if (mService != null) {
             try {
@@ -364,7 +364,7 @@ public class MusicPlayer {
         }
         return -1;
     }
-
+    
     public static final int getAudioSessionId() {
         if (mService != null) {
             try {
@@ -374,7 +374,7 @@ public class MusicPlayer {
         }
         return -1;
     }
-
+    
     public static final long[] getQueue() {
         try {
             if (mService != null) {
@@ -385,7 +385,7 @@ public class MusicPlayer {
         }
         return sEmptyList;
     }
-
+    
     public static final HashMap<Long, MusicInfo> getPlayinfos() {
         try {
             if (mService != null) {
@@ -396,7 +396,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static final long getQueueItemAtPosition(int position) {
         try {
             if (mService != null) {
@@ -407,7 +407,7 @@ public class MusicPlayer {
         }
         return -1;
     }
-
+    
     public static final int getQueueSize() {
         try {
             if (mService != null) {
@@ -418,7 +418,7 @@ public class MusicPlayer {
         }
         return 0;
     }
-
+    
     public static final int getQueuePosition() {
         try {
             if (mService != null) {
@@ -428,7 +428,7 @@ public class MusicPlayer {
         }
         return 0;
     }
-
+    
     public static void setQueuePosition(final int position) {
         if (mService != null) {
             try {
@@ -437,7 +437,7 @@ public class MusicPlayer {
             }
         }
     }
-
+    
     public static final int getQueueHistorySize() {
         if (mService != null) {
             try {
@@ -447,7 +447,7 @@ public class MusicPlayer {
         }
         return 0;
     }
-
+    
     public static final int getQueueHistoryPosition(int position) {
         if (mService != null) {
             try {
@@ -457,7 +457,7 @@ public class MusicPlayer {
         }
         return -1;
     }
-
+    
     public static final int[] getQueueHistoryList() {
         if (mService != null) {
             try {
@@ -467,7 +467,7 @@ public class MusicPlayer {
         }
         return null;
     }
-
+    
     public static final int removeTrack(final long id) {
         try {
             if (mService != null) {
@@ -477,7 +477,7 @@ public class MusicPlayer {
         }
         return 0;
     }
-
+    
     public static final boolean removeTrackAtPosition(final long id, final int position) {
         try {
             if (mService != null) {
@@ -487,7 +487,7 @@ public class MusicPlayer {
         }
         return false;
     }
-
+    
     public static void moveQueueItem(final int from, final int to) {
         try {
             if (mService != null) {
@@ -497,7 +497,7 @@ public class MusicPlayer {
         } catch (final RemoteException ignored) {
         }
     }
-
+    
     public static synchronized void playAll(final HashMap<Long, MusicInfo> infos, final long[] list, int position, final boolean forceShuffle) {
         if (list == null || list.length == 0 || mService == null) {
             return;
@@ -520,7 +520,7 @@ public class MusicPlayer {
                         mService.setQueuePosition(position);
                         return;
                     }
-
+    
                 }
             }
             if (position < 0) {
@@ -534,7 +534,7 @@ public class MusicPlayer {
             e.printStackTrace();
         }
     }
-
+    
     public static void playNext(Context context, final HashMap<Long, MusicInfo> map, final long[] list) {
         if (mService == null) {
             return;
@@ -542,7 +542,7 @@ public class MusicPlayer {
         try {
             int current = -1;
             long[] result = list;
-
+    
             for (int i = 0; i < list.length; i++) {
                 if (MusicPlayer.getCurrentAudioId() == list[i]) {
                     current = i;
@@ -563,41 +563,41 @@ public class MusicPlayer {
 //                     result[i] = (long) lists.get(i);
 //                }
 //            }
-
+    
             mService.enqueue(list, map, MediaService.NEXT);
-
+    
             Toast.makeText(context, R.string.next_play, Toast.LENGTH_SHORT).show();
         } catch (final RemoteException ignored) {
         }
     }
-
+    
     public static String getPath() {
         if (mService == null) {
             return null;
         }
         try {
             return mService.getPath();
-
+    
         } catch (Exception e) {
-
+    
         }
         return null;
     }
-
+    
     public static void stop() {
         try {
             mService.stop();
         } catch (Exception e) {
-
+    
         }
     }
-
+    
     public static final int getSongCountForAlbumInt(final Context context, final long id) {
         int songCount = 0;
         if (id == -1) {
             return songCount;
         }
-
+        
         Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, id);
         Cursor cursor = context.getContentResolver().query(uri,
                 new String[]{MediaStore.Audio.AlbumColumns.NUMBER_OF_SONGS}, null, null, null);
@@ -611,10 +611,10 @@ public class MusicPlayer {
             cursor.close();
             cursor = null;
         }
-
+        
         return songCount;
     }
-
+    
     public static final String getReleaseDateForAlbum(final Context context, final long id) {
         if (id == -1) {
             return null;
@@ -634,7 +634,7 @@ public class MusicPlayer {
         }
         return releaseDate;
     }
-
+    
     public static void seek(final long position) {
         if (mService != null) {
             try {
@@ -643,63 +643,63 @@ public class MusicPlayer {
             }
         }
     }
-
+    
     public static void seekRelative(final long deltaInMs) {
         if (mService != null) {
             try {
                 mService.seekRelative(deltaInMs);
             } catch (final RemoteException ignored) {
             } catch (final IllegalStateException ignored) {
-
+    
             }
         }
     }
-
+    
     public static final long position() {
         if (mService != null) {
             try {
                 return mService.position();
             } catch (final RemoteException ignored) {
             } catch (final IllegalStateException ex) {
-
+    
             }
         }
         return 0;
     }
-
+    
     public static final int secondPosition() {
         if (mService != null) {
             try {
                 return mService.secondPosition();
             } catch (final RemoteException ignored) {
             } catch (final IllegalStateException ex) {
-
+    
             }
         }
         return 0;
     }
-
+    
     public static final long duration() {
         if (mService != null) {
             try {
                 return mService.duration();
             } catch (final RemoteException ignored) {
             } catch (final IllegalStateException ignored) {
-
+    
             }
         }
         return 0;
     }
-
+    
     public static void clearQueue() {
-
+        
         try {
-            if(mService != null)
-            mService.removeTracks(0, Integer.MAX_VALUE);
+            if (mService != null)
+                mService.removeTracks(0, Integer.MAX_VALUE);
         } catch (final RemoteException ignored) {
         }
     }
-
+    
     public static void addToQueue(final Context context, final long[] list, long sourceId) {
         if (mService == null) {
             return;
@@ -711,8 +711,8 @@ public class MusicPlayer {
         } catch (final RemoteException ignored) {
         }
     }
-
-
+    
+    
     public static void addToPlaylist(final Context context, final long[] ids, final long playlistid) {
         final int size = ids.length;
         final ContentResolver resolver = context.getContentResolver();
@@ -722,10 +722,10 @@ public class MusicPlayer {
         final Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", playlistid);
         Cursor cursor = null;
         int base = 0;
-
+        
         try {
             cursor = resolver.query(uri, projection, null, null, null);
-
+            
             if (cursor != null && cursor.moveToFirst()) {
                 base = cursor.getInt(0) + 1;
             }
@@ -735,20 +735,20 @@ public class MusicPlayer {
                 cursor = null;
             }
         }
-
+        
         int numinserted = 0;
         for (int offSet = 0; offSet < size; offSet += 1000) {
             makeInsertItems(ids, offSet, 1000, base);
             numinserted += resolver.bulkInsert(uri, mContentValuesCache);
         }
-
+        
     }
-
+    
     public static void makeInsertItems(final long[] ids, final int offset, int len, final int base) {
         if (offset + len > ids.length) {
             len = ids.length - offset;
         }
-
+        
         if (mContentValuesCache == null || mContentValuesCache.length != len) {
             mContentValuesCache = new ContentValues[len];
         }
@@ -760,7 +760,7 @@ public class MusicPlayer {
             mContentValuesCache[i].put(MediaStore.Audio.Playlists.Members.AUDIO_ID, ids[offset + i]);
         }
     }
-
+    
     public static final long createPlaylist(final Context context, final String name) {
         if (name != null && name.length() > 0) {
             final ContentResolver resolver = context.getContentResolver();
@@ -785,7 +785,7 @@ public class MusicPlayer {
         }
         return -1;
     }
-
+    
     public static void exitService() {
 //        if (mService == null) {
 //            return;
@@ -797,7 +797,7 @@ public class MusicPlayer {
         } catch (Exception e) {
         }
     }
-
+    
     public static void timing(int time) {
         if (mService == null) {
             return;
@@ -805,20 +805,20 @@ public class MusicPlayer {
         try {
             mService.timing(time);
         } catch (Exception e) {
-
+    
         }
     }
-
+    
     public static final class ServiceBinder implements ServiceConnection {
         private final ServiceConnection mCallback;
         private final Context mContext;
-
-
+        
+        
         public ServiceBinder(final ServiceConnection callback, final Context context) {
             mCallback = callback;
             mContext = context;
         }
-
+        
         @Override
         public void onServiceConnected(final ComponentName className, final IBinder service) {
             mService = MediaAidlInterface.Stub.asInterface(service);
@@ -827,7 +827,7 @@ public class MusicPlayer {
             }
             initPlaybackServiceWithSettings(mContext);
         }
-
+        
         @Override
         public void onServiceDisconnected(final ComponentName className) {
             if (mCallback != null) {
@@ -836,14 +836,14 @@ public class MusicPlayer {
             mService = null;
         }
     }
-
+    
     public static final class ServiceToken {
         public ContextWrapper mWrappedContext;
-
+        
         public ServiceToken(final ContextWrapper context) {
             mWrappedContext = context;
         }
     }
-
-
+    
+    
 }

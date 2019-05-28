@@ -18,26 +18,26 @@ public class NetworkUtils {
     public static final String NET_TYPE_WIFI = "WIFI";
     public static final String NET_TYPE_MOBILE = "MOBILE";
     public static final String NET_TYPE_NO_NETWORK = "no_network";
-
+    
     private Context mContext = null;
-
+    
     public NetworkUtils(Context pContext) {
         this.mContext = pContext;
     }
-
+    
     public static final String IP_DEFAULT = "0.0.0.0";
-
+    
     public static boolean isConnectInternet(final Context pContext) {
         final ConnectivityManager conManager = (ConnectivityManager) pContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
-
+        
         if (networkInfo != null) {
             return networkInfo.isAvailable();
         }
-
+        
         return false;
     }
-
+    
     public static boolean isConnectWifi(final Context pContext) {
         ConnectivityManager mConnectivity = (ConnectivityManager) pContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = mConnectivity.getActiveNetworkInfo();
@@ -52,7 +52,7 @@ public class NetworkUtils {
             return false;
         }
     }
-
+    
     public static String getNetTypeName(final int pNetType) {
         switch (pNetType) {
             case 0:
@@ -91,31 +91,31 @@ public class NetworkUtils {
                 return "unknown";
         }
     }
-
+    
     public static String getIPAddress() {
         try {
             final Enumeration<NetworkInterface> networkInterfaceEnumeration = NetworkInterface.getNetworkInterfaces();
-
+    
             while (networkInterfaceEnumeration.hasMoreElements()) {
                 final NetworkInterface networkInterface = networkInterfaceEnumeration.nextElement();
-
+        
                 final Enumeration<InetAddress> inetAddressEnumeration = networkInterface.getInetAddresses();
-
+        
                 while (inetAddressEnumeration.hasMoreElements()) {
                     final InetAddress inetAddress = inetAddressEnumeration.nextElement();
-
+            
                     if (!inetAddress.isLoopbackAddress()) {
                         return inetAddress.getHostAddress();
                     }
                 }
             }
-
+    
             return NetworkUtils.IP_DEFAULT;
         } catch (final SocketException e) {
             return NetworkUtils.IP_DEFAULT;
         }
     }
-
+    
     public String getConnTypeName() {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

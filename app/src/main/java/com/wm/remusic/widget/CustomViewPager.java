@@ -8,18 +8,18 @@ import android.view.MotionEvent;
 import android.view.View;
 
 public class CustomViewPager extends ViewPager {
-
+    
     public CustomViewPager(Context context) {
         super(context);
     }
-
+    
     public CustomViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-
+    
     PointF downPoint = new PointF();
     OnSingleTouchListener onSingleTouchListener;
-
+    
     @Override
     public boolean onTouchEvent(MotionEvent evt) {
         switch (evt.getAction()) {
@@ -49,17 +49,17 @@ public class CustomViewPager extends ViewPager {
         }
         return super.onTouchEvent(evt);
     }
-
+    
     public void onSingleTouch(View v) {
         if (onSingleTouchListener != null) {
             onSingleTouchListener.onSingleTouch(v);
         }
     }
-
+    
     public interface OnSingleTouchListener {
-        public void onSingleTouch(View v);
+        void onSingleTouch(View v);
     }
-
+    
     public void setOnSingleTouchListener(
             OnSingleTouchListener onSingleTouchListener) {
         this.onSingleTouchListener = onSingleTouchListener;

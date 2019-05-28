@@ -77,8 +77,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.wm.remusic.service.MusicPlayer.getAlbumPath;
@@ -91,7 +89,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private ImageView mBackAlbum, mPlayingmode, mControl, mNext, mPre, mPlaylist, mCmt, mFav, mDown, mMore, mNeedle;
     private TextView mTimePlayed, mDuration;
     private PlayerSeekBar mProgress;
-
+    
     private ActionBar ab;
     private ObjectAnimator mNeedleAnim, mRotateAnim;
     private AnimatorSet mAnimatorSet;
@@ -122,20 +120,20 @@ public class PlayingActivity extends BaseActivity implements IConstants {
     private PlayMusic mPlayThread;
     private boolean print = true;
     private String TAG = PlayingActivity.class.getSimpleName();
-
-
+    
+    
     @Override
     protected void showQuickControl(boolean show) {
         //super.showOrHideQuickControl(show);
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playing);
         mPlaylistsManager = PlaylistsManager.getInstance(this);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        
+        toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             ab = getSupportActionBar();
@@ -148,37 +146,36 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 }
             });
         }
-
-
-
-        mAlbumLayout = (FrameLayout) findViewById(R.id.headerView);
-        mLrcViewContainer = (RelativeLayout) findViewById(R.id.lrcviewContainer);
-        mLrcView = (LrcView) findViewById(R.id.lrcview);
-        mTryGetLrc = (TextView) findViewById(R.id.tragetlrc);
-        mMusicTool = (LinearLayout) findViewById(R.id.music_tool);
-
-        mBackAlbum = (ImageView) findViewById(R.id.albumArt);
-        mPlayingmode = (ImageView) findViewById(R.id.playing_mode);
-        mControl = (ImageView) findViewById(R.id.playing_play);
-        mNext = (ImageView) findViewById(R.id.playing_next);
-        mPre = (ImageView) findViewById(R.id.playing_pre);
-        mPlaylist = (ImageView) findViewById(R.id.playing_playlist);
-        mMore = (ImageView) findViewById(R.id.playing_more);
-        mCmt = (ImageView) findViewById(R.id.playing_cmt);
-        mFav = (ImageView) findViewById(R.id.playing_fav);
-        mDown = (ImageView) findViewById(R.id.playing_down);
-        mTimePlayed = (TextView) findViewById(R.id.music_duration_played);
-        mDuration = (TextView) findViewById(R.id.music_duration);
-        mProgress = (PlayerSeekBar) findViewById(R.id.play_seek);
-        mNeedle = (ImageView) findViewById(R.id.needle);
-        mViewPager = (AlbumViewPager) findViewById(R.id.view_pager);
-
+        
+        
+        mAlbumLayout = findViewById(R.id.headerView);
+        mLrcViewContainer = findViewById(R.id.lrcviewContainer);
+        mLrcView = findViewById(R.id.lrcview);
+        mTryGetLrc = findViewById(R.id.tragetlrc);
+        mMusicTool = findViewById(R.id.music_tool);
+        
+        mBackAlbum = findViewById(R.id.albumArt);
+        mPlayingmode = findViewById(R.id.playing_mode);
+        mControl = findViewById(R.id.playing_play);
+        mNext = findViewById(R.id.playing_next);
+        mPre = findViewById(R.id.playing_pre);
+        mPlaylist = findViewById(R.id.playing_playlist);
+        mMore = findViewById(R.id.playing_more);
+        mCmt = findViewById(R.id.playing_cmt);
+        mFav = findViewById(R.id.playing_fav);
+        mDown = findViewById(R.id.playing_down);
+        mTimePlayed = findViewById(R.id.music_duration_played);
+        mDuration = findViewById(R.id.music_duration);
+        mProgress = findViewById(R.id.play_seek);
+        mNeedle = findViewById(R.id.needle);
+        mViewPager = findViewById(R.id.view_pager);
+        
         mNeedleAnim = ObjectAnimator.ofFloat(mNeedle, "rotation", -25, 0);
         mNeedleAnim.setDuration(200);
         mNeedleAnim.setRepeatMode(0);
         mNeedleAnim.setInterpolator(new LinearInterpolator());
-
-        mVolumeSeek = (SeekBar) findViewById(R.id.volume_seek);
+        
+        mVolumeSeek = findViewById(R.id.volume_seek);
         mProgress.setIndeterminate(false);
         mProgress.setProgress(1);
         mProgress.setMax(1000);
@@ -186,12 +183,12 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         setViewPager();
         initLrcView();
         mHandler = HandlerUtil.getInstance(this);
-
+        
         mHandler.postDelayed(mUpAlbumRunnable, 0);
         mPlayThread = new PlayMusic();
         mPlayThread.start();
     }
-
+    
     private void initLrcView() {
         mLrcView.setOnSeekToListener(onSeekToListener);
         mLrcView.setOnLrcClickListener(onLrcClickListener);
@@ -215,7 +212,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 }
             }
         });
-
+        
         mTryGetLrc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,7 +222,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 Toast.makeText(getApplicationContext(), "正在获取信息", Toast.LENGTH_SHORT).show();
             }
         });
-
+        
         final AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         int v = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         int mMaxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -236,25 +233,25 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.ADJUST_SAME);
             }
-
+    
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+        
             }
-
+    
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+        
             }
         });
     }
-
-
+    
+    
     LrcView.OnLrcClickListener onLrcClickListener = new LrcView.OnLrcClickListener() {
-
+        
         @Override
         public void onClick() {
-
+            
             if (mLrcViewContainer.getVisibility() == View.VISIBLE) {
                 mLrcViewContainer.setVisibility(View.INVISIBLE);
                 mAlbumLayout.setVisibility(View.VISIBLE);
@@ -263,16 +260,16 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
     };
     LrcView.OnSeekToListener onSeekToListener = new LrcView.OnSeekToListener() {
-
+    
         @Override
         public void onSeekTo(int progress) {
             MusicPlayer.seek(progress);
         }
     };
-
-
+    
+    
     private List<LrcRow> getLrcRows() {
-
+        
         List<LrcRow> rows = null;
         InputStream is = null;
         try {
@@ -298,22 +295,22 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
         return rows;
     }
-
+    
     private void loadOther() {
-
+        
         setSeekBarListener();
         setTools();
-
+        
     }
-
+    
     private void setViewPager() {
         mViewPager.setOffscreenPageLimit(2);
         PlaybarPagerTransformer transformer = new PlaybarPagerTransformer();
         mAdapter = new FragmentAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.setPageTransformer(true, transformer);
-
-      // 改变viewpager动画时间
+        
+        // 改变viewpager动画时间
         try {
             Field mField = ViewPager.class.getDeclaredField("mScroller");
             mField.setAccessible(true);
@@ -326,9 +323,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
+        
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
+            
             @Override
             public void onPageSelected(final int pPosition) {
                 if (pPosition < 1) { //首位之前，跳转到末尾（N）
@@ -336,14 +333,14 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                     mViewPager.setCurrentItem(MusicPlayer.getQueue().length, false);
                     isNextOrPreSetPage = false;
                     return;
-
+    
                 } else if (pPosition > MusicPlayer.getQueue().length) { //末位之后，跳转到首位（1）
                     MusicPlayer.setQueuePosition(0);
                     mViewPager.setCurrentItem(1, false); //false:不显示跳转过程的动画
                     isNextOrPreSetPage = false;
                     return;
                 } else {
-
+    
                     if (!isNextOrPreSetPage) {
                         if (pPosition < MusicPlayer.getQueuePosition() + 1) {
 //                            HandlerUtil.getInstance(PlayingActivity.this).postDelayed(new Runnable() {
@@ -355,12 +352,12 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 //                                    mPlayHandler.sendMessage(msg);
 //                                }
 //                            }, 500);
-
+    
                             Message msg = new Message();
                             msg.what = PRE_MUSIC;
-                            mPlayHandler.sendMessageDelayed(msg,TIME_DELAY);
-
-
+                            mPlayHandler.sendMessageDelayed(msg, TIME_DELAY);
+                            
+                            
                         } else if (pPosition > MusicPlayer.getQueuePosition() + 1) {
 //                            HandlerUtil.getInstance(PlayingActivity.this).postDelayed(new Runnable() {
 //                                @Override
@@ -370,31 +367,31 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 //
 //                                }
 //                            }, 500);
-
+    
                             Message msg = new Message();
                             msg.what = NEXT_MUSIC;
-                            mPlayHandler.sendMessageDelayed(msg,TIME_DELAY);
-
+                            mPlayHandler.sendMessageDelayed(msg, TIME_DELAY);
+                            
                         }
                     }
-
+    
                 }
                 //MusicPlayer.setQueuePosition(pPosition - 1);
                 isNextOrPreSetPage = false;
-
+                
             }
-
+            
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+            
             }
-
+            
             @Override
             public void onPageScrollStateChanged(int pState) {
             }
         });
     }
-
+    
     private void setTools() {
         mPlayingmode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -403,22 +400,22 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 updatePlaymode();
             }
         });
-
+        
         mPre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // MusicPlayer.previous(PlayingActivity.this.getApplication(), true);
-
+                // MusicPlayer.previous(PlayingActivity.this.getApplication(), true);
+                
                 Message msg = new Message();
                 msg.what = PRE_MUSIC;
                 mPlayHandler.sendMessage(msg);
             }
         });
-
+        
         mControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+    
                 if (MusicPlayer.isPlaying()) {
                     mControl.setImageResource(R.drawable.play_rdi_btn_pause);
                 } else {
@@ -429,7 +426,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 }
             }
         });
-
+        
         mNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -442,11 +439,11 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 Message msg = new Message();
                 msg.what = NEXT_MUSIC;
                 mPlayHandler.sendMessage(msg);
-
-             //   MusicPlayer.mNext();
+    
+                //   MusicPlayer.mNext();
             }
         });
-
+        
         mPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -454,21 +451,21 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 playQueueFragment.show(getSupportFragmentManager(), "playlistframent");
             }
         });
-
+        
         mMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+    
                 SimpleMoreFragment moreFragment = SimpleMoreFragment.newInstance(MusicPlayer.getCurrentAudioId());
                 moreFragment.show(getSupportFragmentManager(), "music");
             }
         });
-
+        
         mFav.setOnClickListener(new View.OnClickListener() {
-
+            
             @Override
             public void onClick(View v) {
-
+                
                 if (isFav) {
                     mPlaylistsManager.removeItem(PlayingActivity.this, IConstants.FAV_PLAYLIST,
                             MusicPlayer.getCurrentAudioId());
@@ -484,22 +481,22 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                     mFav.setImageResource(R.drawable.play_icn_loved);
                     isFav = true;
                 }
-
+                
                 Intent intent = new Intent(IConstants.PLAYLIST_COUNT_CHANGED);
                 sendBroadcast(intent);
             }
         });
-
-
+        
+        
     }
-
+    
     Runnable mNextRunnable = new Runnable() {
         @Override
         public void run() {
             MusicPlayer.next();
         }
     };
-
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // handle item selection
@@ -510,20 +507,20 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + musicInfo.data));
             shareIntent.setType("audio/*");
             this.startActivity(Intent.createChooser(shareIntent, getResources().getString(R.string.shared_to)));
-
+    
         }
         return super.onOptionsItemSelected(item);
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.playing_menu, menu);
         return true;
-
+        
     }
-
+    
     private void updatePlaymode() {
         if (MusicPlayer.getShuffleMode() == MediaService.SHUFFLE_NORMAL) {
             mPlayingmode.setImageResource(R.drawable.play_icn_shuffle);
@@ -543,29 +540,29 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                     break;
             }
         }
-
+        
     }
-
+    
     @Override
     protected void onStart() {
         super.onStart();
         //设置ViewPager的默认项
         mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
     }
-
+    
     @Override
     public void onResume() {
         super.onResume();
         lastAlbum = -1;
-        if(MusicPlayer.isTrackLocal())
+        if (MusicPlayer.isTrackLocal())
             updateBuffer(100);
         else {
             updateBuffer(MusicPlayer.secondPosition());
         }
-        mHandler.postDelayed(mUpdateProgress,0);
+        mHandler.postDelayed(mUpdateProgress, 0);
     }
-
-
+    
+    
     public void updateQueue() {
         if (MusicPlayer.getQueueSize() == 0) {
             MusicPlayer.stop();
@@ -575,7 +572,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         mAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1, false);
     }
-
+    
     private void updateFav(boolean b) {
         if (b) {
             mFav.setImageResource(R.drawable.play_icn_loved);
@@ -583,7 +580,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             mFav.setImageResource(R.drawable.play_rdi_icn_love);
         }
     }
-
+    
     public void updateLrc() {
         List<LrcRow> list = getLrcRows();
         if (list != null && list.size() > 0) {
@@ -594,13 +591,13 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             mLrcView.reset();
         }
     }
-
+    
     public void updateTrack() {
         mHandler.removeCallbacks(mUpAlbumRunnable);
-        if(MusicPlayer.getCurrentAlbumId() != lastAlbum)
-        mHandler.postDelayed(mUpAlbumRunnable, 1600);
-
-
+        if (MusicPlayer.getCurrentAlbumId() != lastAlbum)
+            mHandler.postDelayed(mUpAlbumRunnable, 1600);
+        
+        
         isFav = false;
         long[] favlists = mPlaylistsManager.getPlaylistIds(IConstants.FAV_PLAYLIST);
         long currentid = MusicPlayer.getCurrentAudioId();
@@ -612,30 +609,30 @@ public class PlayingActivity extends BaseActivity implements IConstants {
         }
         updateFav(isFav);
         updateLrc();
-
-
+        
+        
         ab.setTitle(MusicPlayer.getTrackName());
         ab.setSubtitle(MusicPlayer.getArtistName());
         mDuration.setText(MusicUtils.makeShortTimeString(PlayingActivity.this.getApplication(), MusicPlayer.duration() / 1000));
     }
-
+    
     private Runnable mUpAlbumRunnable = new Runnable() {
         @Override
         public void run() {
             new setBlurredAlbumArt().execute();
         }
     };
-
+    
     public void updateTrackInfo() {
-
+        
         if (MusicPlayer.getQueueSize() == 0) {
             return;
         }
-
+        
         Fragment fragment = (RoundFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
         if (fragment != null) {
             View v = fragment.getView();
-            if(mViewWeakReference.get() != v && v != null){
+            if (mViewWeakReference.get() != v && v != null) {
                 ((ViewGroup) v).setAnimationCacheEnabled(false);
                 if (mViewWeakReference != null)
                     mViewWeakReference.clear();
@@ -643,16 +640,16 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 mActiveView = mViewWeakReference.get();
             }
         }
-
+        
         if (mActiveView != null) {
             //            animatorWeakReference = new WeakReference<>((ObjectAnimator) mActiveView.getTag(R.id.tag_animator));
             //            mRotateAnim = animatorWeakReference.get();
             mRotateAnim = (ObjectAnimator) mActiveView.getTag(R.id.tag_animator);
         }
-
+        
         //mProgress.setMax((int) MusicPlayer.mDuration());
-
-
+        
+        
         mAnimatorSet = new AnimatorSet();
         if (MusicPlayer.isPlaying()) {
             mProgress.removeCallbacks(mUpdateProgress);
@@ -669,7 +666,7 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 mAnimatorSet.play(mNeedleAnim).before(mRotateAnim);
                 mAnimatorSet.start();
             }
-
+    
         } else {
             mProgress.removeCallbacks(mUpdateProgress);
             mControl.setImageResource(R.drawable.play_rdi_btn_play);
@@ -677,83 +674,83 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                 mNeedleAnim.reverse();
                 mNeedleAnim.end();
             }
-
+    
             if (mRotateAnim != null && mRotateAnim.isRunning()) {
                 mRotateAnim.cancel();
                 float valueAvatar = (float) mRotateAnim.getAnimatedValue();
                 mRotateAnim.setFloatValues(valueAvatar, 360f + valueAvatar);
             }
         }
-
+        
         isNextOrPreSetPage = false;
         if (MusicPlayer.getQueuePosition() + 1 != mViewPager.getCurrentItem()) {
             mViewPager.setCurrentItem(MusicPlayer.getQueuePosition() + 1);
             isNextOrPreSetPage = true;
         }
-
+        
     }
-
+    
     @Override
     public void updateBuffer(int p) {
-        mProgress.setSecondaryProgress(p*10);
+        mProgress.setSecondaryProgress(p * 10);
     }
-
+    
     @Override
     public void loading(boolean l) {
         mProgress.setLoading(l);
     }
-
+    
     private Runnable mUpdateProgress = new Runnable() {
-
+        
         @Override
         public void run() {
-
+            
             if (mProgress != null) {
                 long position = MusicPlayer.position();
                 long duration = MusicPlayer.duration();
-                if (duration > 0 && duration < 627080716){
+                if (duration > 0 && duration < 627080716) {
                     mProgress.setProgress((int) (1000 * position / duration));
-                    mTimePlayed.setText(MusicUtils.makeTimeString( position ));
+                    mTimePlayed.setText(MusicUtils.makeTimeString(position));
                 }
-
+                
                 if (MusicPlayer.isPlaying()) {
                     mProgress.postDelayed(mUpdateProgress, 200);
-                }else {
+                } else {
                     mProgress.removeCallbacks(mUpdateProgress);
                 }
             }
         }
     };
-
+    
     private void setSeekBarListener() {
-
+        
         if (mProgress != null)
             mProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 int progress = 0;
-
+    
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     i = (int) (i * MusicPlayer.duration() / 1000);
                     mLrcView.seekTo(i, true, b);
                     if (b) {
-                        MusicPlayer.seek((long)i);
-                        mTimePlayed.setText(MusicUtils.makeTimeString( i ));
+                        MusicPlayer.seek((long) i);
+                        mTimePlayed.setText(MusicUtils.makeTimeString(i));
                     }
                 }
-
+    
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar) {
                 }
-
+    
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                 }
             });
     }
-
+    
     private void stopAnim() {
         mActiveView = null;
-
+        
         if (mRotateAnim != null) {
             mRotateAnim.end();
             mRotateAnim = null;
@@ -767,42 +764,42 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             mAnimatorSet = null;
         }
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
     }
-
+    
     @Override
     public void onStop() {
         super.onStop();
     }
-
+    
     @Override
     public void onDestroy() {
         super.onDestroy();
         mPlayHandler.removeCallbacksAndMessages(null);
         mPlayHandler.getLooper().quit();
         mPlayHandler = null;
-
+        
         mProgress.removeCallbacks(mUpdateProgress);
         stopAnim();
     }
-
+    
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         stopAnim();
         mProgress.removeCallbacks(mUpdateProgress);
     }
-
-
+    
+    
     public class PlaybarPagerTransformer implements ViewPager.PageTransformer {
-
-
+        
+        
         @Override
         public void transformPage(View view, float position) {
-
+            
             if (position == 0) {
                 if (MusicPlayer.isPlaying()) {
                     mRotateAnim = (ObjectAnimator) view.getTag(R.id.tag_animator);
@@ -812,9 +809,9 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                         mAnimatorSet.start();
                     }
                 }
-
+                
             } else if (position == -1 || position == -2 || position == 1) {
-
+                
                 mRotateAnim = (ObjectAnimator) view.getTag(R.id.tag_animator);
                 if (mRotateAnim != null) {
                     mRotateAnim.setFloatValues(0);
@@ -822,29 +819,29 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                     mRotateAnim = null;
                 }
             } else {
-
+                
                 if (mNeedleAnim != null) {
                     mNeedleAnim.reverse();
                     mNeedleAnim.end();
                 }
-
+                
                 mRotateAnim = (ObjectAnimator) view.getTag(R.id.tag_animator);
                 if (mRotateAnim != null) {
                     mRotateAnim.cancel();
                     float valueAvatar = (float) mRotateAnim.getAnimatedValue();
                     mRotateAnim.setFloatValues(valueAvatar, 360f + valueAvatar);
-
+    
                 }
             }
         }
-
+        
     }
-
-
+    
+    
     private class setBlurredAlbumArt extends AsyncTask<Void, Void, Drawable> {
-
+        
         long albumid = MusicPlayer.getCurrentAlbumId();
-
+        
         @Override
         protected Drawable doInBackground(Void... loadedImage) {
             lastAlbum = albumid;
@@ -867,11 +864,11 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                         .newBuilderWithSource(Uri.parse(getAlbumPath()))
                         .setProgressiveRenderingEnabled(true)
                         .build();
-
+    
                 ImagePipeline imagePipeline = Fresco.getImagePipeline();
                 DataSource<CloseableReference<CloseableImage>>
                         dataSource = imagePipeline.fetchDecodedImage(imageRequest, PlayingActivity.this);
-
+    
                 dataSource.subscribe(new BaseBitmapDataSubscriber() {
                                          @Override
                                          public void onNewResultImpl(@Nullable Bitmap bitmap) {
@@ -882,20 +879,20 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                                                  L.D(print, TAG, "getalbumpath bitmap success");
                                              }
                                          }
-
+        
                                          @Override
                                          public void onFailureImpl(DataSource dataSource) {
                                              // No cleanup required here.
                                              L.D(print, TAG, "getalbumpath bitmap failed");
                                              mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.placeholder_disk_210);
-
+            
                                          }
                                      },
                         CallerThreadExecutor.getInstance());
                 if (mBitmap != null) {
                     drawable = ImageUtils.createBlurredImageFromBitmap(mBitmap, PlayingActivity.this.getApplication(), 3);
                 }
-
+    
             } else {
                 try {
                     mBitmap = null;
@@ -920,77 +917,77 @@ public class PlayingActivity extends BaseActivity implements IConstants {
                     if (bitmap != null) {
                         drawable = ImageUtils.createBlurredImageFromBitmap(bitmap, PlayingActivity.this.getApplication(), 3);
                     }
-
+    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
+            
             return drawable;
         }
-
+        
         @Override
         protected void onPostExecute(Drawable result) {
-
+            
             if (albumid != MusicPlayer.getCurrentAlbumId()) {
                 this.cancel(true);
                 return;
             }
             setDrawable(result);
-
+            
         }
-
+        
     }
-
+    
     private void setDrawable(Drawable result) {
         if (result != null) {
             if (mBackAlbum.getDrawable() != null) {
                 final TransitionDrawable td =
                         new TransitionDrawable(new Drawable[]{mBackAlbum.getDrawable(), result});
-
-
+    
+    
                 mBackAlbum.setImageDrawable(td);
                 //去除过度绘制
                 td.setCrossFadeEnabled(true);
                 td.startTransition(200);
-
+    
             } else {
                 mBackAlbum.setImageDrawable(result);
             }
         }
     }
-
+    
     class FragmentAdapter extends FragmentStatePagerAdapter {
-
+        
         private int mChildCount = 0;
-
+        
         public FragmentAdapter(FragmentManager fm) {
             super(fm);
         }
-
+        
         @Override
         public Fragment getItem(int position) {
-
+            
             if (position == MusicPlayer.getQueue().length + 1 || position == 0) {
                 return RoundFragment.newInstance("");
             }
             // return RoundFragment.newInstance(MusicPlayer.getQueue()[position - 1]);
             return RoundFragment.newInstance(MusicPlayer.getAlbumPathAll()[position - 1]);
         }
-
+        
         @Override
         public int getCount() {
             //左右各加一个
             return MusicPlayer.getQueue().length + 2;
         }
-
-
+        
+        
         @Override
         public void notifyDataSetChanged() {
             mChildCount = getCount();
             super.notifyDataSetChanged();
         }
-
+        
         @Override
         public int getItemPosition(Object object) {
             if (mChildCount > 0) {
@@ -999,30 +996,30 @@ public class PlayingActivity extends BaseActivity implements IConstants {
             }
             return super.getItemPosition(object);
         }
-
+        
     }
-
+    
     public class MyScroller extends Scroller {
         private int animTime = VIEWPAGER_SCROLL_TIME;
-
+        
         public MyScroller(Context context) {
             super(context);
         }
-
+        
         public MyScroller(Context context, Interpolator interpolator) {
             super(context, interpolator);
         }
-
+        
         @Override
         public void startScroll(int startX, int startY, int dx, int dy, int duration) {
             super.startScroll(startX, startY, dx, dy, animTime);
         }
-
+        
         @Override
         public void startScroll(int startX, int startY, int dx, int dy) {
             super.startScroll(startX, startY, dx, dy, animTime);
         }
-
+        
         public void setmDuration(int animTime) {
             this.animTime = animTime;
         }
@@ -1056,33 +1053,33 @@ public class PlayingActivity extends BaseActivity implements IConstants {
 //            Looper.loop();
 //        }
 //    });
-
+    
     public class PlayMusic extends Thread {
-        public void run(){
-                if(Looper.myLooper() == null)
+        public void run() {
+            if (Looper.myLooper() == null)
                 Looper.prepare();
-                mPlayHandler = new Handler(){
-                    @Override
-                    public void handleMessage(Message msg) {
-                        super.handleMessage(msg);
-                            switch (msg.what){
-                                case PRE_MUSIC:
-                                    MusicPlayer.previous(PlayingActivity.this,true);
-                                    break;
-                                case NEXT_MUSIC:
-                                    MusicPlayer.next();
-                                    break;
-                                case 3:
-                                    MusicPlayer.setQueuePosition(msg.arg1);
-                                    break;
-                        }
+            mPlayHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    switch (msg.what) {
+                        case PRE_MUSIC:
+                            MusicPlayer.previous(PlayingActivity.this, true);
+                            break;
+                        case NEXT_MUSIC:
+                            MusicPlayer.next();
+                            break;
+                        case 3:
+                            MusicPlayer.setQueuePosition(msg.arg1);
+                            break;
                     }
-                };
-
-                Looper.loop();
-
+                }
+            };
+            
+            Looper.loop();
+            
         }
     }
-
-
+    
+    
 }

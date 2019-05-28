@@ -16,25 +16,25 @@ import java.util.List;
  */
 public class DefaultLrcParser implements ILrcParser {
     private static final DefaultLrcParser istance = new DefaultLrcParser();
-
+    
     public static final DefaultLrcParser getIstance() {
         return istance;
     }
-
+    
     private DefaultLrcParser() {
     }
-
+    
     /***
      * 将歌词文件里面的字符串 解析成一个List<LrcRow>
      */
     @Override
     public List<LrcRow> getLrcRows(String str) {
-
+    
         if (TextUtils.isEmpty(str)) {
             return null;
         }
         BufferedReader br = new BufferedReader(new StringReader(str));
-
+    
         List<LrcRow> lrcRows = new ArrayList<LrcRow>();
         String lrcLine;
         try {
@@ -62,8 +62,8 @@ public class DefaultLrcParser implements ILrcParser {
                 }
             }
         }
-
+    
         return lrcRows;
     }
-
+    
 }

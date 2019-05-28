@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (lrc_arrow) www.longdw.com
  */
 
@@ -37,7 +37,6 @@ public class SplashScreen {
      * 显示。
      *
      * @param imageResource 图片资源
-     * @param millis        停留时间，以毫秒为单位。
      * @param animation     消失时的动画效果，取值可以是：SplashScreen.SLIDE_LEFT, SplashScreen.SLIDE_UP, SplashScreen.FADE
      */
     public void show(final int imageResource, final int animation) {

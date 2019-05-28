@@ -472,11 +472,7 @@ public class ConverPinYin {
     }
 
     private static boolean validate(String cnStr) {
-        if (cnStr == null || cnStr.trim().equals("")) {
-            return false;
-        } else {
-            return true;
-        }
+        return cnStr != null && !cnStr.trim().equals("");
     }
 
     public static String getFullSpell(String cnStr) {
@@ -523,11 +519,11 @@ public class ConverPinYin {
         }
         return retuBuf.toString();
     }
-
-	/*
+    
+    /*
      * public static void main(String args[]) { String str = "���뺺��";
-	 * System.out.println(ConverPinYin.getFullSpell(str));
-	 * System.out.println(ConverPinYin.getFirstSpell(str));
-	 * //ConverPinYin.getFirstSpell(str) ConverPinYin.getFullSpell(str); }
-	 */
+     * System.out.println(ConverPinYin.getFullSpell(str));
+     * System.out.println(ConverPinYin.getFirstSpell(str));
+     * //ConverPinYin.getFirstSpell(str) ConverPinYin.getFullSpell(str); }
+     */
 }

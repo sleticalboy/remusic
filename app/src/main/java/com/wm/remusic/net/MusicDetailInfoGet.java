@@ -11,13 +11,13 @@ public class MusicDetailInfoGet implements Runnable {
     String id;
     int p;
     SparseArray<MusicDetailInfo> arrayList;
-
+    
     public MusicDetailInfoGet(String id, int position, SparseArray<MusicDetailInfo> arrayList) {
         this.id = id;
         p = position;
         this.arrayList = arrayList;
     }
-
+    
     @Override
     public void run() {
         try {
@@ -31,7 +31,7 @@ public class MusicDetailInfoGet implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-
+    
         }
     }
 }

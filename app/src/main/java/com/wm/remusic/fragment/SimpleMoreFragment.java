@@ -41,20 +41,20 @@ import java.util.List;
  * Created by wm on 2016/1/31.
  */
 public class SimpleMoreFragment extends AttachDialogFragment {
-
+    
     private double heightPercent = 0.5;
     private TextView topTitle;
     private MusicFlowAdapter musicflowAdapter;
     private MusicInfo adapterMusicInfo;
-
+    
     //弹出的activity列表
     private List<OverFlowItem> mlistInfo = new ArrayList<>();  //声明一个list，动态存储要显示的信息
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private long args;
     private String musicName;
-
-
+    
+    
     public static SimpleMoreFragment newInstance(long id) {
         SimpleMoreFragment fragment = new SimpleMoreFragment();
         Bundle args = new Bundle();
@@ -62,12 +62,12 @@ public class SimpleMoreFragment extends AttachDialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
-
+    
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        
         //设置无标题
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         //设置从底部弹出
@@ -81,8 +81,8 @@ public class SimpleMoreFragment extends AttachDialogFragment {
         }
         //布局
         View view = inflater.inflate(R.layout.more_fragment, container);
-        topTitle = (TextView) view.findViewById(R.id.pop_list_title);
-        recyclerView = (RecyclerView) view.findViewById(R.id.pop_list);
+        topTitle = view.findViewById(R.id.pop_list_title);
+        recyclerView = view.findViewById(R.id.pop_list);
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -91,15 +91,15 @@ public class SimpleMoreFragment extends AttachDialogFragment {
         setItemDecoration();
         return view;
     }
-
+    
     //设置分割线
     private void setItemDecoration() {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
-
+    
     private void getList() {
-
+        
         long musicId = args;
         adapterMusicInfo = MusicUtils.getMusicInfo(mContext, musicId);
         musicName = adapterMusicInfo.musicName;
@@ -109,9 +109,9 @@ public class SimpleMoreFragment extends AttachDialogFragment {
         topTitle.setText("歌曲：" + " " + musicName);
         setMusicInfo();
         musicflowAdapter = new MusicFlowAdapter(mContext, mlistInfo, adapterMusicInfo);
-
+        
     }
-
+    
     private void setClick() {
         if (musicflowAdapter != null) {
             musicflowAdapter.setOnItemClickListener(new MusicFlowAdapter.OnRecyclerViewItemClickListener() {
@@ -125,7 +125,7 @@ public class SimpleMoreFragment extends AttachDialogFragment {
                                     public void run() {
                                         if (adapterMusicInfo.songId == MusicPlayer.getCurrentAudioId())
                                             return;
-
+    
                                         long[] ids = new long[1];
                                         ids[0] = adapterMusicInfo.songId;
                                         HashMap<Long, MusicInfo> map = new HashMap<Long, MusicInfo>();
@@ -134,8 +134,8 @@ public class SimpleMoreFragment extends AttachDialogFragment {
                                     }
                                 }, 100);
                             }
-
-
+    
+    
                             dismiss();
                             break;
                         case 1:
@@ -156,7 +156,7 @@ public class SimpleMoreFragment extends AttachDialogFragment {
                                         setPositiveButton(getResources().getString(R.string.sure), new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-
+    
                                                 Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, adapterMusicInfo.songId);
                                                 mContext.getContentResolver().delete(uri, null, null);
                                                 if (MusicPlayer.getCurrentAudioId() == adapterMusicInfo.songId) {
@@ -165,9 +165,9 @@ public class SimpleMoreFragment extends AttachDialogFragment {
                                                     } else {
                                                         MusicPlayer.next();
                                                     }
-
+    
                                                 }
-
+    
                                                 HandlerUtil.getInstance(mContext).postDelayed(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -194,7 +194,7 @@ public class SimpleMoreFragment extends AttachDialogFragment {
                                             }
                                         }).show();
                             }
-
+    
                             dismiss();
                             break;
                         case 4:
@@ -218,7 +218,7 @@ public class SimpleMoreFragment extends AttachDialogFragment {
                                             }
                                         }).show();
                             }
-
+    
                             break;
                         case 5:
                             MusicDetailFragment detailFrament = MusicDetailFragment.newInstance(adapterMusicInfo);
@@ -232,9 +232,9 @@ public class SimpleMoreFragment extends AttachDialogFragment {
             });
             recyclerView.setAdapter(musicflowAdapter);
         }
-
+        
     }
-
+    
     //设置音乐overflow条目
     private void setMusicInfo() {
         //设置mlistInfo，listview要显示的内容
@@ -245,28 +245,27 @@ public class SimpleMoreFragment extends AttachDialogFragment {
         setInfo("设为铃声", R.drawable.lay_icn_ring);
         setInfo("查看歌曲信息", R.drawable.lay_icn_document);
     }
-
-
+    
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.CustomDatePickerDialog);
     }
-
+    
     @Override
     public void onStart() {
         super.onStart();
         //设置fragment高度 、宽度
         int dialogHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * heightPercent);
-        ;
-//        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        //        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 //        Display display = wm.getDefaultDisplay();
 //        int height = display.getHeight();
         getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, dialogHeight);
         getDialog().setCanceledOnTouchOutside(true);
-
+        
     }
-
+    
     //为info设置数据，并放入mlistInfo
     public void setInfo(String title, int id) {
         // mlistInfo.clear();
@@ -275,6 +274,6 @@ public class SimpleMoreFragment extends AttachDialogFragment {
         information.setAvatar(id);
         mlistInfo.add(information); //将新的info对象加入到信息列表中
     }
-
-
+    
+    
 }

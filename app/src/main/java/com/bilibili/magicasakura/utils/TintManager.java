@@ -44,25 +44,25 @@ import java.util.WeakHashMap;
  * @time 15/9/15
  */
 public class TintManager {
-
+    
     private static final String TAG = "TintManager";
     private static final boolean DEBUG = false;
     private static final PorterDuff.Mode DEFAULT_MODE = PorterDuff.Mode.SRC_IN;
     private static final String SKIP_DRAWABLE_TAG = "appcompat_skip_skip";
-
+    
     private static final WeakHashMap<Context, TintManager> INSTANCE_CACHE = new WeakHashMap<>();
     private static final ColorFilterLruCache COLOR_FILTER_CACHE = new ColorFilterLruCache(6);
-
+    
     private final Object mDrawableCacheLock = new Object();
-
+    
     private WeakReference<Context> mContextRef;
     private SparseArray<ColorStateList> mCacheTintList;
     private SparseArray<WeakReference<Drawable.ConstantState>> mCacheDrawables;
     private SparseArray<String> mSkipDrawableIdTags;
-
+    
     public static TintManager get(Context context) {
         if (context == null) return null;
-
+        
         if (context instanceof ContextThemeWrapper) {
             context = ((ContextThemeWrapper) context).getBaseContext();
         }
@@ -77,11 +77,11 @@ public class TintManager {
         }
         return tm;
     }
-
+    
     private TintManager(Context context) {
         mContextRef = new WeakReference<>(context);
     }
-
+    
     public static void clearTintCache() {
         for (Map.Entry<Context, TintManager> entry : INSTANCE_CACHE.entrySet()) {
             TintManager tm = entry.getValue();
@@ -90,7 +90,7 @@ public class TintManager {
         }
         COLOR_FILTER_CACHE.evictAll();
     }
-
+    
     private void clear() {
         if (mCacheTintList != null) {
             mCacheTintList.clear();
@@ -102,14 +102,14 @@ public class TintManager {
             mSkipDrawableIdTags.clear();
         }
     }
-
+    
     @Nullable
     public ColorStateList getColorStateList(@ColorRes int resId) {
         if (resId == 0) return null;
-
+        
         final Context context = mContextRef.get();
         if (context == null) return null;
-
+        
         ColorStateList colorStateList = mCacheTintList != null ? mCacheTintList.get(resId) : null;
         if (colorStateList == null) {
             colorStateList = ColorStateListUtils.createColorStateList(context, resId);
@@ -122,12 +122,12 @@ public class TintManager {
         }
         return colorStateList;
     }
-
+    
     @Nullable
     public Drawable getDrawable(@DrawableRes int resId) {
         final Context context = mContextRef.get();
         if (context == null) return null;
-
+        
         if (resId == 0) return null;
         if (mSkipDrawableIdTags != null) {
             final String cachedTagName = mSkipDrawableIdTags.get(resId);
@@ -139,7 +139,7 @@ public class TintManager {
             // Create an id cache as we'll need one later
             mSkipDrawableIdTags = new SparseArray<>();
         }
-
+        
         // Try the cache first (if it exists)
         Drawable drawable = getCacheDrawable(context, resId);
         if (drawable == null) {
@@ -151,17 +151,17 @@ public class TintManager {
                 }
             }
         }
-
+        
         if (drawable == null) {
             mSkipDrawableIdTags.append(resId, SKIP_DRAWABLE_TAG);
         }
         return drawable;
     }
-
+    
     private Drawable getCacheDrawable(@NonNull final Context context, final int key) {
         synchronized (mDrawableCacheLock) {
             if (mCacheDrawables == null) return null;
-
+    
             final WeakReference<Drawable.ConstantState> weakReference = mCacheDrawables.get(key);
             if (weakReference != null) {
                 Drawable.ConstantState cs = weakReference.get();
@@ -176,7 +176,7 @@ public class TintManager {
         }
         return null;
     }
-
+    
     private boolean addCachedDrawable(final int key, @NonNull final Drawable drawable) {
         if (drawable instanceof FilterableStateListDrawable) {
             return false;
@@ -193,21 +193,21 @@ public class TintManager {
         }
         return false;
     }
-
+    
     private static class ColorFilterLruCache extends LruCache<Integer, PorterDuffColorFilter> {
-
+        
         public ColorFilterLruCache(int maxSize) {
             super(maxSize);
         }
-
+        
         PorterDuffColorFilter get(int color, PorterDuff.Mode mode) {
             return get(generateCacheKey(color, mode));
         }
-
+        
         PorterDuffColorFilter put(int color, PorterDuff.Mode mode, PorterDuffColorFilter filter) {
             return put(generateCacheKey(color, mode), filter);
         }
-
+        
         private static int generateCacheKey(int color, PorterDuff.Mode mode) {
             int hashCode = 1;
             hashCode = 31 * hashCode + color;
@@ -215,11 +215,11 @@ public class TintManager {
             return hashCode;
         }
     }
-
+    
     public static void tintViewBackground(View view, TintInfo tint) {
         Drawable background;
         if (view == null || (background = view.getBackground()) == null) return;
-
+        
         if (tint.mHasTintList || tint.mHasTintMode) {
             background.mutate();
             if (background instanceof ColorDrawable) {
@@ -233,14 +233,14 @@ public class TintManager {
         } else {
             background.clearColorFilter();
         }
-
+        
         if (Build.VERSION.SDK_INT <= 23) {
             // On Gingerbread, GradientDrawable does not invalidate itself when it's ColorFilter
             // has changed, so we need to force an invalidation
             background.invalidateSelf();
         }
     }
-
+    
     public static void tintViewDrawable(View view, Drawable drawable, TintInfo tint) {
         if (view == null || drawable == null) return;
         if (tint.mHasTintList || tint.mHasTintMode) {
@@ -256,14 +256,14 @@ public class TintManager {
         } else {
             drawable.clearColorFilter();
         }
-
+        
         if (Build.VERSION.SDK_INT <= 23) {
             // On Gingerbread, GradientDrawable does not invalidate itself when it's ColorFilter
             // has changed, so we need to force an invalidation
             drawable.invalidateSelf();
         }
     }
-
+    
     private static PorterDuffColorFilter createTintFilter(Context context, ColorStateList tint, PorterDuff.Mode tintMode, final int[] state) {
         if (tint == null || tintMode == null) {
             return null;
@@ -271,20 +271,20 @@ public class TintManager {
         final int color = ThemeUtils.replaceColor(context, tint.getColorForState(state, tint.getDefaultColor()));
         return getPorterDuffColorFilter(color, tintMode);
     }
-
+    
     private static PorterDuffColorFilter getPorterDuffColorFilter(int color, PorterDuff.Mode mode) {
         // First, lets see if the cache already contains the color filter
         PorterDuffColorFilter filter = COLOR_FILTER_CACHE.get(color, mode);
-
+        
         if (filter == null) {
             // Cache miss, so create a color filter and add it to the cache
             filter = new PorterDuffColorFilter(color, mode);
             COLOR_FILTER_CACHE.put(color, mode, filter);
         }
-
+        
         return filter;
     }
-
+    
     private static void printLog(String msg) {
         if (DEBUG) {
             Log.i(TAG, msg);

@@ -38,7 +38,7 @@ import java.util.HashMap;
  * Created by wm on 2016/2/4.
  */
 public class PlayQueueFragment extends AttachDialogFragment {
-
+    
     private RecyclerView.ItemDecoration itemDecoration;
     private PlaylistAdapter adapter;
     private ArrayList<MusicInfo> playlist;
@@ -50,14 +50,15 @@ public class PlayQueueFragment extends AttachDialogFragment {
     private LinearLayoutManager layoutManager;
     private Handler mHandler;
     private PlayQuueuListener mQueueListener;
-    public interface PlayQuueuListener{
+    
+    public interface PlayQuueuListener {
         void onPlay(int position);
     }
-
-    public void setQueueListener(PlayQuueuListener listener){
+    
+    public void setQueueListener(PlayQuueuListener listener) {
         mQueueListener = listener;
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +67,13 @@ public class PlayQueueFragment extends AttachDialogFragment {
         musicPlaybackState = MusicPlaybackState.getInstance(mContext);
         mHandler = HandlerUtil.getInstance(mContext);
     }
-
+    
     @Override
     public void onStop() {
         super.onStop();
-
+        
     }
-
+    
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,23 +85,23 @@ public class PlayQueueFragment extends AttachDialogFragment {
         params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         getDialog().getWindow().setAttributes(params);
-
-
+        
+        
         View view = inflater.inflate(R.layout.fragment_queue, container);
-
+        
         //布局
-        playlistNumber = (TextView) view.findViewById(R.id.play_list_number);
-        addToPlaylist = (TextView) view.findViewById(R.id.playlist_addto);
-        clearAll = (TextView) view.findViewById(R.id.playlist_clear_all);
-
+        playlistNumber = view.findViewById(R.id.play_list_number);
+        addToPlaylist = view.findViewById(R.id.playlist_addto);
+        clearAll = view.findViewById(R.id.playlist_clear_all);
+        
         addToPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AddNetPlaylistDialog.newInstance(playlist).show(getFragmentManager(), "add");
             }
         });
-
-
+        
+        
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,14 +117,14 @@ public class PlayQueueFragment extends AttachDialogFragment {
                 dismiss();
             }
         });
-        recyclerView = (RecyclerView) view.findViewById(R.id.play_list);
+        recyclerView = view.findViewById(R.id.play_list);
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         new loadSongs().execute();
         return view;
     }
-
+    
     @Override
     public void onStart() {
         super.onStart();
@@ -131,13 +132,13 @@ public class PlayQueueFragment extends AttachDialogFragment {
         int dialogHeight = (int) (mContext.getResources().getDisplayMetrics().heightPixels * 0.6);
         getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, dialogHeight);
         getDialog().setCanceledOnTouchOutside(true);
-
+        
     }
-
+    
     private String readTextFromSDcard(InputStream is) throws Exception {
         InputStreamReader reader = new InputStreamReader(is);
         BufferedReader bufferedReader = new BufferedReader(reader);
-        StringBuffer buffer = new StringBuffer("");
+        StringBuffer buffer = new StringBuffer();
         String str;
         while ((str = bufferedReader.readLine()) != null) {
             buffer.append(str);
@@ -145,10 +146,10 @@ public class PlayQueueFragment extends AttachDialogFragment {
         }
         return buffer.toString();
     }
-
+    
     //异步加载recyclerview界面
     private class loadSongs extends AsyncTask<Void, Void, Void> {
-
+        
         @Override
         protected Void doInBackground(Void... params) {
             if (mContext != null) {
@@ -166,15 +167,15 @@ public class PlayQueueFragment extends AttachDialogFragment {
                             playlist.add(play.get(queue[i]));
                         }
                     }
-
+    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
+    
             }
             return null;
         }
-
+        
         @Override
         protected void onPostExecute(Void result) {
             if (playlist != null && playlist.size() > 0) {
@@ -183,37 +184,37 @@ public class PlayQueueFragment extends AttachDialogFragment {
                 itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
                 recyclerView.addItemDecoration(itemDecoration);
                 playlistNumber.setText("播放列表（" + playlist.size() + "）");
-
+    
                 for (int i = 0; i < playlist.size(); i++) {
                     MusicInfo info = playlist.get(i);
-
+        
                     if (info != null && MusicPlayer.getCurrentAudioId() == info.songId) {
                         recyclerView.scrollToPosition(i);
                     }
                 }
-
+    
             }
-
+            
         }
-
+        
     }
-
+    
     class PlaylistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private ArrayList<MusicInfo> playlist = new ArrayList<>();
-
+        
         public PlaylistAdapter(ArrayList<MusicInfo> list) {
             playlist = list;
         }
-
+        
         public void updateDataSet(ArrayList<MusicInfo> list) {
             this.playlist = list;
         }
-
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             return new ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.fragment_playqueue_item, viewGroup, false));
         }
-
+        
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             musicInfo = playlist.get(position);
@@ -230,38 +231,38 @@ public class PlayQueueFragment extends AttachDialogFragment {
             } else {
                 ((ItemViewHolder) holder).playstate.setVisibility(View.GONE);
             }
-
+            
         }
-
+        
         @Override
         public int getItemCount() {
             return playlist == null ? 0 : playlist.size();
         }
-
-
+        
+        
         class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             ImageView delete;
             TextView MusicName, Artist;
             TintImageView playstate;
-
+            
             public ItemViewHolder(View itemView) {
                 super(itemView);
-                this.playstate = (TintImageView) itemView.findViewById(R.id.play_state);
-                this.delete = (ImageView) itemView.findViewById(R.id.play_list_delete);
-                this.MusicName = (TextView) itemView.findViewById(R.id.play_list_musicname);
-                this.Artist = (TextView) itemView.findViewById(R.id.play_list_artist);
+                this.playstate = itemView.findViewById(R.id.play_state);
+                this.delete = itemView.findViewById(R.id.play_list_delete);
+                this.MusicName = itemView.findViewById(R.id.play_list_musicname);
+                this.Artist = itemView.findViewById(R.id.play_list_artist);
                 itemView.setOnClickListener(this);
-
+                
                 this.delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         int a = getAdapterPosition();
                         long deleteId = playlist.get(a).songId;
-
+    
                         // musicPlaybackState.Delete(deleteId);
                         notifyItemRemoved(a);
                         MusicPlayer.removeTrack(deleteId);
-
+    
                         updateDataSet(QueueLoader.getQueueSongs(mContext));
                         if (playlist == null) {
                             MusicPlayer.stop();
@@ -275,15 +276,15 @@ public class PlayQueueFragment extends AttachDialogFragment {
                         } else {
                             playlistNumber.setText("播放列表");
                         }
-
+    
                     }
                 });
-
+                
             }
-
+            
             @Override
             public void onClick(View v) {
-
+                
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -294,19 +295,19 @@ public class PlayQueueFragment extends AttachDialogFragment {
                         long[] ids = new long[1];
                         ids[0] = playlist.get(a).songId;
                         MusicPlayer.setQueuePosition(a);
-
-                        if(mQueueListener != null)
-                        mQueueListener.onPlay(a);
-
+    
+                        if (mQueueListener != null)
+                            mQueueListener.onPlay(a);
+                        
                         notifyItemChanged(currentlyPlayingPosition);
                         notifyItemChanged(a);
                     }
                 }, 70);
-
+                
             }
         }
-
+        
     }
-
-
+    
+    
 }

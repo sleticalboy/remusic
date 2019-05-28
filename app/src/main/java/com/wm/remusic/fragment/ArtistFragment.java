@@ -57,8 +57,8 @@ public class ArtistFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recylerview, container, false);
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+    
+        recyclerView = view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         //fastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
@@ -69,8 +69,8 @@ public class ArtistFragment extends BaseFragment {
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         setItemDecoration();
         isAZSort = mPreferences.getArtistSortOrder().equals(SortOrder.ArtistSortOrder.ARTIST_A_Z);
-        dialogText = (TextView) view.findViewById(R.id.dialog_text);
-        sideBar = (SideBar) view.findViewById(R.id.sidebar);
+        dialogText = view.findViewById(R.id.dialog_text);
+        sideBar = view.findViewById(R.id.sidebar);
         sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
             @Override
             public void onTouchingLetterChanged(String s) {
@@ -239,7 +239,7 @@ public class ArtistFragment extends BaseFragment {
             }
 
             //lastFm api加载歌手图片
-            LastFmClient.getInstance(mContext).getArtistInfo(new ArtistQuery(model.artist_name.toString()), new ArtistInfoListener() {
+            LastFmClient.getInstance(mContext).getArtistInfo(new ArtistQuery(model.artist_name), new ArtistInfoListener() {
                 @Override
                 public void artistInfoSucess(LastfmArtist artist) {
                     if (artist != null && artist.mArtwork != null) {
@@ -271,10 +271,10 @@ public class ArtistFragment extends BaseFragment {
 
             ListItemViewHolder(View view) {
                 super(view);
-                this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
-                this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
-                this.draweeView = (SimpleDraweeView) view.findViewById(R.id.viewpager_list_img);
-                this.moreOverflow = (TintImageView) view.findViewById(R.id.viewpager_list_button);
+                this.mainTitle = view.findViewById(R.id.viewpager_list_toptext);
+                this.title = view.findViewById(R.id.viewpager_list_bottom_text);
+                this.draweeView = view.findViewById(R.id.viewpager_list_img);
+                this.moreOverflow = view.findViewById(R.id.viewpager_list_button);
 
                 //弹出frament菜单
                 this.moreOverflow.setOnClickListener(new View.OnClickListener() {
@@ -293,7 +293,7 @@ public class ArtistFragment extends BaseFragment {
             //加载歌手专辑界面fragment
             @Override
             public void onClick(View v) {
-                if(getAdapterPosition() != -1){
+                if (getAdapterPosition() != -1) {
                     FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
                     ArtistDetailFragment fragment = ArtistDetailFragment.newInstance(mList.get(getAdapterPosition()).artist_id);
                     transaction.hide(((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentById(R.id.tab_container));

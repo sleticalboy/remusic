@@ -1,6 +1,5 @@
 package com.wm.remusic.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,13 +21,13 @@ public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private MusicInfo musicInfo;
     private Context mContext;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
-
+    
     public MusicFlowAdapter(Context context, List<OverFlowItem> list, MusicInfo info) {
         mList = list;
         musicInfo = info;
         mContext = context;
     }
-
+    
     @Override
     public void onClick(View v) {
         if (mOnItemClickListener != null) {
@@ -36,11 +35,11 @@ public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             mOnItemClickListener.onItemClick(v, (String) v.getTag());
         }
     }
-
+    
     public void setOnItemClickListener(OnRecyclerViewItemClickListener listener) {
         this.mOnItemClickListener = listener;
     }
-
+    
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.music_flow_layout, parent, false);
@@ -49,7 +48,7 @@ public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         view.setOnClickListener(this);
         return vh;
     }
-
+    
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         OverFlowItem minfo = mList.get(position);
@@ -58,31 +57,31 @@ public class MusicFlowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ((ListItemViewHolder) holder).title.setText(minfo.getTitle());
         //设置tag
         ((ListItemViewHolder) holder).itemView.setTag(position + "");
-
+        
     }
-
+    
     @Override
     public int getItemCount() {
         return mList.size();
     }
-
+    
     //定义接口
     public interface OnRecyclerViewItemClickListener {
         void onItemClick(View view, String data);
     }
-
+    
     public class ListItemViewHolder extends RecyclerView.ViewHolder {
         TintImageView icon;
         TextView title;
-
+        
         ListItemViewHolder(View view) {
             super(view);
-            this.icon = (TintImageView) view.findViewById(R.id.pop_list_view);
-            this.title = (TextView) view.findViewById(R.id.pop_list_item);
-
+            this.icon = view.findViewById(R.id.pop_list_view);
+            this.title = view.findViewById(R.id.pop_list_item);
+            
         }
-
-
+        
+        
     }
-
+    
 }

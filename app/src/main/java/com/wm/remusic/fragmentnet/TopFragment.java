@@ -15,12 +15,12 @@ import com.wm.remusic.R;
  */
 public class TopFragment extends Fragment {
     private WebView webView;
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_top, container, false);
-
-        webView = (WebView) view.findViewById(R.id.webview);
+        
+        webView = view.findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setUserAgentString("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36");
         webView.setWebViewClient(new WebViewClient() {
@@ -31,7 +31,7 @@ public class TopFragment extends Fragment {
             }
         });
         webView.loadUrl("http://music.163.com/#/discover/toplist?id=19723756");
-
+        
         return view;
     }
 }

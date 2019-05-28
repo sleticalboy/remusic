@@ -1,18 +1,18 @@
 /*
-* Copyright (C) 2014 The CyanogenMod Project
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright (C) 2014 The CyanogenMod Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.wm.remusic.recent;
 
@@ -47,10 +47,10 @@ public class SongPlayCount {
     private MusicDB mMusicDatabase = null;
     // number of weeks since epoch time
     private int mNumberOfWeeksSinceEpoch;
-
+    
     // used to track if we've walkd through the db and updated all the rows
     private boolean mDatabaseUpdated;
-
+    
     /**
      * Constructor of <code>RecentStore</code>
      *
@@ -58,13 +58,13 @@ public class SongPlayCount {
      */
     public SongPlayCount(final Context context) {
         mMusicDatabase = MusicDB.getInstance(context);
-
+    
         long msSinceEpoch = System.currentTimeMillis();
         mNumberOfWeeksSinceEpoch = (int) (msSinceEpoch / ONE_WEEK_IN_MS);
-
+    
         mDatabaseUpdated = false;
     }
-
+    
     /**
      * @param context The {@link Context} to use
      * @return A new instance of this class.
@@ -75,7 +75,7 @@ public class SongPlayCount {
         }
         return sInstance;
     }
-
+    
     /**
      * Calculates the score of the song given the play counts
      *
@@ -87,15 +87,15 @@ public class SongPlayCount {
         if (playCounts == null) {
             return 0;
         }
-
+    
         float score = 0;
         for (int i = 0; i < Math.min(playCounts.length, NUM_WEEKS); i++) {
             score += playCounts[i] * getScoreMultiplierForWeek(i);
         }
-
+    
         return score;
     }
-
+    
     /**
      * Gets the column name for each week #
      *
@@ -103,9 +103,9 @@ public class SongPlayCount {
      * @return the column name
      */
     private static String getColumnNameForWeek(final int week) {
-        return SongPlayCountColumns.WEEK_PLAY_COUNT + String.valueOf(week);
+        return SongPlayCountColumns.WEEK_PLAY_COUNT + week;
     }
-
+    
     /**
      * Gets the score multiplier for each week
      *
@@ -116,7 +116,7 @@ public class SongPlayCount {
         return sInterpolator.getInterpolation(1 - (week / (float) NUM_WEEKS)) * INTERPOLATOR_HEIGHT
                 + INTERPOLATOR_BASE;
     }
-
+    
     /**
      * For some performance gain, return a static value for the column index for a week
      * WARNIGN: This function assumes you have selected all columns for it to work
@@ -128,7 +128,7 @@ public class SongPlayCount {
         // ID, followed by the weeks columns
         return 1 + week;
     }
-
+    
     public void onCreate(final SQLiteDatabase db) {
         // create the play count table
         // WARNING: If you change the order of these columns
@@ -139,31 +139,31 @@ public class SongPlayCount {
         builder.append("(");
         builder.append(SongPlayCountColumns.ID);
         builder.append(" INT UNIQUE,");
-
+        
         for (int i = 0; i < NUM_WEEKS; i++) {
             builder.append(getColumnNameForWeek(i));
             builder.append(" INT DEFAULT 0,");
         }
-
+        
         builder.append(SongPlayCountColumns.LAST_UPDATED_WEEK_INDEX);
         builder.append(" INT NOT NULL,");
-
+        
         builder.append(SongPlayCountColumns.PLAYCOUNTSCORE);
         builder.append(" REAL DEFAULT 0);");
-
+        
         db.execSQL(builder.toString());
     }
-
+    
     public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
         // No upgrade path needed yet
     }
-
+    
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // If we ever have downgrade, drop the table to be safe
         db.execSQL("DROP TABLE IF EXISTS " + SongPlayCountColumns.NAME);
         onCreate(db);
     }
-
+    
     /**
      * Increases the play count of a song by 1
      *
@@ -173,11 +173,11 @@ public class SongPlayCount {
         if (songId < 0) {
             return;
         }
-
+    
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         updateExistingRow(database, songId, true);
     }
-
+    
     /**
      * This creates a new entry that indicates a song has been played once as well as its score
      *
@@ -188,16 +188,16 @@ public class SongPlayCount {
         // no row exists, create a new one
         float newScore = getScoreMultiplierForWeek(0);
         int newPlayCount = 1;
-
+    
         final ContentValues values = new ContentValues(3);
         values.put(SongPlayCountColumns.ID, songId);
         values.put(SongPlayCountColumns.PLAYCOUNTSCORE, newScore);
         values.put(SongPlayCountColumns.LAST_UPDATED_WEEK_INDEX, mNumberOfWeeksSinceEpoch);
         values.put(getColumnNameForWeek(0), newPlayCount);
-
+    
         database.insert(SongPlayCountColumns.NAME, null, values);
     }
-
+    
     /**
      * This function will take a song entry and update it to the latest week and increase the count
      * for the current week by 1 if necessary
@@ -208,21 +208,21 @@ public class SongPlayCount {
      */
     private void updateExistingRow(final SQLiteDatabase database, final long id, boolean bumpCount) {
         String stringId = String.valueOf(id);
-
+    
         // begin the transaction
         database.beginTransaction();
-
+    
         // get the cursor of this content inside the transaction
         final Cursor cursor = database.query(SongPlayCountColumns.NAME, null, WHERE_ID_EQUALS,
                 new String[]{stringId}, null, null, null);
-
+    
         // if we have a result
         if (cursor != null && cursor.moveToFirst()) {
             // figure how many weeks since we last updated
             int lastUpdatedIndex = cursor.getColumnIndex(SongPlayCountColumns.LAST_UPDATED_WEEK_INDEX);
             int lastUpdatedWeek = cursor.getInt(lastUpdatedIndex);
             int weekDiff = mNumberOfWeeksSinceEpoch - lastUpdatedWeek;
-
+    
             // if it's more than the number of weeks we track, delete it and create a new entry
             if (Math.abs(weekDiff) >= NUM_WEEKS) {
                 // this entry needs to be dropped since it is too outdated
@@ -233,7 +233,7 @@ public class SongPlayCount {
             } else if (weekDiff != 0) {
                 // else, shift the weeks
                 int[] playCounts = new int[NUM_WEEKS];
-
+    
                 if (weekDiff > 0) {
                     // time is shifted forwards
                     for (int i = 0; i < NUM_WEEKS - weekDiff; i++) {
@@ -242,7 +242,7 @@ public class SongPlayCount {
                 } else if (weekDiff < 0) {
                     // time is shifted backwards (by user) - nor typical behavior but we
                     // will still handle it
-
+        
                     // since weekDiff is -ve, NUM_WEEKS + weekDiff is the real # of weeks we have to
                     // transfer.  Then we transfer the old week i - weekDiff to week i
                     // for example if the user shifted back 2 weeks, ie -2, then for 0 to
@@ -251,14 +251,14 @@ public class SongPlayCount {
                         playCounts[i] = cursor.getInt(getColumnIndexForWeek(i - weekDiff));
                     }
                 }
-
+    
                 // bump the count
                 if (bumpCount) {
                     playCounts[0]++;
                 }
-
+    
                 float score = calculateScore(playCounts);
-
+    
                 // if the score is non-existant, then delete it
                 if (score < .01f) {
                     deleteEntry(database, stringId);
@@ -267,11 +267,11 @@ public class SongPlayCount {
                     ContentValues values = new ContentValues(NUM_WEEKS + 2);
                     values.put(SongPlayCountColumns.LAST_UPDATED_WEEK_INDEX, mNumberOfWeeksSinceEpoch);
                     values.put(SongPlayCountColumns.PLAYCOUNTSCORE, score);
-
+    
                     for (int i = 0; i < NUM_WEEKS; i++) {
                         values.put(getColumnNameForWeek(i), playCounts[i]);
                     }
-
+    
                     // update the entry
                     database.update(SongPlayCountColumns.NAME, values, WHERE_ID_EQUALS,
                             new String[]{stringId});
@@ -279,35 +279,35 @@ public class SongPlayCount {
             } else if (bumpCount) {
                 // else no shifting, just update the scores
                 ContentValues values = new ContentValues(2);
-
+    
                 // increase the score by a single score amount
                 int scoreIndex = cursor.getColumnIndex(SongPlayCountColumns.PLAYCOUNTSCORE);
                 float score = cursor.getFloat(scoreIndex) + getScoreMultiplierForWeek(0);
                 values.put(SongPlayCountColumns.PLAYCOUNTSCORE, score);
-
+    
                 // increase the play count by 1
                 values.put(getColumnNameForWeek(0), cursor.getInt(getColumnIndexForWeek(0)) + 1);
-
+    
                 // update the entry
                 database.update(SongPlayCountColumns.NAME, values, WHERE_ID_EQUALS,
                         new String[]{stringId});
             }
-
+    
             cursor.close();
         } else if (bumpCount) {
             // if we have no existing results, create a new one
             createNewPlayedEntry(database, id);
         }
-
+    
         database.setTransactionSuccessful();
         database.endTransaction();
     }
-
+    
     public void deleteAll() {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         database.delete(SongPlayCountColumns.NAME, null, null);
     }
-
+    
     /**
      * Gets a cursor containing the top songs played.  Note this only returns songs that have been
      * played at least once in the past NUM_WEEKS
@@ -317,13 +317,13 @@ public class SongPlayCount {
      */
     public Cursor getTopPlayedResults(int numResults) {
         updateResults();
-
+    
         final SQLiteDatabase database = mMusicDatabase.getReadableDatabase();
         return database.query(SongPlayCountColumns.NAME, new String[]{SongPlayCountColumns.ID},
                 null, null, null, null, SongPlayCountColumns.PLAYCOUNTSCORE + " DESC",
                 (numResults <= 0 ? null : String.valueOf(numResults)));
     }
-
+    
     /**
      * Given a list of ids, it sorts the results based on the most played results
      *
@@ -332,31 +332,31 @@ public class SongPlayCount {
      */
     public long[] getTopPlayedResultsForList(long[] ids) {
         final int MAX_NUMBER_SONGS_TO_ANALYZE = 250;
-
+    
         if (ids == null || ids.length == 0) {
             return null;
         }
-
+    
         HashSet<Long> uniqueIds = new HashSet<Long>(ids.length);
-
+    
         // create the list of ids to select against
         StringBuilder selection = new StringBuilder();
         selection.append(SongPlayCountColumns.ID);
         selection.append(" IN (");
-
+    
         // add the first element to handle the separator case for the first element
         uniqueIds.add(ids[0]);
         selection.append(ids[0]);
-
+    
         for (int i = 1; i < ids.length; i++) {
             // if the new id doesn't exist
             if (uniqueIds.add(ids[i])) {
                 // append a separator
                 selection.append(",");
-
+    
                 // append the id
                 selection.append(ids[i]);
-
+    
                 // for performance reasons, only look at a certain number of songs
                 // in case their playlist is ridiculously large
                 if (uniqueIds.size() >= MAX_NUMBER_SONGS_TO_ANALYZE) {
@@ -364,22 +364,22 @@ public class SongPlayCount {
                 }
             }
         }
-
+    
         // close out the selection
         selection.append(")");
-
+    
         long[] sortedList = new long[uniqueIds.size()];
-
+    
         // now query for the songs
         final SQLiteDatabase database = mMusicDatabase.getReadableDatabase();
         Cursor topSongsCursor = null;
         int idx = 0;
-
+    
         try {
             topSongsCursor = database.query(SongPlayCountColumns.NAME,
                     new String[]{SongPlayCountColumns.ID}, selection.toString(), null, null,
                     null, SongPlayCountColumns.PLAYCOUNTSCORE + " DESC");
-
+        
             if (topSongsCursor != null && topSongsCursor.moveToFirst()) {
                 do {
                     // for each id found, add it to the list and remove it from the unique ids
@@ -394,16 +394,16 @@ public class SongPlayCount {
                 topSongsCursor = null;
             }
         }
-
+    
         // append the remaining items - these are songs that haven't been played recently
         Iterator<Long> iter = uniqueIds.iterator();
         while (iter.hasNext()) {
             sortedList[idx++] = iter.next();
         }
-
+    
         return sortedList;
     }
-
+    
     /**
      * This updates all the results for the getTopPlayedResults so that we can get an
      * accurate list of the top played results
@@ -412,36 +412,36 @@ public class SongPlayCount {
         if (mDatabaseUpdated) {
             return;
         }
-
+    
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
-
+    
         database.beginTransaction();
-
+    
         int oldestWeekWeCareAbout = mNumberOfWeeksSinceEpoch - NUM_WEEKS + 1;
         // delete rows we don't care about anymore
         database.delete(SongPlayCountColumns.NAME, SongPlayCountColumns.LAST_UPDATED_WEEK_INDEX
                 + " < " + oldestWeekWeCareAbout, null);
-
+    
         // get the remaining rows
         Cursor cursor = database.query(SongPlayCountColumns.NAME,
                 new String[]{SongPlayCountColumns.ID},
                 null, null, null, null, null);
-
+    
         if (cursor != null && cursor.moveToFirst()) {
             // for each row, update it
             do {
                 updateExistingRow(database, cursor.getLong(0), false);
             } while (cursor.moveToNext());
-
+        
             cursor.close();
             cursor = null;
         }
-
+    
         mDatabaseUpdated = true;
         database.setTransactionSuccessful();
         database.endTransaction();
     }
-
+    
     /**
      * @param songId The song Id to remove.
      */
@@ -449,7 +449,7 @@ public class SongPlayCount {
         final SQLiteDatabase database = mMusicDatabase.getWritableDatabase();
         deleteEntry(database, String.valueOf(songId));
     }
-
+    
     /**
      * Deletes the entry
      *
@@ -459,21 +459,21 @@ public class SongPlayCount {
     private void deleteEntry(final SQLiteDatabase database, final String stringId) {
         database.delete(SongPlayCountColumns.NAME, WHERE_ID_EQUALS, new String[]{stringId});
     }
-
+    
     public interface SongPlayCountColumns {
-
+        
         /* Table name */
         String NAME = "songplaycount";
-
+        
         /* Song IDs column */
         String ID = "songid";
-
+        
         /* Week Play Count */
         String WEEK_PLAY_COUNT = "week";
-
+        
         /* Weeks since Epoch */
         String LAST_UPDATED_WEEK_INDEX = "weekindex";
-
+        
         /* Play count */
         String PLAYCOUNTSCORE = "playcountscore";
     }

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import javax.crypto.Cipher;
 
 public class RSAUtils {
-
+    
     /**
      * 生成公钥和私钥
      *
@@ -38,7 +38,7 @@ public class RSAUtils {
         map.put("private", privateKey);
         return map;
     }
-
+    
     /**
      * 使用模和指数生成RSA公钥
      * 注意：【此代码用了默认补位方式，为RSA/None/PKCS1Padding，不同JDK默认的补位方式可能不同，如Android默认是RSA
@@ -60,7 +60,7 @@ public class RSAUtils {
             return null;
         }
     }
-
+    
     /**
      * 使用模和指数生成RSA私钥
      * 注意：【此代码用了默认补位方式，为RSA/None/PKCS1Padding，不同JDK默认的补位方式可能不同，如Android默认是RSA
@@ -82,7 +82,7 @@ public class RSAUtils {
             return null;
         }
     }
-
+    
     /**
      * 公钥加密
      *
@@ -110,17 +110,17 @@ public class RSAUtils {
         mi = toHex(cipher.doFinal(data.getBytes()));
         return mi;
     }
-
+    
     @NonNull
     static public String toHex(byte[] c) throws UnsupportedEncodingException {
-
+        
         StringBuilder buf = new StringBuilder();
         for (byte b : c) {
             buf.append(Integer.toHexString(b & 0xff));
         }
         return buf.toString();
     }
-
+    
     /**
      * 私钥解密
      *
@@ -146,7 +146,7 @@ public class RSAUtils {
         }
         return ming;
     }
-
+    
     /**
      * ASCII码转BCD码
      */
@@ -159,10 +159,10 @@ public class RSAUtils {
         }
         return bcd;
     }
-
+    
     public static byte asc_to_bcd(byte asc) {
         byte bcd;
-
+        
         if ((asc >= '0') && (asc <= '9'))
             bcd = (byte) (asc - '0');
         else if ((asc >= 'A') && (asc <= 'F'))
@@ -173,23 +173,24 @@ public class RSAUtils {
             bcd = (byte) (asc - 48);
         return bcd;
     }
-
+    
     /**
      * BCD转字符串
      */
     public static String bcd2Str(byte[] bytes) {
-        char temp[] = new char[bytes.length * 2], val;
-
+        char[] temp = new char[bytes.length * 2];
+        char val;
+    
         for (int i = 0; i < bytes.length; i++) {
             val = (char) (((bytes[i] & 0xf0) >> 4) & 0x0f);
             temp[i * 2] = (char) (val > 9 ? val + 'A' - 10 : val + '0');
-
+    
             val = (char) (bytes[i] & 0x0f);
             temp[i * 2 + 1] = (char) (val > 9 ? val + 'A' - 10 : val + '0');
         }
         return new String(temp);
     }
-
+    
     /**
      * 拆分字符串
      */
@@ -212,7 +213,7 @@ public class RSAUtils {
         }
         return strings;
     }
-
+    
     /**
      * 拆分数组
      */

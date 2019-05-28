@@ -48,45 +48,45 @@ import java.util.ArrayList;
  *
  * <p>Here is an example implementation of a pager containing fragments of
  * lists:
- *
+ * <p>
  * {@sample development/samples/Support13Demos/src/com/example/android/supportv13/app/FragmentStatePagerSupport.java
- *      complete}
+ * complete}
  *
  * <p>The <code>R.layout.fragment_pager</code> resource of the top-level fragment is:
- *
+ * <p>
  * {@sample development/samples/Support13Demos/res/layout/fragment_pager.xml
- *      complete}
+ * complete}
  *
  * <p>The <code>R.layout.fragment_pager_list</code> resource containing each
  * individual fragment's layout is:
- *
+ * <p>
  * {@sample development/samples/Support13Demos/res/layout/fragment_pager_list.xml
- *      complete}
+ * complete}
  */
 public abstract class FragmentStatePagerAdapter extends PagerAdapter {
     private static final String TAG = "FragmentStatePagerAdapter";
     private static final boolean DEBUG = false;
-
+    
     private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction = null;
-
+    
     private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
     private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
     private Fragment mCurrentPrimaryItem = null;
-
+    
     public FragmentStatePagerAdapter(FragmentManager fm) {
         mFragmentManager = fm;
     }
-
+    
     /**
      * Return the Fragment associated with a specified position.
      */
     public abstract Fragment getItem(int position);
-
+    
     @Override
     public void startUpdate(ViewGroup container) {
     }
-
+    
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         // If we already have this item instantiated, there is nothing
@@ -99,11 +99,11 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
                 return f;
             }
         }
-
+        
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
-
+        
         Fragment fragment = getItem(position);
         if (DEBUG) Log.v(TAG, "Adding item #" + position + ": f=" + fragment);
         if (mSavedState.size() > position) {
@@ -119,19 +119,19 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
         fragment.setUserVisibleHint(false);
         mFragments.set(position, fragment);
         mCurTransaction.add(container.getId(), fragment);
-
+        
         return fragment;
     }
-
+    
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         Fragment fragment = (Fragment) object;
-
+        
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
         if (DEBUG) Log.v(TAG, "Removing item #" + position + ": f=" + object
-                + " v=" + ((Fragment)object).getView());
+                + " v=" + ((Fragment) object).getView());
         while (mSavedState.size() <= position) {
             mSavedState.add(null);
         }
@@ -145,10 +145,10 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
         }
         mCurTransaction.remove(fragment);
     }
-
+    
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
-        Fragment fragment = (Fragment)object;
+        Fragment fragment = (Fragment) object;
         if (fragment != mCurrentPrimaryItem) {
             if (mCurrentPrimaryItem != null) {
                 mCurrentPrimaryItem.setMenuVisibility(false);
@@ -161,7 +161,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
             mCurrentPrimaryItem = fragment;
         }
     }
-
+    
     @Override
     public void finishUpdate(ViewGroup container) {
         if (mCurTransaction != null) {
@@ -170,12 +170,12 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
             mFragmentManager.executePendingTransactions();
         }
     }
-
+    
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return ((Fragment)object).getView() == view;
+        return ((Fragment) object).getView() == view;
     }
-
+    
     @Override
     public Parcelable saveState() {
         Bundle state = null;
@@ -185,7 +185,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
             mSavedState.toArray(fss);
             state.putParcelableArray("states", fss);
         }
-        for (int i=0; i<mFragments.size(); i++) {
+        for (int i = 0; i < mFragments.size(); i++) {
             Fragment f = mFragments.get(i);
             if (f != null && f.isAdded()) {
                 if (state == null) {
@@ -197,22 +197,22 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
         }
         return state;
     }
-
+    
     @Override
     public void restoreState(Parcelable state, ClassLoader loader) {
         if (state != null) {
-            Bundle bundle = (Bundle)state;
+            Bundle bundle = (Bundle) state;
             bundle.setClassLoader(loader);
             Parcelable[] fss = bundle.getParcelableArray("states");
             mSavedState.clear();
             mFragments.clear();
             if (fss != null) {
-                for (int i=0; i<fss.length; i++) {
-                    mSavedState.add((Fragment.SavedState)fss[i]);
+                for (int i = 0; i < fss.length; i++) {
+                    mSavedState.add((Fragment.SavedState) fss[i]);
                 }
             }
             Iterable<String> keys = bundle.keySet();
-            for (String key: keys) {
+            for (String key : keys) {
                 if (key.startsWith("f")) {
                     int index = Integer.parseInt(key.substring(1));
                     Fragment f = mFragmentManager.getFragment(bundle, key);

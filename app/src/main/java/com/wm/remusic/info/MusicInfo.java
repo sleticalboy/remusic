@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class MusicInfo implements Parcelable {
-
+    
     public static final String KEY_SONG_ID = "songid";
     public static final String KEY_ALBUM_ID = "albumid";
     public static final String KEY_ALBUM_NAME = "albumname";
@@ -24,7 +24,7 @@ public class MusicInfo implements Parcelable {
     public static final String KEY_LRC = "lrc";
     public static final String KEY_ISLOCAL = "islocal";
     public static final String KEY_SORT = "sort";
-
+    
     /**
      * 数据库中的_id
      */
@@ -41,15 +41,15 @@ public class MusicInfo implements Parcelable {
     public String lrc;
     public boolean islocal;
     public String sort;
-
-
+    
+    
     public int size;
     /**
      * 0表示没有收藏 1表示收藏
      */
     public int favorite = 0;
     public static final Creator<MusicInfo> CREATOR = new Creator<MusicInfo>() {
-
+    
         @Override
         public MusicInfo createFromParcel(Parcel source) {
             MusicInfo music = new MusicInfo();
@@ -71,18 +71,18 @@ public class MusicInfo implements Parcelable {
             music.sort = bundle.getString(KEY_SORT);
             return music;
         }
-
+    
         @Override
         public MusicInfo[] newArray(int size) {
             return new MusicInfo[size];
         }
     };
-
+    
     @Override
     public int describeContents() {
         return 0;
     }
-
+    
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         Bundle bundle = new Bundle();
@@ -102,13 +102,13 @@ public class MusicInfo implements Parcelable {
         bundle.putString(KEY_SORT, sort);
         dest.writeBundle(bundle);
     }
-
+    
     public int getFavorite() {
         return favorite;
     }
-
+    
     public void setFavorite(int favorite) {
         this.favorite = favorite;
     }
-
+    
 }

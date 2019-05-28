@@ -43,7 +43,7 @@ public class FolderDetailFragment extends BaseFragment {
     private List<MusicInfo> musicInfos = new ArrayList<>();
     private RecyclerView recyclerView;
     private FolderDetailAdapter folderDetailAdapter;
-
+    
     public static FolderDetailFragment newInstance(String id, boolean useTransition, String transitionName) {
         FolderDetailFragment fragment = new FolderDetailFragment();
         Bundle args = new Bundle();
@@ -54,7 +54,7 @@ public class FolderDetailFragment extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,51 +62,51 @@ public class FolderDetailFragment extends BaseFragment {
             folder_path = getArguments().getString("folder_path");
         }
     }
-
-
+    
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_common, container, false);
-
+        
         layoutManager = new LinearLayoutManager(mContext);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        recyclerView = view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(layoutManager);
         folderDetailAdapter = new FolderDetailAdapter(null);
         recyclerView.setAdapter(folderDetailAdapter);
         setItemDecoration();
         reloadAdapter();
         recyclerView.setHasFixedSize(true);
-        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar = view.findViewById(R.id.toolbar);
         ((AppCompatActivity) mContext).setSupportActionBar(toolbar);
         toolbar.setPadding(0, CommonUtils.getStatusHeight(mContext), 0, 0);
         ab = ((AppCompatActivity) mContext).getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
         ab.setDisplayHomeAsUpEnabled(true);
-        String folder = folder_path.substring(folder_path.lastIndexOf(File.separator), folder_path.length());
-        ab.setTitle(folder.substring(folder.lastIndexOf(File.separator) + 1, folder.length()));
+        String folder = folder_path.substring(folder_path.lastIndexOf(File.separator));
+        ab.setTitle(folder.substring(folder.lastIndexOf(File.separator) + 1));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mContext.onBackPressed();
             }
         });
-
-
+        
+        
         return view;
-
+        
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
     }
-
+    
     //设置分割线
     private void setItemDecoration() {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
-
+    
     //更新adapter界面
     public void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {
@@ -116,29 +116,29 @@ public class FolderDetailFragment extends BaseFragment {
                 folderDetailAdapter.updateDataSet(albumList);
                 return null;
             }
-
+    
             @Override
             protected void onPostExecute(Void aVoid) {
                 folderDetailAdapter.notifyDataSetChanged();
             }
         }.execute();
     }
-
+    
     class FolderDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final static int FIRST_ITEM = 0;
         final static int ITEM = 1;
         List<MusicInfo> mList;
-
+        
         public FolderDetailAdapter(List<MusicInfo> musicInfos) {
             mList = musicInfos;
             //list.add(0,null);
         }
-
+        
         //更新adpter的数据
         public void updateDataSet(List<MusicInfo> list) {
             this.mList = list;
         }
-
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             if (viewType == FIRST_ITEM) {
@@ -147,18 +147,18 @@ public class FolderDetailFragment extends BaseFragment {
                 return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
             }
         }
-
+        
         @Override
         public int getItemViewType(int position) {
             return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
         }
-
+        
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+            
             if (holder instanceof CommonItemViewHolder) {
                 ((CommonItemViewHolder) holder).textView.setText("共" + mList.size() + "首");
-
+                
                 ((CommonItemViewHolder) holder).select.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -182,26 +182,24 @@ public class FolderDetailFragment extends BaseFragment {
                 }
             }
         }
-
+        
         @Override
         public int getItemCount() {
             return (null != mList ? mList.size() + 1 : 0);
         }
-
-        ;
-
-
+        
+        
         class CommonItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView textView;
             ImageView select;
-
+            
             CommonItemViewHolder(View view) {
                 super(view);
-                this.textView = (TextView) view.findViewById(R.id.play_all_number);
-                this.select = (ImageView) view.findViewById(R.id.select);
+                this.textView = view.findViewById(R.id.play_all_number);
+                this.select = view.findViewById(R.id.select);
                 view.setOnClickListener(this);
             }
-
+            
             //播放文件夹
             @Override
             public void onClick(View v) {
@@ -219,25 +217,25 @@ public class FolderDetailFragment extends BaseFragment {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
+                }, 70);
             }
-
-
+            
+            
         }
-
+        
         public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             //ViewHolder
             ImageView moreOverflow;
             TextView mainTitle, title;
             TintImageView playState;
-
+            
             ListItemViewHolder(View view) {
                 super(view);
-                this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
-                this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
-                this.playState = (TintImageView) view.findViewById(R.id.play_state);
-                this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
-
+                this.mainTitle = view.findViewById(R.id.viewpager_list_toptext);
+                this.title = view.findViewById(R.id.viewpager_list_bottom_text);
+                this.playState = view.findViewById(R.id.play_state);
+                this.moreOverflow = view.findViewById(R.id.viewpager_list_button);
+                
                 //设置弹出菜单
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -247,9 +245,9 @@ public class FolderDetailFragment extends BaseFragment {
                     }
                 });
                 view.setOnClickListener(this);
-
+                
             }
-
+            
             //播放歌曲
             @Override
             public void onClick(View v) {
@@ -270,8 +268,8 @@ public class FolderDetailFragment extends BaseFragment {
                     }
                 }, 70);
             }
-
+            
         }
-
+        
     }
 }

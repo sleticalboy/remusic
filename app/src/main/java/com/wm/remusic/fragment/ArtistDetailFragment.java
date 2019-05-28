@@ -39,10 +39,10 @@ public class ArtistDetailFragment extends BaseFragment {
     private LinearLayoutManager layoutManager;
     private Toolbar toolbar;
     private ActionBar ab;
-
+    
     private RecyclerView recyclerView;
     private ArtDetailAdapter artDetailAdapter;
-
+    
     public static ArtistDetailFragment newInstance(long id) {
         ArtistDetailFragment fragment = new ArtistDetailFragment();
         Bundle args = new Bundle();
@@ -50,7 +50,7 @@ public class ArtistDetailFragment extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,13 +58,13 @@ public class ArtistDetailFragment extends BaseFragment {
             artistID = getArguments().getLong("artist_id");
         }
     }
-
-
+    
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_common, container, false);
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        
+        recyclerView = view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         artDetailAdapter = new ArtDetailAdapter(null);
@@ -72,9 +72,9 @@ public class ArtistDetailFragment extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         setItemDecoration();
         reloadAdapter();
-
+        
         ArtistInfo artistInfo = MusicUtils.getArtistinfo(mContext, artistID);
-        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar = view.findViewById(R.id.toolbar);
         toolbar.setPadding(0, CommonUtils.getStatusHeight(mContext), 0, 0);
         ((AppCompatActivity) mContext).setSupportActionBar(toolbar);
         ab = ((AppCompatActivity) mContext).getSupportActionBar();
@@ -84,60 +84,60 @@ public class ArtistDetailFragment extends BaseFragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getActivity() != null)
-                getActivity().onBackPressed();
+                if (getActivity() != null)
+                    getActivity().onBackPressed();
             }
         });
         return view;
-
-
+        
+        
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
-
+        
     }
-
+    
     //设置分割线
     private void setItemDecoration() {
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST);
         recyclerView.addItemDecoration(itemDecoration);
     }
-
-
+    
+    
     //更新adapter界面
     public void reloadAdapter() {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                ArrayList<MusicInfo> artistList = (ArrayList) MusicUtils.queryMusic(mContext, artistID + "", IConstants.START_FROM_ARTIST);
+                ArrayList<MusicInfo> artistList = MusicUtils.queryMusic(mContext, artistID + "", IConstants.START_FROM_ARTIST);
                 artDetailAdapter.updateDataSet(artistList);
                 return null;
             }
-
+    
             @Override
             protected void onPostExecute(Void aVoid) {
                 artDetailAdapter.notifyDataSetChanged();
             }
         }.execute();
     }
-
+    
     class ArtDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final static int FIRST_ITEM = 0;
         final static int ITEM = 1;
         ArrayList<MusicInfo> mList;
-
+        
         public ArtDetailAdapter(ArrayList<MusicInfo> musicInfos) {
             mList = musicInfos;
             //list.add(0,null);
         }
-
+        
         //更新adpter的数据
         public void updateDataSet(ArrayList<MusicInfo> list) {
             this.mList = list;
         }
-
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             if (viewType == FIRST_ITEM) {
@@ -146,15 +146,15 @@ public class ArtistDetailFragment extends BaseFragment {
                 return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
             }
         }
-
+        
         @Override
         public int getItemViewType(int position) {
             return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
         }
-
+        
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+            
             if (holder instanceof CommonItemViewHolder) {
                 ((CommonItemViewHolder) holder).textView.setText("共" + mList.size() + "首");
                 ((CommonItemViewHolder) holder).select.setOnClickListener(new View.OnClickListener() {
@@ -165,7 +165,7 @@ public class ArtistDetailFragment extends BaseFragment {
                         mContext.startActivity(intent);
                     }
                 });
-
+                
             }
             if (holder instanceof ListItemViewHolder) {
                 MusicInfo musicInfo = mList.get(position - 1);
@@ -179,29 +179,27 @@ public class ArtistDetailFragment extends BaseFragment {
                 } else {
                     ((ListItemViewHolder) holder).playState.setVisibility(View.GONE);
                 }
-
+    
             }
         }
-
+        
         @Override
         public int getItemCount() {
             return (null != mList ? mList.size() + 1 : 0);
         }
-
-        ;
-
-
+        
+        
         class CommonItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView textView;
             ImageView select;
-
+            
             CommonItemViewHolder(View view) {
                 super(view);
-                this.textView = (TextView) view.findViewById(R.id.play_all_number);
-                this.select = (ImageView) view.findViewById(R.id.select);
+                this.textView = view.findViewById(R.id.play_all_number);
+                this.select = view.findViewById(R.id.select);
                 view.setOnClickListener(this);
             }
-
+            
             //播放歌手所有歌曲
             @Override
             public void onClick(View v) {
@@ -219,24 +217,24 @@ public class ArtistDetailFragment extends BaseFragment {
                         }
                         MusicPlayer.playAll(infos, list, 0, false);
                     }
-                },70);
+                }, 70);
             }
-
-
+            
+            
         }
-
+        
         public class ListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             //ViewHolder
             ImageView moreOverflow;
             TextView mainTitle, title;
             TintImageView playState;
-
+            
             ListItemViewHolder(View view) {
                 super(view);
-                this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
-                this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
-                this.playState = (TintImageView) view.findViewById(R.id.play_state);
-                this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
+                this.mainTitle = view.findViewById(R.id.viewpager_list_toptext);
+                this.title = view.findViewById(R.id.viewpager_list_bottom_text);
+                this.playState = view.findViewById(R.id.play_state);
+                this.moreOverflow = view.findViewById(R.id.viewpager_list_button);
                 view.setOnClickListener(this);
                 //设置弹出菜单
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
@@ -246,9 +244,9 @@ public class ArtistDetailFragment extends BaseFragment {
                         moreFragment.show(getFragmentManager(), "music");
                     }
                 });
-
+                
             }
-
+            
             //播放歌曲
             @Override
             public void onClick(View v) {
@@ -269,10 +267,10 @@ public class ArtistDetailFragment extends BaseFragment {
                     }
                 }, 60);
             }
-
+            
         }
-
-
+        
+        
     }
-
+    
 }

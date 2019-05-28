@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,13 +33,13 @@ import java.util.HashMap;
  * Created by wm on 2016/5/18.
  */
 public class SearchMusicFragment extends AttachFragment {
-
+    
     private MusicAdapter mAdapter;
     private ArrayList<SearchSongInfo> songInfos;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
-
-
+    
+    
     public static SearchMusicFragment newInstance(ArrayList<SearchSongInfo> list) {
         SearchMusicFragment fragment = new SearchMusicFragment();
         Bundle bundle = new Bundle();
@@ -48,7 +47,7 @@ public class SearchMusicFragment extends AttachFragment {
         fragment.setArguments(bundle);
         return fragment;
     }
-
+    
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,42 +55,42 @@ public class SearchMusicFragment extends AttachFragment {
         if (getArguments() != null) {
             songInfos = getArguments().getParcelableArrayList("searchMusic");
         }
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        
+        recyclerView = view.findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new MusicAdapter(songInfos);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST));
-
+        
         return view;
     }
-
-
+    
+    
     public class MusicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+        
         final static int FIRST_ITEM = 0;
         final static int ITEM = 1;
         private ArrayList<SearchSongInfo> mList;
-
+        
         public MusicAdapter(ArrayList<SearchSongInfo> list) {
 //            if (list == null) {
 //                throw new IllegalArgumentException("model Data must not be null");
 //            }
             mList = list;
         }
-
+        
         //更新adpter的数据
         public void updateDataSet(ArrayList<SearchSongInfo> list) {
             this.mList = list;
         }
-
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 //            if (viewType == FIRST_ITEM)
 //                return new CommonItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.common_item, viewGroup, false));
-
+            
             return new ListItemViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_musci_common_item, viewGroup, false));
         }
 
@@ -101,19 +100,19 @@ public class SearchMusicFragment extends AttachFragment {
 //            return position == FIRST_ITEM ? FIRST_ITEM : ITEM;
 //
 //        }
-
+        
         //将数据与界面进行绑定
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             SearchSongInfo model = mList.get(position);
             if (holder instanceof ListItemViewHolder) {
-
+    
                 ((ListItemViewHolder) holder).mainTitle.setText(model.getTitle());
                 ((ListItemViewHolder) holder).title.setText(model.getAuthor());
-
+    
             }
         }
-
+        
         @Override
         public int getItemCount() {
             return (null != mList ? mList.size() : 0);
@@ -137,20 +136,20 @@ public class SearchMusicFragment extends AttachFragment {
 //            }
 //
 //        }
-
-
+        
+        
         public class ListItemViewHolder extends RecyclerView.ViewHolder {
             //ViewHolder
             ImageView moreOverflow, playState;
             TextView mainTitle, title;
-
+            
             ListItemViewHolder(View view) {
                 super(view);
-                this.mainTitle = (TextView) view.findViewById(R.id.viewpager_list_toptext);
-                this.title = (TextView) view.findViewById(R.id.viewpager_list_bottom_text);
-                this.playState = (ImageView) view.findViewById(R.id.play_state);
-                this.moreOverflow = (ImageView) view.findViewById(R.id.viewpager_list_button);
-
+                this.mainTitle = view.findViewById(R.id.viewpager_list_toptext);
+                this.title = view.findViewById(R.id.viewpager_list_bottom_text);
+                this.playState = view.findViewById(R.id.play_state);
+                this.moreOverflow = view.findViewById(R.id.viewpager_list_button);
+                
                 moreOverflow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -175,8 +174,8 @@ public class SearchMusicFragment extends AttachFragment {
                     @Override
                     public void onClick(View v) {
                         final SearchSongInfo model = mList.get(getAdapterPosition());
-                        new AsyncTask<Void,Void,Void>(){
-
+                        new AsyncTask<Void, Void, Void>() {
+                            
                             @Override
                             protected Void doInBackground(Void... params) {
                                 MusicInfo musicInfo = new MusicInfo();
@@ -189,8 +188,8 @@ public class SearchMusicFragment extends AttachFragment {
                                 } catch (NullPointerException e) {
                                     e.printStackTrace();
                                 }
-
-
+    
+    
                                 musicInfo.songId = Integer.parseInt(model.getSong_id());
                                 musicInfo.musicName = model.getTitle();
                                 musicInfo.artist = model.getAuthor();
@@ -199,7 +198,7 @@ public class SearchMusicFragment extends AttachFragment {
                                 musicInfo.albumId = Integer.parseInt(model.getAlbum_id());
                                 musicInfo.artistId = Integer.parseInt(model.getArtist_id());
                                 musicInfo.lrc = model.getLrclink();
-
+    
                                 HashMap<Long, MusicInfo> infos = new HashMap<Long, MusicInfo>();
                                 long[] list = new long[1];
                                 list[0] = musicInfo.songId;
@@ -210,12 +209,12 @@ public class SearchMusicFragment extends AttachFragment {
                         }.execute();
                     }
                 });
-
+                
             }
-
-
+            
+            
         }
     }
-
-
+    
+    
 }

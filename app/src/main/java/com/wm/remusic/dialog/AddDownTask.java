@@ -33,12 +33,12 @@ import java.util.ArrayList;
  * Created by wm on 2016/8/8.
  */
 public class AddDownTask extends DialogFragment {
-
+    
     private String[] ids, names, artists;
     private Context mContext;
     private ArrayList<String> mList = new ArrayList<>();
     private String isLoding;
-
+    
     public static AddDownTask newIntance(String[] ids, String[] names, String[] artists) {
         AddDownTask addDownTask = new AddDownTask();
         Bundle bundle = new Bundle();
@@ -48,26 +48,26 @@ public class AddDownTask extends DialogFragment {
         addDownTask.setArguments(bundle);
         return addDownTask;
     }
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         //设置无标题
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+        
         if (getArguments() != null) {
             ids = getArguments().getStringArray("ids");
             names = getArguments().getStringArray("names");
         }
-
+        
         if (getContext() != null) {
             mContext = getContext();
         }
-
+        
         final LoadDownInfos loadDownInfos = new LoadDownInfos();
         loadDownInfos.execute();
-
+        
         View view = inflater.inflate(R.layout.loading_dialog_fragment, container);
-        SimpleDraweeView draweeView = (SimpleDraweeView) view.findViewById(R.id.loding_circle);
+        SimpleDraweeView draweeView = view.findViewById(R.id.loding_circle);
         RotateAnimation animation = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
         animation.setDuration(5000);
@@ -83,31 +83,31 @@ public class AddDownTask extends DialogFragment {
                 }
             }
         }, 10000);
-
+        
         return view;
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.DownLoadingDialog);
     }
-
+    
     @Override
     public void onStart() {
         super.onStart();
         //设置fragment高度 、宽度
-        int dialogHeight = (int) (getActivity().getResources().getDisplayMetrics().heightPixels);
-        int dialogWidth = (int) (getActivity().getResources().getDisplayMetrics().widthPixels);
+        int dialogHeight = getActivity().getResources().getDisplayMetrics().heightPixels;
+        int dialogWidth = getActivity().getResources().getDisplayMetrics().widthPixels;
         getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
         getDialog().setCanceledOnTouchOutside(true);
-
+        
     }
-
-
+    
+    
     class LoadDownInfos extends AsyncTask<Void, Void, Void> {
         int size;
-
+        
         @Override
         protected Void doInBackground(Void... params) {
             int le = ids.length;
@@ -116,7 +116,7 @@ public class AddDownTask extends DialogFragment {
                     JsonArray jsonArray = HttpUtil.getResposeJsonObject(BMA.Song.songInfo(ids[j]).trim()).get("songurl")
                             .getAsJsonObject().get("url").getAsJsonArray();
                     int len = jsonArray.size();
-
+    
                     int downloadBit = PreferencesUtility.getInstance(mContext).getDownMusicBit();
                     MusicFileDownInfo musicFileDownInfo = null;
                     for (int i = len - 1; i > -1; i--) {
@@ -131,23 +131,23 @@ public class AddDownTask extends DialogFragment {
                         mList.add(musicFileDownInfo.getFile_link());
                         size += musicFileDownInfo.getFile_size();
                     }
-
-
+    
+    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
+    
             }
-
+            
             return null;
         }
-
-
+        
+        
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Log.e("size", size + "");
-
+            
             String result = null;
             size = size / (1024 * 1024);
             Log.e("size", size + "");
@@ -155,12 +155,12 @@ public class AddDownTask extends DialogFragment {
                 result = (float) Math.round((float) size / (1024 * 10)) / 10 + "G";
             } else {
                 result = size + "M";
-
+    
             }
-
+            
             new AlertDialog.Builder(mContext).setTitle("将下载歌曲,大约占用" + result + "空间,确定下载吗")
                     .setPositiveButton(mContext.getString(R.string.sure), new DialogInterface.OnClickListener() {
-
+    
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent();
@@ -170,7 +170,7 @@ public class AddDownTask extends DialogFragment {
                             intent.setAction(DownService.ADD_MULTI_DOWNTASK);
                             intent.setPackage(IConstants.PACKAGE);
                             mContext.startService(intent);
-
+        
                             dialog.dismiss();
                         }
                     }).
@@ -180,9 +180,9 @@ public class AddDownTask extends DialogFragment {
                             dialog.dismiss();
                         }
                     }).show();
-
+            
             dismiss();
         }
     }
-
+    
 }

@@ -15,33 +15,33 @@ import com.wm.remusic.service.MusicPlayer;
  * Created by wm on 2016/3/22.
  */
 public class TimingFragment extends AttachDialogFragment implements View.OnClickListener {
-
+    
     private TextView timing10, timing20, timing30, timing45, timing60, timing90;
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //设置无标题
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+        
         View view = inflater.inflate(R.layout.fragment_timing, container);
-        timing10 = (TextView) view.findViewById(R.id.timing_10min);
-        timing20 = (TextView) view.findViewById(R.id.timing_20min);
-        timing30 = (TextView) view.findViewById(R.id.timing_30min);
-        timing45 = (TextView) view.findViewById(R.id.timing_45min);
-        timing60 = (TextView) view.findViewById(R.id.timing_60min);
-        timing90 = (TextView) view.findViewById(R.id.timing_90min);
+        timing10 = view.findViewById(R.id.timing_10min);
+        timing20 = view.findViewById(R.id.timing_20min);
+        timing30 = view.findViewById(R.id.timing_30min);
+        timing45 = view.findViewById(R.id.timing_45min);
+        timing60 = view.findViewById(R.id.timing_60min);
+        timing90 = view.findViewById(R.id.timing_90min);
         timing10.setOnClickListener(this);
         timing20.setOnClickListener(this);
         timing30.setOnClickListener(this);
         timing45.setOnClickListener(this);
         timing60.setOnClickListener(this);
         timing90.setOnClickListener(this);
-
-
+        
+        
         return view;
     }
-
+    
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -77,14 +77,14 @@ public class TimingFragment extends AttachDialogFragment implements View.OnClick
                 break;
         }
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //设置样式
         //setStyle(DialogFragment.STYLE_NO_FRAME, R.style.CustomDatePickerDialog);
     }
-
+    
     @Override
     public void onStart() {
         super.onStart();
@@ -93,7 +93,7 @@ public class TimingFragment extends AttachDialogFragment implements View.OnClick
         int dialogWidth = (int) (mContext.getResources().getDisplayMetrics().widthPixels * 0.79);
         getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
         getDialog().setCanceledOnTouchOutside(true);
-
+        
     }
-
+    
 }

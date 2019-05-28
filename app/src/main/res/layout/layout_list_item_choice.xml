@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2016 Bilibili
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,29 +18,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/progress_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:text="Choose Progress Style"
-   />
+        android:text="Choose Progress Style" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
 
-   />
+        />
 
     <TextView
         android:id="@+id/download"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:text="Choose Download Files"
- />
+        android:text="Choose Download Files" />
 
 </LinearLayout>

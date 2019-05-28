@@ -4,10 +4,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class BMA {
-
+    
     public static final String FORMATE = "json";
     public static final String BASE = "http://tingapi.ting.baidu.com/v1/restserver/ting?from=android&version=5.6.5.6&format=" + FORMATE;
-
+    
     /**
      * 轮播音乐封面
      *
@@ -20,14 +20,14 @@ public class BMA {
                 .append("&num=").append(num);
         return sb.toString();
     }
-
+    
     /**
      * 唱片专辑
      *
      * @author Sanron
      */
     public static class Album {
-
+        
         /**
          * 推荐唱片
          *
@@ -42,7 +42,7 @@ public class BMA {
                     .append("&limit=").append(limmit);
             return sb.toString();
         }
-
+        
         /**
          * 唱片信息
          *
@@ -56,15 +56,15 @@ public class BMA {
             return sb.toString();
         }
     }
-
-
+    
+    
     /**
      * 音乐场景
      *
      * @author Sanron
      */
     public static class Scene {
-
+        
         /**
          * 推荐音乐场景(需要cuid，暂时关闭)
          * @return
@@ -74,7 +74,7 @@ public class BMA {
 //			sb.append("&method=").append("baidu.ting.scene.getSugScene");
 //			return sb.toString();
 //		}
-
+        
         /**
          * 固定场景
          *
@@ -85,7 +85,7 @@ public class BMA {
             sb.append("&method=").append("baidu.ting.scene.getConstantScene");
             return sb.toString();
         }
-
+        
         /**
          * 所有场景类别
          *
@@ -96,7 +96,7 @@ public class BMA {
             sb.append("&method=").append("baidu.ting.scene.getCategoryList");
             return sb.toString();
         }
-
+        
         /**
          * 场景类别下的所有场景
          *
@@ -110,7 +110,7 @@ public class BMA {
             return sb.toString();
         }
     }
-
+    
     /**
      * 音乐标签
      *
@@ -127,7 +127,7 @@ public class BMA {
             sb.append("&method=").append("baidu.ting.tag.getAllTag");
             return sb.toString();
         }
-
+        
         /**
          * 热门音乐标签
          *
@@ -140,7 +140,7 @@ public class BMA {
                     .append("&nums=").append(num);
             return sb.toString();
         }
-
+        
         /**
          * 标签为tagname的歌曲
          *
@@ -156,9 +156,9 @@ public class BMA {
             return sb.toString();
         }
     }
-
+    
     public static class Song {
-
+        
         /**
          * 歌曲基本信息
          *
@@ -171,7 +171,7 @@ public class BMA {
                     .append("&song_id=").append(songid);
             return sb.toString();
         }
-
+        
         /**
          * 编辑推荐歌曲
          *
@@ -184,7 +184,7 @@ public class BMA {
                     .append("&num=").append(num);
             return sb.toString();
         }
-
+        
         /**
          * 歌曲信息和下载地址
          *
@@ -200,7 +200,7 @@ public class BMA {
                     .append("&e=").append(e);
             return sb.toString();
         }
-
+        
         /**
          * 歌曲伴奏信息
          *
@@ -216,7 +216,7 @@ public class BMA {
                     .append("&e=").append(e);
             return sb.toString();
         }
-
+        
         /**
          * 相似歌曲
          *
@@ -231,14 +231,14 @@ public class BMA {
             return sb.toString();
         }
     }
-
+    
     /**
      * 艺术家
      *
      * @author Sanron
      */
     public static class Artist {
-
+        
         /**
          * 全部地区
          */
@@ -263,7 +263,7 @@ public class BMA {
          * 其他
          */
         public static final int AREA_OTHER = 5;
-
+        
         /**
          * 无选择
          */
@@ -280,7 +280,7 @@ public class BMA {
          * 组合
          */
         public static final int SEX_GROUP = 3;
-
+        
         /**
          * 获取艺术家列表
          *
@@ -305,7 +305,7 @@ public class BMA {
             }
             return sb.toString();
         }
-
+        
         /**
          * 热门艺术家
          *
@@ -316,7 +316,7 @@ public class BMA {
         public static String hotArtist(int offset, int limit) {
             return artistList(offset, limit, 0, 0, 1, null);
         }
-
+        
         /**
          * 艺术家歌曲
          *
@@ -336,7 +336,7 @@ public class BMA {
                     .append("&limits=").append(limit);
             return sb.toString();
         }
-
+        
         /**
          * 艺术家信息
          *
@@ -352,12 +352,12 @@ public class BMA {
             return sb.toString();
         }
     }
-
+    
     /**
      * 音乐榜
      */
     public static class Billboard {
-
+        
         /**
          * 所有音乐榜类别
          *
@@ -369,7 +369,7 @@ public class BMA {
                     .append("&kflag=1");
             return sb.toString();
         }
-
+        
         /**
          * 音乐榜歌曲
          *
@@ -388,14 +388,14 @@ public class BMA {
             return sb.toString();
         }
     }
-
+    
     /**
      * 歌单
      *
      * @author Sanron
      */
     public static class GeDan {
-
+        
         /**
          * 歌单分类
          *
@@ -406,7 +406,7 @@ public class BMA {
             sb.append("&method=").append("baidu.ting.diy.gedanCategory");
             return sb.toString();
         }
-
+        
         /**
          * 热门歌单
          *
@@ -419,7 +419,7 @@ public class BMA {
                     .append("&num=").append(num);
             return sb.toString();
         }
-
+        
         /**
          * 歌单
          *
@@ -434,8 +434,8 @@ public class BMA {
                     .append("&page_no=").append(pageNo);
             return sb.toString();
         }
-
-
+        
+        
         /**
          * 包含标签的歌单
          *
@@ -452,7 +452,7 @@ public class BMA {
                     .append("&query=").append(encode(tag));
             return sb.toString();
         }
-
+        
         /**
          * 歌单信息和歌曲
          *
@@ -466,14 +466,14 @@ public class BMA {
             return sb.toString();
         }
     }
-
+    
     /**
      * 电台
      *
      * @author Sanron
      */
     public static class Radio {
-
+        
         /**
          * 录制电台
          *
@@ -488,7 +488,7 @@ public class BMA {
                     .append("&page_size=").append(pageSize);
             return sb.toString();
         }
-
+        
         /**
          * 推荐电台（注意返回的都是乐播节目)
          *
@@ -501,7 +501,7 @@ public class BMA {
                     .append("&num=").append(num);
             return sb.toString();
         }
-
+        
         /**
          * 频道歌曲
          *
@@ -517,7 +517,7 @@ public class BMA {
             return sb.toString();
         }
     }
-
+    
     /**
      * 乐播节目
      * 节目相当于一个专辑
@@ -526,7 +526,7 @@ public class BMA {
      * @author Sanron
      */
     public static class Lebo {
-
+        
         /**
          * 频道
          *
@@ -535,14 +535,14 @@ public class BMA {
          * @return
          */
         public static String channelTag(int pageNo, int pageSize) {
-
+    
             StringBuffer sb = new StringBuffer(BASE);
             sb.append("&method=").append("baidu.ting.lebo.getChannelTag")
                     .append("&page_no=").append(pageNo)
                     .append("&page_size=0").append(pageSize);
             return sb.toString();
         }
-
+        
         /**
          * 返回频道下的不同节目的几期
          * 包含几个节目，每个节目有一期或多期
@@ -559,7 +559,7 @@ public class BMA {
                     .append("&num=").append(num);
             return sb.toString();
         }
-
+        
         /**
          * 节目信息
          *
@@ -575,14 +575,14 @@ public class BMA {
             return sb.toString();
         }
     }
-
+    
     /**
      * 搜索
      *
      * @author Sanron
      */
     public static class Search {
-
+        
         /**
          * 热门关键字
          *
@@ -593,7 +593,7 @@ public class BMA {
             sb.append("&method=").append("baidu.ting.search.hot");
             return sb.toString();
         }
-
+        
         /**
          * 搜索建议
          *
@@ -606,7 +606,7 @@ public class BMA {
                     .append("&query=").append(encode(query));
             return sb.toString();
         }
-
+        
         /**
          * 搜歌词
          *
@@ -626,7 +626,7 @@ public class BMA {
                     .append("&e=").append(e);
             return sb.toString();
         }
-
+        
         /**
          * 合并搜索结果，用于搜索建议中的歌曲
          *
@@ -642,7 +642,7 @@ public class BMA {
                     .append("&type=-1&data_source=0");
             return sb.toString();
         }
-
+        
         /**
          * 搜索伴奏
          *
@@ -660,10 +660,10 @@ public class BMA {
             return sb.toString();
         }
     }
-
+    
     public static String encode(String str) {
         if (str == null) return "";
-
+        
         try {
             return URLEncoder.encode(str, "utf-8");
         } catch (UnsupportedEncodingException e) {
@@ -671,5 +671,5 @@ public class BMA {
         }
         return str;
     }
-
+    
 }

@@ -34,7 +34,7 @@ import java.util.List;
  * Created by wm on 2016/4/11.
  */
 public class SearchTabPagerFragment extends AttachFragment {
-
+    
     private ViewPager viewPager;
     private int page = 0;
     String key;
@@ -44,7 +44,7 @@ public class SearchTabPagerFragment extends AttachFragment {
     ArrayList<SearchSongInfo> songResults = new ArrayList<>();
     ArrayList<SearchArtistInfo> artistResults = new ArrayList<>();
     ArrayList<SearchAlbumInfo> albumResults = new ArrayList<>();
-
+    
     public static final SearchTabPagerFragment newInstance(int page, String key) {
         SearchTabPagerFragment f = new SearchTabPagerFragment();
         Bundle bdl = new Bundle(1);
@@ -53,15 +53,15 @@ public class SearchTabPagerFragment extends AttachFragment {
         f.setArguments(bdl);
         return f;
     }
-
-
+    
+    
     private void search(final String key) {
         new AsyncTask<Void, Void, Void>() {
-
+    
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-
+    
                     JsonObject jsonObject = HttpUtil.getResposeJsonObject(BMA.Search.searchMerge(key, 1, 10)).get("result").getAsJsonObject();
                     JsonObject songObject = jsonObject.get("song_info").getAsJsonObject();
                     JsonArray songArray = songObject.get("song_list").getAsJsonArray();
@@ -70,14 +70,14 @@ public class SearchTabPagerFragment extends AttachFragment {
                         Log.e("songinfo", songInfo.getTitle());
                         songResults.add(songInfo);
                     }
-
+    
                     JsonObject artistObject = jsonObject.get("artist_info").getAsJsonObject();
                     JsonArray artistArray = artistObject.get("artist_list").getAsJsonArray();
                     for (JsonElement o : artistArray) {
                         SearchArtistInfo artistInfo = MainApplication.gsonInstance().fromJson(o, SearchArtistInfo.class);
                         artistResults.add(artistInfo);
                     }
-
+    
                     JsonObject albumObject = jsonObject.get("album_info").getAsJsonObject();
                     JsonArray albumArray = albumObject.get("album_list").getAsJsonArray();
                     for (JsonElement o : albumArray) {
@@ -87,11 +87,11 @@ public class SearchTabPagerFragment extends AttachFragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-
+        
+        
                 return null;
             }
-
+    
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
@@ -99,7 +99,7 @@ public class SearchTabPagerFragment extends AttachFragment {
                     return;
                 }
                 contentView = LayoutInflater.from(mContext).inflate(R.layout.fragment_net_tab, frameLayout, false);
-                viewPager = (ViewPager) contentView.findViewById(R.id.viewpager);
+                viewPager = contentView.findViewById(R.id.viewpager);
                 if (viewPager != null) {
                     Adapter adapter = new Adapter(getChildFragmentManager());
                     adapter.addFragment(SearchMusicFragment.newInstance(songResults), "单曲");
@@ -108,81 +108,81 @@ public class SearchTabPagerFragment extends AttachFragment {
                     viewPager.setAdapter(adapter);
                     viewPager.setOffscreenPageLimit(3);
                 }
-
-                TabLayout tabLayout = (TabLayout) contentView.findViewById(R.id.tabs);
+        
+                TabLayout tabLayout = contentView.findViewById(R.id.tabs);
                 tabLayout.setupWithViewPager(viewPager);
                 viewPager.setCurrentItem(page);
                 tabLayout.setTabTextColors(R.color.text_color, ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary).getDefaultColor());
                 tabLayout.setSelectedTabIndicatorColor(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary).getDefaultColor());
                 frameLayout.removeAllViews();
                 frameLayout.addView(contentView);
-
+        
             }
         }.execute();
-
-
+        
+        
     }
-
-
+    
+    
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        
         View rootView = inflater.inflate(R.layout.load_framelayout, container, false);
-        frameLayout = (FrameLayout) rootView.findViewById(R.id.loadframe);
+        frameLayout = rootView.findViewById(R.id.loadframe);
         View loadview = LayoutInflater.from(mContext).inflate(R.layout.loading, frameLayout, false);
         frameLayout.addView(loadview);
-
-
+        
+        
         if (getArguments() != null) {
             key = getArguments().getString("key");
         }
         search(key);
-
-
+        
+        
         return rootView;
-
+        
     }
-
-
+    
+    
     @Override
     public void onResume() {
         super.onResume();
     }
-
-
+    
+    
     @Override
     public void onStart() {
         super.onStart();
     }
-
+    
     static class Adapter extends FragmentStatePagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
-
+        
         public Adapter(FragmentManager fm) {
             super(fm);
         }
-
+        
         public void addFragment(Fragment fragment, String title) {
             mFragments.add(fragment);
             mFragmentTitles.add(title);
         }
-
+        
         @Override
         public Fragment getItem(int position) {
             return mFragments.get(position);
         }
-
+        
         @Override
         public int getCount() {
             return mFragments.size();
         }
-
+        
         @Override
         public CharSequence getPageTitle(int position) {
             return mFragmentTitles.get(position);

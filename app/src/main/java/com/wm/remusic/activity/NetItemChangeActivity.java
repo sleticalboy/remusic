@@ -33,13 +33,13 @@ public class NetItemChangeActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private Toolbar toolbar;
-
+    
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.change_netmusic_item);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.actionbar_back);
@@ -50,8 +50,8 @@ public class NetItemChangeActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-        TextView defaultPosition = (TextView) findViewById(R.id.default_item_position);
+        
+        TextView defaultPosition = findViewById(R.id.default_item_position);
         defaultPosition.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         defaultPosition.getPaint().setAntiAlias(true);//抗锯齿
         defaultPosition.setOnClickListener(new View.OnClickListener() {
@@ -60,8 +60,8 @@ public class NetItemChangeActivity extends AppCompatActivity {
                 PreferencesUtility.getInstance(NetItemChangeActivity.this).setItemPostion("推荐歌单 最新专辑 主播电台");
             }
         });
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        
+        recyclerView = findViewById(R.id.recyclerview);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
@@ -72,11 +72,11 @@ public class NetItemChangeActivity extends AppCompatActivity {
             list.add(st);
         }
         mAdapter = new SelectAdapter(list);
-
+        
         recyclerView.setAdapter(mAdapter);
         DragSortRecycler dragSortRecycler = new DragSortRecycler();
         dragSortRecycler.setViewHandleId(R.id.move);
-
+        
         dragSortRecycler.setOnItemMovedListener(new DragSortRecycler.OnItemMovedListener() {
             @Override
             public void onItemMoved(int from, int to) {
@@ -85,8 +85,8 @@ public class NetItemChangeActivity extends AppCompatActivity {
                 mAdapter.removeSongAt(from);
                 mAdapter.addStringTo(to, str);
                 mAdapter.notifyDataSetChanged();
-
-
+    
+    
                 String st = "";
                 for (int i = 0; i < mAdapter.strs.size(); i++) {
                     if (i == mAdapter.strs.size() - 1) {
@@ -99,80 +99,80 @@ public class NetItemChangeActivity extends AppCompatActivity {
                 //MusicPlayer.moveQueueItem(from, to);
             }
         });
-
+        
         recyclerView.addItemDecoration(dragSortRecycler);
         recyclerView.addOnItemTouchListener(dragSortRecycler);
         recyclerView.addOnScrollListener(dragSortRecycler.getScrollListener());
         recyclerView.setHasFixedSize(true);
     }
-
-
+    
+    
     @Override
     public void onPause() {
         super.onPause();
     }
-
+    
     @Override
     public void onStop() {
         super.onStop();
     }
-
-
+    
+    
     public class SelectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+        
         private ArrayList<String> strs = new ArrayList<>();
-
+        
         public SelectAdapter(ArrayList<String> strs) {
             this.strs = strs;
         }
-
-
+        
+        
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-
+            
             View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.net_item_change_recyclerview_item, viewGroup, false);
             return new ListItemViewHolder(itemView);
         }
-
-
+        
+        
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int i) {
             String str = strs.get(i);
             //设置条目状态
             ((ListItemViewHolder) holder).mainTitle.setText(str);
-
-
+            
+            
         }
-
+        
         public String getMusicAt(int i) {
             return strs.get(i);
         }
-
+        
         public void addStringTo(int i, String str) {
             strs.add(i, str);
         }
-
+        
         public void removeSongAt(int i) {
             strs.remove(i);
         }
-
+        
         @Override
         public int getItemCount() {
             return strs.size();
         }
-
+        
         public class ListItemViewHolder extends RecyclerView.ViewHolder {
             //ViewHolder
             TextView mainTitle;
             ImageView move;
-
+            
             ListItemViewHolder(View view) {
                 super(view);
-                this.mainTitle = (TextView) view.findViewById(R.id.text);
-                this.move = (ImageView) view.findViewById(R.id.move);
-
+                this.mainTitle = view.findViewById(R.id.text);
+                this.move = view.findViewById(R.id.move);
+                
             }
-
+            
         }
     }
 }

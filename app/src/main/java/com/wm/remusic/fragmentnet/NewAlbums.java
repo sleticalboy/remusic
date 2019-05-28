@@ -9,16 +9,16 @@ public class NewAlbums {
     public final String albumName;
     public final String artistName;
     public int publishTime;
-
+    
     public NewAlbums() {
         this.coverImgUrl = "";
         this.id = -1;
         this.albumName = "";
         this.artistName = "";
         this.publishTime = -1;
-
+        
     }
-
+    
     public NewAlbums(String _coverImg, long _id, String _album_Name, String _artistName,
                      int _publishTime) {
         this.coverImgUrl = _coverImg;
@@ -27,5 +27,5 @@ public class NewAlbums {
         this.artistName = _artistName;
         this.publishTime = _publishTime;
     }
-
+    
 }
