@@ -72,12 +72,7 @@ public class ProxyFileUtils {
         ProxyUtils.asynRemoveBufferFile(Constants.CACHE_FILE_NUMBER);
         // 可用空间大小是否大于SD卡预留最小值
         long freeSize = ProxyUtils.getAvailaleSize(Constants.DOWNLOAD_PATH);
-        if (freeSize > Constants.SD_REMAIN_SIZE) {
-            return true;
-        } else {
-
-            return false;
-        }
+        return freeSize > Constants.SD_REMAIN_SIZE;
     }
 
     private ProxyFileUtils(Context context, String name) {
@@ -134,7 +129,7 @@ public class ProxyFileUtils {
 
     public byte[] read(int startPos) {
         if (isEnable) {
-            int byteCount = (int) (getLength() - startPos);
+            int byteCount = getLength() - startPos;
             byte[] tmp = new byte[byteCount];
             try {
                 randomAccessFile.seek(startPos);
@@ -151,7 +146,7 @@ public class ProxyFileUtils {
 
     public byte[] read(int startPos, int length) {
         if (isEnable) {
-            int byteCount = (int) (getLength() - startPos);
+            int byteCount = getLength() - startPos;
             if (byteCount > length) {
                 byteCount = length;
             }
@@ -211,16 +206,13 @@ public class ProxyFileUtils {
         if (!f.exists()) {
             return false;
         }
-        if (f.length() != CacheFileInfoDao.getInstance().getFileSize(name)) {
-            return false;
-        }
-        return true;
+        return f.length() == CacheFileInfoDao.getInstance().getFileSize(name);
     }
 
     /**
      * 获取有效的文件名
      *
-     * @param url
+     * @param uri
      * @return
      */
     static protected String getValidFileName(URI uri) {

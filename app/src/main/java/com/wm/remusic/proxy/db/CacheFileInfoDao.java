@@ -12,10 +12,10 @@ import java.util.Collection;
 import java.util.Map;
 
 public class CacheFileInfoDao extends SQLiteOpenHelper {
-
-    static final int DB_VERSION = 1;
-    static final String DB_NAME = "cachefileinfo.db";
-    static final String TABLE_NAME = "CacheFileInfo";
+    
+    private static final int DB_VERSION = 1;
+    private static final String DB_NAME = "cachefileinfo.db";
+    private static final String TABLE_NAME = "CacheFileInfo";
 
     private static CacheFileInfoDao audioDao;
 

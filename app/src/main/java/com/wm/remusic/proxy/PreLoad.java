@@ -19,11 +19,11 @@ import java.net.URL;
 public class PreLoad extends Thread {
 
     private static final String LOG_TAG = RequestDealThread.class.getSimpleName();
-
-    CacheFileInfoDao cacheDao = CacheFileInfoDao.getInstance();
-    ProxyFileUtils fileUtils;
-    URI uri;
-    URL url;
+    
+    private CacheFileInfoDao cacheDao = CacheFileInfoDao.getInstance();
+    private ProxyFileUtils fileUtils;
+    private URI uri;
+    private URL url;
 
     public PreLoad(Context context, String url) {
         try {
@@ -71,11 +71,7 @@ public class PreLoad extends Thread {
                     break;
                 }
             }
-            if (fileUtils.isEnable()) {
-                return true;
-            } else {
-                return false;
-            }
+            return fileUtils.isEnable();
         } catch (IOException e) {
             Log.e(LOG_TAG, "缓存异常", e);
             return false;

@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.CacheControl;
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -28,6 +29,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okio.BufferedSource;
@@ -37,8 +39,27 @@ import okio.Okio;
  * Created by wm on 2016/4/10.
  */
 public class HttpUtil {
+    
+    private static final String TAG = "HttpUtil";
     public static final OkHttpClient mOkHttpClient = new OkHttpClient();
     
+    private HttpUtil() {
+        final List<Interceptor> interceptors = mOkHttpClient.interceptors();
+        interceptors.add(new Interceptor() {
+            @Override
+            public Response intercept(final Chain chain) throws IOException {
+                final Request request = chain.request();
+                Log.d(TAG, "http method: " + request.method() + " url: " + request.urlString());
+                for (final String name : request.headers().names()) {
+                    Log.d(TAG, name + "=" + request.header(name));
+                }
+                // final RequestBody requestBody = request.body();
+                // if (requestBody != null) {
+                // }
+                return chain.proceed(request);
+            }
+        });
+    }
     
     public static void getOut(final String url) {
         try {
@@ -195,17 +216,21 @@ public class HttpUtil {
     
     
     public static String getResposeString(String action1) {
+        Log.d(TAG, "getResposeString() called with: action1 = [" + action1 + "]");
         try {
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
             Request request = new Request.Builder()
                     .url(action1)
+                    .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
                     .build();
             Response response = mOkHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
                 String c = response.body().string();
                 Log.e("billboard", c);
                 return c;
+            } else {
+                Log.d(TAG, "error string: " + response.body().string());
             }
     
         } catch (Exception e) {
@@ -220,6 +245,7 @@ public class HttpUtil {
     }
     
     public static JsonObject getResposeJsonObject(String action1, Context context, boolean forceCache) {
+        Log.d(TAG, "getResposeJsonObject() called with: action1 = [" + action1 + "], context = [" + context + "], forceCache = [" + forceCache + "]");
         try {
             Log.e("action-cache", action1);
             File sdcache = context.getCacheDir();
@@ -230,6 +256,7 @@ public class HttpUtil {
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(1000, TimeUnit.MINUTES);
             Request.Builder builder = new Request.Builder()
+                    .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
                     .url(action1);
             if (forceCache) {
                 builder.cacheControl(CacheControl.FORCE_CACHE);
@@ -243,6 +270,8 @@ public class HttpUtil {
                 JsonElement el = parser.parse(c);
                 return el.getAsJsonObject();
     
+            } else {
+                Log.d(TAG, "error string: " + response.body().string());
             }
     
         } catch (Exception e) {
@@ -258,11 +287,13 @@ public class HttpUtil {
     
     
     public static JsonObject getResposeJsonObject(String action1) {
+        Log.d(TAG, "getResposeJsonObject() called with: action1 = [" + action1 + "]");
         try {
             mOkHttpClient.setConnectTimeout(3000, TimeUnit.MINUTES);
             mOkHttpClient.setReadTimeout(3000, TimeUnit.MINUTES);
             Request request = new Request.Builder()
                     .url(action1)
+                    .addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
 //                    .addHeader("Referer","http://music.163.com/")
 //                    .addHeader("Cookie", "appver=1.5.0.75771")
                     .build();
@@ -276,6 +307,8 @@ public class HttpUtil {
                 JsonElement el = parser.parse(c);
                 return el.getAsJsonObject();
     
+            } else {
+                Log.d(TAG, "error string: " + response.body().string());
             }
     
         } catch (Exception e) {
