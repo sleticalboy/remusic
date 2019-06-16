@@ -2,6 +2,7 @@ package com.wm.remusic.fragment;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -119,8 +120,8 @@ public class MainFragment extends BaseFragment {
 
     //设置音乐overflow条目
     private void setMusicInfo() {
-
-        if (CommonUtils.isLollipop() && ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        final Context context = mContext == null ? requireContext() : mContext;
+        if (CommonUtils.isLollipop() && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             loadCount(false);
         } else {
             loadCount(true);

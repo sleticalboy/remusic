@@ -6,10 +6,12 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.util.Log;
 
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.common.internal.Supplier;
+import com.facebook.common.logging.FLog;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipeline;
@@ -122,6 +124,9 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
     
     private void frescoInit() {
         Fresco.initialize(this, getConfigureCaches(this));
+        if (BuildConfig.DEBUG) {
+            FLog.setMinimumLoggingLevel(Log.VERBOSE);
+        }
     }
 
 
