@@ -37,9 +37,10 @@ import okio.Okio;
  * Created by wm on 2016/4/10.
  */
 public class HttpUtil {
+    
+    private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36";
     public  static final OkHttpClient mOkHttpClient = new OkHttpClient();
-
-
+    
     public static void getOut(final String url) {
         try {
             mOkHttpClient.setConnectTimeout(1000, TimeUnit.MINUTES);
@@ -47,7 +48,7 @@ public class HttpUtil {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            Response response = mOkHttpClient.newCall(request).execute();
+            Response response = mOkHttpClient.newCall(checkUserAgent(request)).execute();
             if (response.isSuccessful()) {
 
                 FileOutputStream fo = new FileOutputStream("/storage/emulated/0/" + "gedangein" + ".json");
@@ -61,8 +62,15 @@ public class HttpUtil {
             e.printStackTrace();
         }
     }
-
-
+    
+    private static Request checkUserAgent(final Request request) {
+        final String oldUa = request.header("User-Agent");
+        if (oldUa == null) {
+            return request.newBuilder().header("User-Agent", USER_AGENT).build();
+        }
+        return request;
+    }
+    
     public static Bitmap getBitmapStream(Context context, String url, boolean forceCache) {
         try {
             File sdcache = context.getExternalCacheDir();
@@ -78,7 +86,7 @@ public class HttpUtil {
                 builder.cacheControl(CacheControl.FORCE_CACHE);
             }
             Request request = builder.build();
-            Response response = mOkHttpClient.newCall(request).execute();
+            Response response = mOkHttpClient.newCall(checkUserAgent(request)).execute();
             if (response.isSuccessful()) {
                 return _decodeBitmapFromStream(response.body().byteStream(), 160, 160);
             }
@@ -201,7 +209,7 @@ public class HttpUtil {
             Request request = new Request.Builder()
                     .url(action1)
                     .build();
-            Response response = mOkHttpClient.newCall(request).execute();
+            Response response = mOkHttpClient.newCall(checkUserAgent(request)).execute();
             if (response.isSuccessful()) {
                 String c = response.body().string();
                 Log.e("billboard", c);
@@ -235,7 +243,7 @@ public class HttpUtil {
                 builder.cacheControl(CacheControl.FORCE_CACHE);
             }
             Request request = builder.build();
-            Response response = mOkHttpClient.newCall(request).execute();
+            Response response = mOkHttpClient.newCall(checkUserAgent(request)).execute();
             if (response.isSuccessful()) {
                 String c = response.body().string();
                 Log.e("cache", c);
@@ -266,7 +274,7 @@ public class HttpUtil {
 //                    .addHeader("Referer","http://music.163.com/")
 //                    .addHeader("Cookie", "appver=1.5.0.75771")
                     .build();
-            Response response = mOkHttpClient.newCall(request).execute();
+            Response response = mOkHttpClient.newCall(checkUserAgent(request)).execute();
             if (response.isSuccessful()) {
                 String c = response.body().string();
 //                FileOutputStream fileOutputStream = new FileOutputStream("/sdcard/" + System.currentTimeMillis() + ".txt");
@@ -299,7 +307,7 @@ public class HttpUtil {
                     Request request = new Request.Builder()
                             .url(url)
                             .build();
-                    Response response = mOkHttpClient.newCall(request).execute();
+                    Response response = mOkHttpClient.newCall(checkUserAgent(request)).execute();
                     if (response.isSuccessful()) {
                         FileOutputStream fo = new FileOutputStream("/storage/emulated/0/" + name + ".mp3");
                         byte[] c = new byte[1024];
