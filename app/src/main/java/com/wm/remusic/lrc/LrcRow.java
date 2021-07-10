@@ -3,6 +3,8 @@ package com.wm.remusic.lrc;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,10 +83,8 @@ public class LrcRow implements Comparable<LrcRow> {
      * @param lrcLine
      * @return
      */
-    public static final List<LrcRow> createRows(String lrcLine) {
-        if (!lrcLine.startsWith("[") || lrcLine.indexOf("]") != 9) {
-            return null;
-        }
+    public static List<LrcRow> createRows(String lrcLine) {
+        if (!lrcLine.startsWith("[") || lrcLine.indexOf("]") != 9) return null;
         //最后一个"]"
         int lastIndexOfRightBracket = lrcLine.lastIndexOf("]");
         //歌词内容
@@ -96,10 +96,7 @@ public class LrcRow implements Comparable<LrcRow> {
         String[] timesArray = times.split("-");
         List<LrcRow> lrcRows = new ArrayList<LrcRow>();
         for (String tem : timesArray) {
-            if (TextUtils.isEmpty(tem.trim())) {
-                continue;
-            }
-            //
+            if (TextUtils.isEmpty(tem.trim())) continue;
             try {
                 LrcRow lrcRow = new LrcRow(tem, formatTime(tem), content);
                 lrcRows.add(lrcRow);
@@ -112,9 +109,6 @@ public class LrcRow implements Comparable<LrcRow> {
     
     /****
      * 把歌词时间转换为毫秒值  如 将00:10.00  转为10000
-     *
-     * @param tem
-     * @return
      */
     private static int formatTime(String timeStr) {
         timeStr = timeStr.replace('.', ':');
@@ -130,11 +124,9 @@ public class LrcRow implements Comparable<LrcRow> {
         return this.time - anotherLrcRow.time;
     }
     
+    @NonNull
     @Override
     public String toString() {
-        return "LrcRow [timeStr=" + timeStr + ", time=" + time + ", content="
-                + content + "]";
+        return "LrcRow [timeStr=" + timeStr + ", time=" + time + ", content=" + content + "]";
     }
-    
-    
 }

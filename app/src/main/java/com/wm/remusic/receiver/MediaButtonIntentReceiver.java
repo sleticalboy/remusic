@@ -18,13 +18,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.support.v4.content.WakefulBroadcastReceiver;
+import androidx.legacy.content.WakefulBroadcastReceiver;
 import android.util.Log;
 import android.view.KeyEvent;
 
 import com.wm.remusic.activity.MainActivity;
 import com.wm.remusic.service.MediaService;
-
 
 /**
  * Used to control headset playback.
@@ -51,9 +50,6 @@ public class MediaButtonIntentReceiver extends WakefulBroadcastReceiver {
     
     private static Handler mHandler = new Handler() {
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void handleMessage(final Message msg) {
             switch (msg.what) {
@@ -139,13 +135,10 @@ public class MediaButtonIntentReceiver extends WakefulBroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         final String intentAction = intent.getAction();
         if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intentAction)) {
-            if (true)
-                startService(context, MediaService.CMDPAUSE);
+            if (true) startService(context, MediaService.CMDPAUSE);
         } else if (Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
             final KeyEvent event = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-            if (event == null) {
-                return;
-            }
+            if (event == null) return;
     
             final int keycode = event.getKeyCode();
             final int action = event.getAction();
@@ -173,52 +166,50 @@ public class MediaButtonIntentReceiver extends WakefulBroadcastReceiver {
                     command = MediaService.CMDPLAY;
                     break;
             }
-            if (command != null) {
-                if (action == KeyEvent.ACTION_DOWN) {
-                    if (mDown) {
-                        if (MediaService.CMDTOGGLEPAUSE.equals(command)
-                                || MediaService.CMDPLAY.equals(command)) {
-                            if (mLastClickTime != 0
-                                    && eventtime - mLastClickTime > LONG_PRESS_DELAY) {
-                                acquireWakeLockAndSendMessage(context,
-                                        mHandler.obtainMessage(MSG_LONGPRESS_TIMEOUT, context), 0);
-                            }
+            if (command == null) return;
+            if (action == KeyEvent.ACTION_DOWN) {
+                if (mDown) {
+                    if (MediaService.CMDTOGGLEPAUSE.equals(command)
+                            || MediaService.CMDPLAY.equals(command)) {
+                        if (mLastClickTime != 0 && eventtime - mLastClickTime > LONG_PRESS_DELAY) {
+                            acquireWakeLockAndSendMessage(context,
+                                    mHandler.obtainMessage(MSG_LONGPRESS_TIMEOUT, context), 0);
                         }
-                    } else if (event.getRepeatCount() == 0) {
-    
-                        if (keycode == KeyEvent.KEYCODE_HEADSETHOOK) {
-                            if (eventtime - mLastClickTime >= DOUBLE_CLICK) {
-                                mClickCounter = 0;
-                            }
-        
-                            mClickCounter++;
-                            if (DEBUG) Log.v(TAG, "Got headset click, count = " + mClickCounter);
-                            mHandler.removeMessages(MSG_HEADSET_DOUBLE_CLICK_TIMEOUT);
-        
-                            Message msg = mHandler.obtainMessage(
-                                    MSG_HEADSET_DOUBLE_CLICK_TIMEOUT, mClickCounter, 0, context);
-        
-                            long delay = mClickCounter < 3 ? DOUBLE_CLICK : 0;
-                            if (mClickCounter >= 3) {
-                                mClickCounter = 0;
-                            }
-                            mLastClickTime = eventtime;
-                            acquireWakeLockAndSendMessage(context, msg, delay);
-                        } else {
-                            startService(context, command);
-                        }
-                        mLaunched = false;
-                        mDown = true;
                     }
-                } else {
-                    mHandler.removeMessages(MSG_LONGPRESS_TIMEOUT);
-                    mDown = false;
+                } else if (event.getRepeatCount() == 0) {
+
+                    if (keycode == KeyEvent.KEYCODE_HEADSETHOOK) {
+                        if (eventtime - mLastClickTime >= DOUBLE_CLICK) {
+                            mClickCounter = 0;
+                        }
+
+                        mClickCounter++;
+                        if (DEBUG) Log.v(TAG, "Got headset click, count = " + mClickCounter);
+                        mHandler.removeMessages(MSG_HEADSET_DOUBLE_CLICK_TIMEOUT);
+
+                        Message msg = mHandler.obtainMessage(
+                                MSG_HEADSET_DOUBLE_CLICK_TIMEOUT, mClickCounter, 0, context);
+
+                        long delay = mClickCounter < 3 ? DOUBLE_CLICK : 0;
+                        if (mClickCounter >= 3) {
+                            mClickCounter = 0;
+                        }
+                        mLastClickTime = eventtime;
+                        acquireWakeLockAndSendMessage(context, msg, delay);
+                    } else {
+                        startService(context, command);
+                    }
+                    mLaunched = false;
+                    mDown = true;
                 }
-                if (isOrderedBroadcast()) {
-                    abortBroadcast();
-                }
-                releaseWakeLockIfHandlerIdle();
+            } else {
+                mHandler.removeMessages(MSG_LONGPRESS_TIMEOUT);
+                mDown = false;
             }
+            if (isOrderedBroadcast()) {
+                abortBroadcast();
+            }
+            releaseWakeLockIfHandlerIdle();
         }
     }
 }

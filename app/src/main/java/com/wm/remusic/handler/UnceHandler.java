@@ -57,8 +57,7 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
                     application.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             //退出程序
             AlarmManager mgr = (AlarmManager) application.getSystemService(Context.ALARM_SERVICE);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 300,
-                    restartIntent); // 1秒钟后重启应用
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 300, restartIntent); // 1秒钟后重启应用
             PreferencesUtility.getInstance(MainApplication.context).setExitTime();
             android.os.Process.killProcess(android.os.Process.myPid());
         }
@@ -71,9 +70,7 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
      * @return true:如果处理了该异常信息;否则返回false.
      */
     private boolean handleException(final Throwable ex) {
-        if (ex == null) {
-            return false;
-        }
+        if (ex == null) return false;
         //使用Toast来显示异常信息
         new Thread() {
             @Override
@@ -95,13 +92,7 @@ public class UnceHandler implements Thread.UncaughtExceptionHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                CommonUtils.sendTextMail("errlog from " + CommonUtils.getUniquePsuedoID(), CommonUtils.getDeviceInfo() + Log.getStackTraceString(ex));
-            }
-        }).start();
-
+        new Thread(() -> CommonUtils.sendTextMail("errlog from " + CommonUtils.getUniquePsuedoID(), CommonUtils.getDeviceInfo() + Log.getStackTraceString(ex))).start();
 
         return true;
     }

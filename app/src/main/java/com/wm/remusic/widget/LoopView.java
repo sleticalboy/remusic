@@ -2,15 +2,8 @@ package com.wm.remusic.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,6 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.facebook.common.logging.FLog;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -39,16 +36,12 @@ import com.wm.remusic.net.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by muyang on 2016/3/24.
  */
-public class LoodView extends FrameLayout {
-    //轮播图图片数量
-    private final static int IMAGE_COUNT = 7;
+public class LoopView extends FrameLayout {
     //自动轮播时间间隔
     private final static int TIME_INTERVAL = 3;
     //自动轮播启用开关
@@ -64,28 +57,18 @@ public class LoodView extends FrameLayout {
     private Context mContext;
     //当前轮播页面
     private int currentItem = 0;
-    //定时任务
-    private ScheduledExecutorService scheduledExecutorService;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            viewPager.setCurrentItem(currentItem);
-        }
-    };
-    
-    
-    public LoodView(Context context) {
+
+    public LoopView(Context context) {
         super(context);
         mContext = context;
     }
-    
-    public LoodView(Context context, AttributeSet attributeSet) {
+
+    public LoopView(Context context, AttributeSet attributeSet) {
         this(context, attributeSet, 0);
         mContext = context;
     }
-    
-    public LoodView(Context context, AttributeSet attributeSet, int defStyle) {
+
+    public LoopView(Context context, AttributeSet attributeSet, int defStyle) {
         super(context, attributeSet, defStyle);
         mContext = context;
         initImageView();
@@ -93,30 +76,29 @@ public class LoodView extends FrameLayout {
         if (isAutoPlay) {
             startPlay();
         }
-        
     }
-    
+
     public void onDestroy() {
-        scheduledExecutorService.shutdownNow();
-        scheduledExecutorService = null;
+        stopPlay();
     }
-    
+
+    private LoopTask mTask;
+
     /**
      * 开始轮播图切换
      */
-    
     public void startPlay() {
-        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutorService.scheduleAtFixedRate(new LoopTask(), 1, TIME_INTERVAL, TimeUnit.SECONDS);
+        post(mTask = new LoopTask());
     }
-    
+
     /**
      * 停止切换
      */
     private void stopPlay() {
-        scheduledExecutorService.shutdown();
+        removeCallbacks(mTask);
+        mTask = null;
     }
-    
+
     /**
      * 初始化UI
      *
@@ -126,7 +108,6 @@ public class LoodView extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.load_view, this, true);
         for (String imagesID : imageNet) {
             final SimpleDraweeView mAlbumArt = new SimpleDraweeView(context);
-    
             ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
                 @Override
                 public void onFinalImageSet(String id, @Nullable ImageInfo imageInfo, @Nullable Animatable anim) {
@@ -143,12 +124,12 @@ public class LoodView extends FrameLayout {
                             qualityInfo.isOfGoodEnoughQuality(),
                             qualityInfo.isOfFullQuality());
                 }
-        
+
                 @Override
                 public void onIntermediateImageSet(String id, @Nullable ImageInfo imageInfo) {
                     //FLog.d("Intermediate image received");
                 }
-        
+
                 @Override
                 public void onFailure(String id, Throwable throwable) {
                     mAlbumArt.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
@@ -162,21 +143,20 @@ public class LoodView extends FrameLayout {
             }
             if (uri != null) {
                 ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri).build();
-    
+
                 DraweeController controller = Fresco.newDraweeControllerBuilder()
                         .setOldController(mAlbumArt.getController())
                         .setImageRequest(request)
                         .setControllerListener(controllerListener)
                         .build();
-    
+
                 mAlbumArt.setController(controller);
             } else {
                 mAlbumArt.setImageURI(Uri.parse("res:/" + R.drawable.placeholder_disk_210));
             }
-    
-    
+
             //view.setImageURI(Uri.parse(imagesID));
-    
+
             // view.setImageResource(imagesID);
             // view.setImageResource(imagesID);
             mAlbumArt.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -189,14 +169,14 @@ public class LoodView extends FrameLayout {
         dotViewList.add(findViewById(R.id.v_dot5));
         dotViewList.add(findViewById(R.id.v_dot6));
         dotViewList.add(findViewById(R.id.v_dot7));
-    
+
         viewPager = findViewById(R.id.viewPager);
         viewPager.setFocusable(true);
         fPagerAdapter = new FPagerAdapter();
         viewPager.setAdapter(fPagerAdapter);
         viewPager.addOnPageChangeListener(new MyPageChangeListener());
     }
-    
+
     private void initImageView() {
         imageResIds = new int[]{
                 R.mipmap.first,
@@ -207,19 +187,19 @@ public class LoodView extends FrameLayout {
                 R.mipmap.six,
                 R.mipmap.seven
         };
-        
+
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 if (NetworkUtils.isConnectInternet(mContext)) {
                     isFromCache = false;
                 }
-    
+
                 try {
                     JsonArray rray = HttpUtil.getResposeJsonObject(BMA.focusPic(7), mContext, isFromCache).get("pic").getAsJsonArray();
                     int en = rray.size();
                     Gson gson = new Gson();
-        
+
                     imageNet.clear();
                     for (int i = 0; i < en; i++) {
                         FocusItemInfo focusItemInfo = gson.fromJson(rray.get(i), FocusItemInfo.class);
@@ -232,11 +212,9 @@ public class LoodView extends FrameLayout {
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
-    
-    
                 return null;
             }
-            
+
             @Override
             protected void onPostExecute(Void aVoid) {
                 for (int i = 0; i < 7; i++) {
@@ -244,69 +222,47 @@ public class LoodView extends FrameLayout {
                 }
             }
         }.execute();
-        
-        
+
+
         for (int i = 0; i < 7; i++) {
             imageNet.add("");
         }
-        
+
         imageViewList = new ArrayList<>();
         dotViewList = new ArrayList<>();
     }
-    
+
     private class FPagerAdapter extends PagerAdapter {
-        
-        
+
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             container.addView(imageViewList.get(position));
             return imageViewList.get(position);
         }
-        
+
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView(imageViewList.get(position));
         }
-        
+
         @Override
         public int getCount() {
             return imageViewList.size();
         }
-        
-        @Override
-        public void restoreState(Parcelable state, ClassLoader loader) {
-            super.restoreState(state, loader);
-        }
-        
-        @Override
-        public Parcelable saveState() {
-            return null;
-        }
-        
-        @Override
-        public void startUpdate(ViewGroup container) {
-            super.startUpdate(container);
-        }
-        
-        @Override
-        public void finishUpdate(ViewGroup container) {
-            super.finishUpdate(container);
-        }
-        
+
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
         }
     }
-    
+
     private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
         boolean isAutoPlay = false;
-        
+
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        
         }
-        
+
         @Override
         public void onPageSelected(int position) {
             currentItem = position;
@@ -317,9 +273,8 @@ public class LoodView extends FrameLayout {
                     dotViewList.get(i).setBackgroundResource(R.mipmap.grey_point);
                 }
             }
-            
         }
-        
+
         @Override
         public void onPageScrollStateChanged(int state) {
             switch (state) {
@@ -344,10 +299,9 @@ public class LoodView extends FrameLayout {
                     }
                     break;
             }
-            
         }
     }
-    
+
     //解决滑动冲突
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -357,36 +311,21 @@ public class LoodView extends FrameLayout {
                 break;
             }
             case MotionEvent.ACTION_MOVE:
-                break;
             case MotionEvent.ACTION_UP:
                 break;
         }
         return super.dispatchTouchEvent(ev);
     }
-    
-    private class LoopTask implements Runnable {
+
+    private final class LoopTask implements Runnable {
         @Override
         public void run() {
-            synchronized (viewPager) {
-                currentItem = (currentItem + 1) % imageViewList.size();
-                handler.obtainMessage().sendToTarget();
-    
-            }
-    
+            if (mTask == null) return;
+            currentItem = (currentItem + 1) % imageViewList.size();
+            viewPager.setCurrentItem(currentItem);
+            postDelayed(this, TimeUnit.SECONDS.toMillis(TIME_INTERVAL));
         }
     }
-    
-    /**
-     * 销毁ImageView回收资源
-     */
-    private void destoryBitmaps() {
-        for (int i = 0; i < IMAGE_COUNT; i++) {
-            ImageView imageView = imageViewList.get(i);
-            Drawable drawable = imageView.getDrawable();
-            if (drawable != null)
-                //解除drawable对view的引用
-                drawable.setCallback(null);
-        }
-    }
+
 }
 

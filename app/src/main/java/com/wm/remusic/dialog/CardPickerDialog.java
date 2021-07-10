@@ -17,8 +17,8 @@
 package com.wm.remusic.dialog;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +28,6 @@ import android.widget.ImageView;
 
 import com.wm.remusic.R;
 import com.wm.remusic.uitl.ThemeHelper;
-
 
 /**
  * @author xyczero
@@ -81,7 +80,6 @@ public class CardPickerDialog extends DialogFragment implements View.OnClickList
     public void onClick(View v) {
         Log.e("theme", "onconclick");
         switch (v.getId()) {
-    
             case android.R.id.button1:
                 if (mClickListener != null) {
                     mClickListener.onConfirm(mCurrentTheme);

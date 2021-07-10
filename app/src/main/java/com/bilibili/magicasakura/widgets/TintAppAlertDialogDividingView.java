@@ -29,6 +29,7 @@ import com.wm.remusic.R;
  * @time 2015/9/1
  */
 public class TintAppAlertDialogDividingView extends View {
+
     public static final int[] TINT_ATTRS = {
             android.R.attr.background
     };

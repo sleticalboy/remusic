@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <declare-styleable name="roundedimageview">
         <attr name="border_thickness" format="dimension" />
         <attr name="border_inside_color" format="color" />
         <attr name="border_outside_color" format="color"></attr>
     </declare-styleable>
-
 
     <!-- main theme color -->
     <attr name="themeColorSecondary" format="color" />
@@ -72,13 +70,14 @@
             <enum name="screen" value="15" />
         </attr>
         <attr name="drawableTint" format="color" />
-        <attr name="drawableTintMode">
-            <enum name="src_over" value="3" />
-            <enum name="src_in" value="5" />
-            <enum name="src_atop" value="9" />
-            <enum name="multiply" value="14" />
-            <enum name="screen" value="15" />
-        </attr>
+        <!--duplicated with androidx-->
+        <!--<attr name="drawableTintMode">-->
+        <!--    <enum name="src_over" value="3" />-->
+        <!--    <enum name="src_in" value="5" />-->
+        <!--    <enum name="src_atop" value="9" />-->
+        <!--    <enum name="multiply" value="14" />-->
+        <!--    <enum name="screen" value="15" />-->
+        <!--</attr>-->
         <attr name="progressTint" format="color" />
         <attr name="progressIndeterminateTint" format="color" />
     </declare-styleable>

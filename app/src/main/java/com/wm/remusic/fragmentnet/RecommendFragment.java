@@ -6,8 +6,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
@@ -43,7 +43,7 @@ import com.wm.remusic.json.RecommendListRecommendInfo;
 import com.wm.remusic.net.HttpUtil;
 import com.wm.remusic.net.NetworkUtils;
 import com.wm.remusic.uitl.PreferencesUtility;
-import com.wm.remusic.widget.LoodView;
+import com.wm.remusic.widget.LoopView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -75,7 +75,7 @@ public class RecommendFragment extends AttachFragment {
     private boolean isDayFirst;
     private ViewGroup mContent;
     private View mRecommendView;
-    private LoodView mLoodView;
+    private LoopView mLoopView;
     
     public void setChanger(ChangeView changer) {
         mChangeView = changer;
@@ -106,7 +106,7 @@ public class RecommendFragment extends AttachFragment {
             mContent.addView(dayRec);
         }
         
-        mLoadView = mLayoutInflater.inflate(R.layout.loading, null, false);
+        mLoadView = mLayoutInflater.inflate(R.layout.loading, mViewContent, false);
         mItemLayout.setVisibility(View.INVISIBLE);
         mViewContent.addView(mLoadView);
         
@@ -115,28 +115,22 @@ public class RecommendFragment extends AttachFragment {
         mRadioAdapter = new RadioAdapter(null);
         
         TextView change = mRecommendView.findViewById(R.id.change_item_position);
-        change.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent itent = new Intent(mContext, NetItemChangeActivity.class);
-                mContext.startActivity(itent);
-            }
+        change.setOnClickListener(v -> {
+            mContext.startActivity(new Intent(mContext, NetItemChangeActivity.class));
         });
         
-        mLoodView = mRecommendView.findViewById(R.id.loop_view);
+        mLoopView = mRecommendView.findViewById(R.id.loop_view);
         if (!isDayFirst) {
             mContent.addView(mRecommendView);
         }
-        
         return mContent;
     }
     
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if (mLoodView != null)
-                mLoodView.requestFocus();
+        if (isVisibleToUser && mLoopView != null) {
+            mLoopView.requestFocus();
         }
     }
     
@@ -361,7 +355,7 @@ public class RecommendFragment extends AttachFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mLoodView.onDestroy();
+        mLoopView.onDestroy();
     }
     
     @Override

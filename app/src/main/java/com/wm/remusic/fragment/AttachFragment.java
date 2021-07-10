@@ -1,7 +1,7 @@
 package com.wm.remusic.fragment;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by wm on 2016/3/17.
@@ -15,6 +15,4 @@ public class AttachFragment extends Fragment {
         super.onAttach(activity);
         this.mContext = activity;
     }
-    
-    
 }

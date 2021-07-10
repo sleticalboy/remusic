@@ -56,7 +56,7 @@
 
     <com.wm.remusic.widget.CustomViewPager
         android:layout_below="@+id/toolbar"
-        android:layout_above="@+id/nav_play"
+        android:layout_above="@+id/bottom_container"
         android:id="@+id/main_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

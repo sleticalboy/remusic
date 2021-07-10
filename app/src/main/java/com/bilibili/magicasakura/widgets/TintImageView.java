@@ -28,9 +28,10 @@ import com.bilibili.magicasakura.utils.TintManager;
  * @author xyczero617@gmail.com
  * @time 15/11/8
  */
-public class TintImageView extends ImageView implements Tintable, AppCompatBackgroundHelper.BackgroundExtensible
-        , AppCompatImageHelper.ImageExtensible {
+public class TintImageView extends ImageView implements Tintable,
+        AppCompatBackgroundHelper.BackgroundExtensible, AppCompatImageHelper.ImageExtensible {
     private AppCompatBackgroundHelper mBackgroundHelper;
+
     private AppCompatImageHelper mImageHelper;
 
     public TintImageView(Context context) {
@@ -43,9 +44,8 @@ public class TintImageView extends ImageView implements Tintable, AppCompatBackg
 
     public TintImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (isInEditMode()) {
-            return;
-        }
+        if (isInEditMode()) return;
+
         TintManager tintManager = TintManager.get(context);
 
         mBackgroundHelper = new AppCompatBackgroundHelper(this, tintManager);
@@ -58,17 +58,13 @@ public class TintImageView extends ImageView implements Tintable, AppCompatBackg
     @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();
-        if (getBackground() != null) {
-            invalidateDrawable(getBackground());
-        }
+        if (getBackground() != null) invalidateDrawable(getBackground());
     }
 
     @Override
     public void setBackgroundDrawable(Drawable background) {
         super.setBackgroundDrawable(background);
-        if (mBackgroundHelper != null) {
-            mBackgroundHelper.setBackgroundDrawableExternal(background);
-        }
+        if (mBackgroundHelper != null) mBackgroundHelper.setBackgroundDrawableExternal(background);
     }
 
     @Override
@@ -83,17 +79,13 @@ public class TintImageView extends ImageView implements Tintable, AppCompatBackg
     @Override
     public void setBackgroundColor(int color) {
         super.setBackgroundColor(color);
-        if (mBackgroundHelper != null) {
-            mBackgroundHelper.setBackgroundColor(color);
-        }
+        if (mBackgroundHelper != null) mBackgroundHelper.setBackgroundColor(color);
     }
 
     @Override
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
-        if (mImageHelper != null) {
-            mImageHelper.setImageDrawable();
-        }
+        if (mImageHelper != null) mImageHelper.setImageDrawable();
     }
 
     @Override
@@ -107,39 +99,27 @@ public class TintImageView extends ImageView implements Tintable, AppCompatBackg
 
     @Override
     public void setBackgroundTintList(int resId) {
-        if (mBackgroundHelper != null) {
-            mBackgroundHelper.setBackgroundTintList(resId, null);
-        }
+        if (mBackgroundHelper != null) mBackgroundHelper.setBackgroundTintList(resId, null);
     }
 
     @Override
     public void setBackgroundTintList(int resId, PorterDuff.Mode mode) {
-        if (mBackgroundHelper != null) {
-            mBackgroundHelper.setBackgroundTintList(resId, mode);
-        }
+        if (mBackgroundHelper != null) mBackgroundHelper.setBackgroundTintList(resId, mode);
     }
 
     @Override
     public void setImageTintList(int resId) {
-        if (mImageHelper != null) {
-            mImageHelper.setImageTintList(resId, null);
-        }
+        if (mImageHelper != null) mImageHelper.setImageTintList(resId, null);
     }
 
     @Override
     public void setImageTintList(int resId, PorterDuff.Mode mode) {
-        if (mImageHelper != null) {
-            mImageHelper.setImageTintList(resId, mode);
-        }
+        if (mImageHelper != null) mImageHelper.setImageTintList(resId, mode);
     }
 
     @Override
     public void tint() {
-        if (mBackgroundHelper != null) {
-            mBackgroundHelper.tint();
-        }
-        if (mImageHelper != null) {
-            mImageHelper.tint();
-        }
+        if (mBackgroundHelper != null) mBackgroundHelper.tint();
+        if (mImageHelper != null) mImageHelper.tint();
     }
 }

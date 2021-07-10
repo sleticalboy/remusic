@@ -36,17 +36,12 @@ public class PreLoad extends Thread {
     }
 
     public boolean download(int size) {
+        Log.i(LOG_TAG, "缓存开始");
         try {
-            Log.i(LOG_TAG, "缓存开始");
-            //
-            if (!fileUtils.isEnable()) {
-                return false;
-            }
+            if (!fileUtils.isEnable()) return false;
             // 得到文件长度，如果超过缓冲给定长度，则返回
             int fileLength = fileUtils.getLength();
-            if (fileLength >= size) {
-                return true;
-            }
+            if (fileLength >= size) return true;
             // 如果已经下载完成，返回
             System.out.println(fileUtils.getLength() + " " + cacheDao.getFileSize(fileUtils.getFileName()));
             if (fileUtils.getLength() == cacheDao.getFileSize(fileUtils.getFileName())) {
@@ -54,12 +49,8 @@ public class PreLoad extends Thread {
             }
             // 从之前的位置缓存
             HttpURLConnection response = HttpUtils.send(url.openConnection());
-            if (response == null) {
-                return false;
-            }
             int contentLength = Integer.valueOf(response.getHeaderField(Constants.CONTENT_LENGTH));
             cacheDao.insertOrUpdate(fileUtils.getFileName(), contentLength);
-            //
             InputStream data = response.getInputStream();
             byte[] buff = new byte[1024 * 40];
             int readBytes = 0;

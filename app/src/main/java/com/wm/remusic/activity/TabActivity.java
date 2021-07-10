@@ -1,7 +1,7 @@
 package com.wm.remusic.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.wm.remusic.R;
 import com.wm.remusic.fragment.ArtistDetailFragment;

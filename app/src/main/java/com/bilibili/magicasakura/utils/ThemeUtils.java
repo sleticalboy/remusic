@@ -32,15 +32,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
-import android.support.annotation.AttrRes;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StyleRes;
-import android.support.v4.graphics.ColorUtils;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.view.ContextThemeWrapper;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.StateSet;
@@ -51,6 +42,16 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.WrapperListAdapter;
+
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StyleRes;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.graphics.ColorUtils;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bilibili.magicasakura.widgets.Tintable;
 import com.wm.remusic.R;
@@ -276,8 +277,8 @@ public class ThemeUtils {
         /*if (drawable instanceof android.support.v4.graphics.drawable.DrawableWrapper) {
             return ((android.support.v4.graphics.drawable.DrawableWrapper) drawable).getWrappedDrawable();
         } else */
-        if (drawable instanceof android.support.v7.graphics.drawable.DrawableWrapper) {
-            return ((android.support.v7.graphics.drawable.DrawableWrapper) drawable).getWrappedDrawable();
+        if (drawable instanceof androidx.appcompat.graphics.drawable.DrawableWrapper) {
+            return ((androidx.appcompat.graphics.drawable.DrawableWrapper) drawable).getWrappedDrawable();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && drawable instanceof android.graphics.drawable.DrawableWrapper) {
             return ((android.graphics.drawable.DrawableWrapper) drawable).getDrawable();
         }
@@ -458,20 +459,13 @@ public class ThemeUtils {
                         mRecycler.setAccessible(true);
                     }
                     if (mClearMethod == null) {
-                        mClearMethod = Class.forName("android.support.v7.widget.RecyclerView$Recycler")
+                        mClearMethod = Class.forName(RecyclerView.class.getName() + "$Recycler")
                                 .getDeclaredMethod("clear");
                         mClearMethod.setAccessible(true);
                     }
                     mClearMethod.invoke(mRecycler.get(view));
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+                } catch (NoSuchMethodException | IllegalAccessException | NoSuchFieldException
+                        | InvocationTargetException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
                 ((RecyclerView) view).getRecycledViewPool().clear();

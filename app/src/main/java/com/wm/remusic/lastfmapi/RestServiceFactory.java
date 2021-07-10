@@ -25,12 +25,12 @@ import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
-
 public class RestServiceFactory {
     private static final String TAG_OK_HTTP = "OkHttp";
     private static final long CACHE_SIZE = 1024 * 1024;
 
     public static <T> T create(final Context context, String baseUrl, Class<T> clazz) {
+
         final OkHttpClient okHttpClient = new OkHttpClient();
 
         okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),

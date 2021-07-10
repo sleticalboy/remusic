@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -84,9 +84,11 @@ public class SplashActivity extends AppCompatActivity /*Activity */ {
      */
     private void runApp() {
         //初始化SDK
-        AdManager.getInstance(mContext).init("9ca9f88752601ff9", "c91f620182e46bad", false, true);
+        // AdManager.getInstance(mContext).init("9ca9f88752601ff9", "c91f620182e46bad", false, true);
         //设置开屏
-        setupSplashAd();
+        // setupSplashAd();
+        // 打开主页
+        startActivity(new Intent(this, MainActivity.class));
     }
     
     /**
@@ -98,7 +100,7 @@ public class SplashActivity extends AppCompatActivity /*Activity */ {
         RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.ABOVE, R.id.view_divider);
-        
+
         // 对开屏进行设置
         SplashViewSettings splashViewSettings = new SplashViewSettings();
         //		// 设置是否展示失败自动跳转，默认自动跳转
@@ -107,19 +109,19 @@ public class SplashActivity extends AppCompatActivity /*Activity */ {
         splashViewSettings.setTargetClass(MainActivity.class);
         // 设置开屏的容器
         splashViewSettings.setSplashViewContainer(splashLayout);
-        
+
         // 展示开屏广告
         SpotManager.getInstance(mContext)
                 .showSplash(mContext, splashViewSettings, mStopListener);
     }
     
     static SpotListener mStopListener = new SpotListener() {
-        
+
         @Override
         public void onShowSuccess() {
             logInfo("开屏展示成功");
         }
-        
+
         @Override
         public void onShowFailed(int errorCode) {
             logError("开屏展示失败");
@@ -144,12 +146,12 @@ public class SplashActivity extends AppCompatActivity /*Activity */ {
                     break;
             }
         }
-        
+
         @Override
         public void onSpotClosed() {
             logDebug("开屏被关闭");
         }
-        
+
         @Override
         public void onSpotClicked(boolean isWebPage) {
             logDebug("开屏被点击");

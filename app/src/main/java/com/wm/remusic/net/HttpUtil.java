@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.CacheControl;
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -42,10 +43,9 @@ public class HttpUtil {
     
     private static final String TAG = "HttpUtil";
     public static final OkHttpClient mOkHttpClient = new OkHttpClient();
-    
-    private HttpUtil() {
-        final List<Interceptor> interceptors = mOkHttpClient.interceptors();
-        interceptors.add(new Interceptor() {
+
+    static {
+        mOkHttpClient.interceptors().add(new Interceptor() {
             @Override
             public Response intercept(final Chain chain) throws IOException {
                 final Request request = chain.request();
@@ -53,12 +53,17 @@ public class HttpUtil {
                 for (final String name : request.headers().names()) {
                     Log.d(TAG, name + "=" + request.header(name));
                 }
-                // final RequestBody requestBody = request.body();
-                // if (requestBody != null) {
-                // }
-                return chain.proceed(request);
+                Response response = chain.proceed(request);
+                Log.d(TAG, "-------------->");
+                for (final String name : response.headers().names()) {
+                    Log.d(TAG, name + "=" + response.header(name));
+                }
+                return response;
             }
         });
+    }
+    
+    private HttpUtil() {
     }
     
     public static void getOut(final String url) {

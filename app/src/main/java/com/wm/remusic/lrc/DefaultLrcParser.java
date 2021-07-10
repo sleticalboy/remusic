@@ -15,9 +15,10 @@ import java.util.List;
  * @author Ligang  2014/8/19
  */
 public class DefaultLrcParser implements ILrcParser {
+
     private static final DefaultLrcParser istance = new DefaultLrcParser();
     
-    public static final DefaultLrcParser getIstance() {
+    public static DefaultLrcParser getIstance() {
         return istance;
     }
     

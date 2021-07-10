@@ -4,14 +4,13 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.util.Log;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.common.internal.Supplier;
-import com.facebook.common.logging.FLog;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipeline;
@@ -34,14 +33,14 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
     //private static int MAX_MEM = 60 * ByteConstants.MB;
     private long favPlaylist = IConstants.FAV_PLAYLIST;
     private static Gson gson;
-    
+
     public static Gson gsonInstance() {
         if (gson == null) {
             gson = new Gson();
         }
         return gson;
     }
-    
+
     private ImagePipelineConfig getConfigureCaches(Context context) {
         final MemoryCacheParams bitmapCacheParams = new MemoryCacheParams(
                 MAX_MEM,// 内存缓存中总图片的最大大小,以字节为单位。
@@ -49,7 +48,7 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
                 MAX_MEM,// 内存缓存中准备清除但尚未被删除的总图片的最大大小,以字节为单位。
                 Integer.MAX_VALUE,// 内存缓存中准备清除的总图片的最大数量。
                 Integer.MAX_VALUE / 10);// 内存缓存中单个图片的最大大小。
-        
+
         Supplier<MemoryCacheParams> mSupplierMemoryCacheParams = new Supplier<MemoryCacheParams>() {
             @Override
             public MemoryCacheParams get() {
@@ -59,8 +58,8 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
         ImagePipelineConfig.Builder builder = ImagePipelineConfig.newBuilder(context)
                 .setDownsampleEnabled(true);
         builder.setBitmapMemoryCacheParamsSupplier(mSupplierMemoryCacheParams);
-        
-        
+
+
         //小图片的磁盘配置
         DiskCacheConfig diskSmallCacheConfig = DiskCacheConfig.newBuilder(context)
                 .setBaseDirectoryPath(context.getApplicationContext().getCacheDir())//缓存图片基路径
@@ -73,7 +72,7 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
 //                .setMaxCacheSizeOnVeryLowDiskSpace(MAX_SMALL_DISK_VERYLOW_CACHE_SIZE)//缓存的最大大小,当设备极低磁盘空间
 //            .setVersion(version)
                 .build();
-        
+
         //默认图片的磁盘配置
         DiskCacheConfig diskCacheConfig = DiskCacheConfig.newBuilder(context)
                 .setBaseDirectoryPath(Environment.getExternalStorageDirectory().getAbsoluteFile())//缓存图片基路径
@@ -86,7 +85,7 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
 //                .setMaxCacheSizeOnVeryLowDiskSpace(MAX_DISK_CACHE_VERYLOW_SIZE)//缓存的最大大小,当设备极低磁盘空间
 //            .setVersion(version)
                 .build();
-        
+
         //缓存图片配置
         ImagePipelineConfig.Builder configBuilder = ImagePipelineConfig.newBuilder(context)
 //            .setAnimatedImageFactory(AnimatedImageFactory animatedImageFactory)//图片加载动画
@@ -107,7 +106,7 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
                 ;
         return builder.build();
     }
-    
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
@@ -116,32 +115,31 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
         imagePipeline.clearMemoryCaches();
         //清空硬盘缓存，一般在设置界面供用户手动清理
         //imagePipeline.clearDiskCaches();
-        
+
         //同时清理内存缓存和硬盘缓存
         //imagePipeline.clearCaches();
     }
-    
-    
+
+
     private void frescoInit() {
         Fresco.initialize(this, getConfigureCaches(this));
-        if (BuildConfig.DEBUG) {
-            FLog.setMinimumLoggingLevel(Log.VERBOSE);
-        }
+        // if (BuildConfig.DEBUG) {
+        //     FLog.setMinimumLoggingLevel(Log.VERBOSE);
+        // }
     }
-
 
 //    public static RefWatcher getRefWatcher(Context context) {
 //        MainApplication application = (MainApplication) context.getApplicationContext();
 //        return application.refWatcher;
 //    }
-    
+
     //捕获全局Exception 重启界面
     public void initCatchException() {
         //设置该CrashHandler为程序的默认处理器
         UnceHandler catchExcep = new UnceHandler(this);
         Thread.setDefaultUncaughtExceptionHandler(catchExcep);
     }
-    
+
     @Override
     public void onCreate() {
         frescoInit();
@@ -151,10 +149,9 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
 //            // You should not init your app in this process.
 //            return;
 //        }
-        
-        
+
         context = this;
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Nammu.init(this);
         }
@@ -162,14 +159,14 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
         // refWatcher = LeakCanary.install(this);
         //       LeakCanary.install(this);
         initCatchException();
-        
+
         if (!PreferencesUtility.getInstance(this).getFavriateMusicPlaylist()) {
             PlaylistInfo.getInstance(this).addPlaylist(favPlaylist, getResources().getString(R.string.my_fav_playlist),
                     0, "res:/" + R.mipmap.lay_protype_default, "local");
             PreferencesUtility.getInstance(this).setFavriateMusicPlaylist(true);
         }
     }
-    
+
     @Override
     public int replaceColorById(Context context, @ColorRes int colorId) {
         if (ThemeHelper.isDefaultTheme(context)) {
@@ -181,7 +178,7 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
         }
         return context.getResources().getColor(colorId);
     }
-    
+
     @Override
     public int replaceColor(Context context, @ColorInt int originColor) {
         if (ThemeHelper.isDefaultTheme(context)) {
@@ -194,7 +191,7 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
         }
         return colorId != -1 ? getResources().getColor(colorId) : originColor;
     }
-    
+
     private String getTheme(Context context) {
         if (ThemeHelper.getTheme(context) == ThemeHelper.CARD_STORM) {
             return "blue";
@@ -213,10 +210,9 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
         }
         return null;
     }
-    
-    private
+
     @ColorRes
-    int getThemeColorId(Context context, int colorId, String theme) {
+    private int getThemeColorId(Context context, int colorId, String theme) {
         switch (colorId) {
             case R.color.theme_color_primary:
                 return context.getResources().getIdentifier(theme, "color", getPackageName());
@@ -227,15 +223,13 @@ public class MainApplication extends Application implements ThemeUtils.switchCol
         }
         return colorId;
     }
-    
-    private
+
     @ColorRes
-    int getThemeColor(Context context, int color, String theme) {
-        switch (color) {
-            case 0xd20000:
-                return context.getResources().getIdentifier(theme, "color", getPackageName());
+    private int getThemeColor(Context context, int color, String theme) {
+        if (color == 0xd20000) {
+            return context.getResources().getIdentifier(theme, "color", getPackageName());
         }
         return -1;
     }
-    
+
 }

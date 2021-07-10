@@ -1,6 +1,6 @@
 package com.wm.remusic.net;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;

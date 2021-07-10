@@ -4,7 +4,7 @@ package com.wm.remusic.net;
  * Created by wm on 2016/4/14.
  */
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;

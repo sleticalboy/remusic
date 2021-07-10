@@ -8,8 +8,10 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -41,7 +43,6 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
      * 更新播放队列
      */
     public void updateQueue() {
-    
     }
     
     /**
@@ -65,7 +66,6 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
                 listener.reloadAdapter();
             }
         }
-    
     }
     
     public void updateTime() {
@@ -80,26 +80,20 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
      * 歌曲切换
      */
     public void updateTrack() {
-    
     }
     
-    
     public void updateLrc() {
-    
     }
     
     /**
      * @param p 更新歌曲缓冲进度值，p取值从0~100
      */
     public void updateBuffer(int p) {
-    
     }
     
     public void changeTheme() {
         for (final MusicStateListener listener : mMusicListener) {
-            if (listener != null) {
-                listener.changeTheme();
-            }
+            if (listener != null) listener.changeTheme();
         }
     }
     
@@ -107,7 +101,6 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
      * @param l 歌曲是否加载中
      */
     public void loading(boolean l) {
-    
     }
     
     
@@ -115,8 +108,8 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
      * @param outState 取消保存状态
      */
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //super.onSaveInstanceState(outState);
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
     
     /**
@@ -142,8 +135,7 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
                 ft.show(fragment).commitAllowingStateLoss();
             }
         } else {
-            if (fragment != null)
-                ft.hide(fragment).commitAllowingStateLoss();
+            if (fragment != null) ft.hide(fragment).commitAllowingStateLoss();
         }
     }
     
@@ -169,7 +161,6 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         showQuickControl(true);
     }
     
-    
     @Override
     public void onServiceConnected(final ComponentName name, final IBinder service) {
         mService = MediaAidlInterface.Stub.asInterface(service);
@@ -190,7 +181,6 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
         } catch (final Throwable e) {
         }
         mMusicListener.clear();
-        
     }
     
     public void unbindService() {
@@ -215,49 +205,43 @@ public class BaseActivity extends AppCompatActivity implements ServiceConnection
             mMusicListener.remove(status);
         }
     }
-    
-    
+
     private final static class PlaybackStatus extends BroadcastReceiver {
         
         private final WeakReference<BaseActivity> mReference;
         
-        
         public PlaybackStatus(final BaseActivity activity) {
             mReference = new WeakReference<>(activity);
         }
-        
         
         @Override
         public void onReceive(final Context context, final Intent intent) {
             final String action = intent.getAction();
             BaseActivity baseActivity = mReference.get();
             if (baseActivity != null) {
-                if (action.equals(MediaService.META_CHANGED)) {
+                if (MediaService.META_CHANGED.equals(action)) {
                     baseActivity.updateTrackInfo();
-    
-                } else if (action.equals(MediaService.PLAYSTATE_CHANGED)) {
-    
-                } else if (action.equals(MediaService.TRACK_PREPARED)) {
+                } else if (MediaService.PLAYSTATE_CHANGED.equals(action)) {
+                } else if (MediaService.TRACK_PREPARED.equals(action)) {
                     baseActivity.updateTime();
-                } else if (action.equals(MediaService.BUFFER_UP)) {
+                } else if (MediaService.BUFFER_UP.equals(action)) {
                     baseActivity.updateBuffer(intent.getIntExtra("progress", 0));
-                } else if (action.equals(MediaService.MUSIC_LODING)) {
+                } else if (MediaService.MUSIC_LODING.equals(action)) {
                     baseActivity.loading(intent.getBooleanExtra("isloading", false));
-                } else if (action.equals(MediaService.REFRESH)) {
-    
-                } else if (action.equals(IConstants.MUSIC_COUNT_CHANGED)) {
+                } else if (MediaService.REFRESH.equals(action)) {
+                } else if (IConstants.MUSIC_COUNT_CHANGED.equals(action)) {
                     baseActivity.refreshUI();
-                } else if (action.equals(IConstants.PLAYLIST_COUNT_CHANGED)) {
+                } else if (IConstants.PLAYLIST_COUNT_CHANGED.equals(action)) {
                     baseActivity.refreshUI();
-                } else if (action.equals(MediaService.QUEUE_CHANGED)) {
+                } else if (MediaService.QUEUE_CHANGED.equals(action)) {
                     baseActivity.updateQueue();
-                } else if (action.equals(MediaService.TRACK_ERROR)) {
+                } else if (MediaService.TRACK_ERROR.equals(action)) {
                     final String errorMsg = context.getString(R.string.exit,
                             intent.getStringExtra(MediaService.TrackErrorExtra.TRACK_NAME));
                     Toast.makeText(baseActivity, errorMsg, Toast.LENGTH_SHORT).show();
-                } else if (action.equals(MediaService.MUSIC_CHANGED)) {
+                } else if (MediaService.MUSIC_CHANGED.equals(action)) {
                     baseActivity.updateTrack();
-                } else if (action.equals(MediaService.LRC_UPDATED)) {
+                } else if (MediaService.LRC_UPDATED.equals(action)) {
                     baseActivity.updateLrc();
                 }
     

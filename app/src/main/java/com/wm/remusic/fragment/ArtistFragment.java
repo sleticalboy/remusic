@@ -3,11 +3,11 @@ package com.wm.remusic.fragment;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -244,18 +244,13 @@ public class ArtistFragment extends BaseFragment {
                 public void artistInfoSucess(LastfmArtist artist) {
                     if (artist != null && artist.mArtwork != null) {
                         ((ListItemViewHolder) holder).draweeView.setImageURI(Uri.parse(artist.mArtwork.get(2).mUrl));
-
-                    } else {
-
                     }
                 }
 
                 @Override
                 public void artistInfoFailed() {
-
                 }
             });
-
         }
 
         @Override
@@ -300,11 +295,7 @@ public class ArtistFragment extends BaseFragment {
                     transaction.add(R.id.tab_container, fragment);
                     transaction.addToBackStack(null).commit();
                 }
-
             }
-
         }
     }
-
-
 }

@@ -34,6 +34,7 @@ import java.util.List;
  * @author Ligang  2014/8/19
  */
 public class LrcView extends View implements ILrcView {
+
     /**
      * 所有的歌词
      ***/

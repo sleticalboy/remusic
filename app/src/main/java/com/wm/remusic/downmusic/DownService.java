@@ -9,8 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -29,11 +29,11 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 /**
  * Created by wm on 2016/12/13.
  */
 public class DownService extends Service {
+
     public static final String ADD_DOWNTASK = "com.wm.remusic.downtaskadd";
     public static final String ADD_MULTI_DOWNTASK = "com.wm.remusic.multidowntaskadd";
     public static final String CANCLE_DOWNTASK = "com.wm.remusic.cacletask";
@@ -322,9 +322,7 @@ public class DownService extends Service {
         mNotificationManager.notify(notificationid, getNotification(true));
         downTaskCount = 0;
         downTaskDownloaded = -1;
-
     }
-
 
     public void startTask() {
         L.D(d, TAG, TAG + " start task task size = " + prepareTaskList.size());
@@ -380,7 +378,6 @@ public class DownService extends Service {
 
         L.D(d, TAG, "resume task = " + taskId);
     }
-
 
     public void cancel(String taskId) {
         if (currentTask != null) {
@@ -470,6 +467,4 @@ public class DownService extends Service {
         intent.setPackage(IConstants.PACKAGE);
         sendBroadcast(intent);
     }
-
-
 }

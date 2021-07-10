@@ -4,8 +4,8 @@ import android.content.Context;
 
 import java.util.List;
 
-
 public interface ILrcView {
+
     /**
      * 初始化画笔，颜色，字体大小等设置
      */

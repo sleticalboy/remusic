@@ -29,6 +29,7 @@ import com.bilibili.magicasakura.utils.TintManager;
  * @time 16/2/18
  */
 public class TintView extends View implements Tintable, AppCompatBackgroundHelper.BackgroundExtensible {
+
     private AppCompatBackgroundHelper mBackgroundHelper;
 
     public TintView(Context context) {
@@ -41,9 +42,7 @@ public class TintView extends View implements Tintable, AppCompatBackgroundHelpe
 
     public TintView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (isInEditMode()) {
-            return;
-        }
+        if (isInEditMode()) return;
         TintManager tintManager = TintManager.get(context);
 
         mBackgroundHelper = new AppCompatBackgroundHelper(this, tintManager);

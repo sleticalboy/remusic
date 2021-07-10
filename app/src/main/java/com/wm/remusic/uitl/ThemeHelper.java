@@ -16,6 +16,7 @@
 
 package com.wm.remusic.uitl;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -25,6 +26,7 @@ import android.content.SharedPreferences;
  * @time 16/5/2
  */
 public class ThemeHelper {
+
     private static final String CURRENT_THEME = "theme_current";
     
     public static final int CARD_SAKURA = 0x1;
@@ -40,10 +42,9 @@ public class ThemeHelper {
         return context.getSharedPreferences("multiple_theme", Context.MODE_PRIVATE);
     }
     
+    @SuppressLint("ApplySharedPref")
     public static void setTheme(Context context, int themeId) {
-        getSharePreference(context).edit()
-                .putInt(CURRENT_THEME, themeId)
-                .commit();
+        getSharePreference(context).edit().putInt(CURRENT_THEME, themeId).commit();
     }
     
     public static int getTheme(Context context) {

@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
  * @author 阿伦
  */
 public class MediaPlayerProxy implements Runnable {
+
     private static final String LOG_TAG = MediaPlayerProxy.class.getSimpleName();
 
     private int port;
@@ -87,9 +88,7 @@ public class MediaPlayerProxy implements Runnable {
         while (isRunning) {
             try {
                 final Socket client = socket.accept();
-                if (client == null) {
-                    continue;
-                }
+                if (client == null) continue;
                 Log.d(LOG_TAG, "client connected");
 
                 HttpURLConnection request = readRequest(client);
@@ -130,30 +129,30 @@ public class MediaPlayerProxy implements Runnable {
         HttpURLConnection request = null;
         int bytes_read;
         byte[] local_request = new byte[1024];
-        String requestStr = "";
+        StringBuilder requestStr = new StringBuilder();
         try {
             while ((bytes_read = client.getInputStream().read(local_request)) != -1) {
                 byte[] tmpBuffer = new byte[bytes_read];
                 System.arraycopy(local_request, 0, tmpBuffer, 0, bytes_read);
                 String str = new String(tmpBuffer);
                 Log.i(LOG_TAG + " Header-> ", str);
-                requestStr = requestStr + str;
-                if (requestStr.contains("GET") && requestStr.contains(Constants.HTTP_END)) {
+                requestStr.append(str);
+                if (requestStr.toString().contains("GET") && requestStr.toString().contains(Constants.HTTP_END)) {
                     break;
                 }
             }
         } catch (IOException e) {
             Log.e(LOG_TAG, "获取Request Header异常", e);
-            return request;
+            return null;
         }
 
-        if (requestStr == "") {
+        if ("".equals(requestStr.toString())) {
             Log.i(LOG_TAG, "请求头为空，获取异常");
-            return request;
+            return null;
         }
 
         // 将Request String组合为HttpUriRequest
-        String[] requestParts = requestStr.split(Constants.LINE_BREAK);
+        String[] requestParts = requestStr.toString().split(Constants.LINE_BREAK);
         StringTokenizer st = new StringTokenizer(requestParts[0]);
         String method = st.nextToken();
         String uri = st.nextToken();

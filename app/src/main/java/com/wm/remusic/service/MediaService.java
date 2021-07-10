@@ -57,8 +57,8 @@ import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AlbumColumns;
 import android.provider.MediaStore.Audio.AudioColumns;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -3086,7 +3086,8 @@ public class MediaService extends Service {
     private static final class ServiceStub extends MediaAidlInterface.Stub {
         
         private final WeakReference<MediaService> mService;
-        
+
+        @Override
         public boolean onTransact(int code, Parcel data, Parcel reply, int flags) {
             try {
                 super.onTransact(code, data, reply, flags);

@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.wm.remusic.widget.LoodView
+        <com.wm.remusic.widget.LoopView
             android:focusableInTouchMode="true"
             android:focusable="true"
             android:id="@+id/loop_view"

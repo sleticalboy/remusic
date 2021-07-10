@@ -6,13 +6,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +79,6 @@ public class MainFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 reloadAdapter();
-
             }
         });
         //先给adapter设置空数据，异步加载好后更新数据，防止Recyclerview no attach
@@ -95,7 +94,6 @@ public class MainFragment extends BaseFragment {
         return view;
     }
 
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -104,7 +102,6 @@ public class MainFragment extends BaseFragment {
             reloadAdapter();
         }
     }
-
 
     //为info设置数据，并放入mlistInfo
     private void setInfo(String title, int count, int id, int i) {
@@ -120,7 +117,7 @@ public class MainFragment extends BaseFragment {
 
     //设置音乐overflow条目
     private void setMusicInfo() {
-        final Context context = mContext == null ? requireContext() : mContext;
+        Context context = mContext == null ? requireContext() : mContext;
         if (CommonUtils.isLollipop() && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             loadCount(false);
         } else {
@@ -139,7 +136,6 @@ public class MainFragment extends BaseFragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
         setInfo(mContext.getResources().getString(R.string.local_music), localMusicCount, R.drawable.music_icn_local, 0);
         setInfo(mContext.getResources().getString(R.string.recent_play), recentMusicCount, R.drawable.music_icn_recent, 1);
@@ -152,8 +148,8 @@ public class MainFragment extends BaseFragment {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(final Void... unused) {
-                ArrayList results = new ArrayList();
                 setMusicInfo();
+                ArrayList results = new ArrayList();
                 ArrayList<Playlist> playlists = playlistInfo.getPlaylist();
                 ArrayList<Playlist> netPlaylists = playlistInfo.getNetPlaylist();
                 results.addAll(mList);
@@ -173,8 +169,7 @@ public class MainFragment extends BaseFragment {
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                if (mContext == null)
-                    return;
+                if (mContext == null) return;
                 mAdapter.notifyDataSetChanged();
                 swipeRefresh.setRefreshing(false);
             }

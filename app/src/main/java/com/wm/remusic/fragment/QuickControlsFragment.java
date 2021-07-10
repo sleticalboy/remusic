@@ -5,7 +5,7 @@ import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,13 +198,6 @@ public class QuickControlsFragment extends BaseFragment {
         } else {
             mAlbumArt.setImageURI(Uri.parse("content://" + MusicPlayer.getAlbumPath()));
         }
-        
-    }
-    
-    @Override
-    public void onStart() {
-        super.onStart();
-        
     }
     
     @Override
@@ -220,7 +213,6 @@ public class QuickControlsFragment extends BaseFragment {
         mProgress.removeCallbacks(mUpdateProgress);
         mProgress.postDelayed(mUpdateProgress, 0);
         updateNowplayingCard();
-        
     }
     
     
@@ -254,6 +246,4 @@ public class QuickControlsFragment extends BaseFragment {
         super.changeTheme();
         mProgress.setProgressTintList(ThemeUtils.getThemeColorStateList(mContext, R.color.theme_color_primary));
     }
-    
-    
 }

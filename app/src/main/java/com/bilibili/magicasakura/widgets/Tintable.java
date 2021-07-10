@@ -21,5 +21,6 @@ package com.bilibili.magicasakura.widgets;
  * Email : xyczero@sina.com
  */
 public interface Tintable {
+
     void tint();
 }

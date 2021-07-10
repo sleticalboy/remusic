@@ -16,7 +16,7 @@ public class HttpUtils {
      * @return
      */
     public static String genResponseHeader(int rangeStart, int rangeEnd, int fileLength) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("HTTP/1.1 206 Partial Content").append("\n");
         sb.append("Content-Type: audio/mpeg").append("\n");
         sb.append("Content-Length: ").append(rangeEnd - rangeStart + 1).append("\n");
@@ -28,7 +28,6 @@ public class HttpUtils {
         sb.append("\n");
         return sb.toString();
     }
-
 
     /**
      * 发送请求,得到Response
